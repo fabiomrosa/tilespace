@@ -1,12 +1,13 @@
-import type { Grid, Placement, Span } from "./packing.ts";
+import type { Grid, Placement, Shape, Span } from "./packing.ts";
 
-/** A Tile waiting for a Space: its index in the Stage and its Span. */
-export type Candidate = { tile: number; span: Span };
+/** A Tile waiting for a Space: its index in the Stage and its Shape, clamped to the Grid. */
+export type Candidate = { tile: number; shape: Shape };
 
 /**
  * Fills one Space with the Candidates by depth-first branch and bound (DEC-08): at the first empty
- * Cell, try the earliest Candidate of each distinct Span, then a Hole. Keeps the filling with the
- * fewest Holes found within `nodeBudget` search steps.
+ * Cell, try the earliest Candidate of each distinct Shape with each of its Spans in order, then a
+ * Hole. Keeps the best filling by the Score `[holes, spanRank]` found within `nodeBudget` steps;
+ * a filling with no Hole stops the search.
  */
 export function packSpace(
   candidates: readonly Candidate[],
@@ -17,12 +18,16 @@ export function packSpace(
   const cells = columns * rows;
   const occupied = new Uint8Array(cells);
   const used = new Uint8Array(candidates.length);
+  const keys = candidates.map((c) => c.shape.map((s) => `${s.cols}x${s.rows}`).join(" "));
+  const largest = candidates.map((c) => Math.max(...c.shape.map((s) => s.cols * s.rows)));
   const placements: Placement[] = [];
   let best: Placement[] = [];
   let bestHoles = Number.POSITIVE_INFINITY;
-  let areaLeft = candidates.reduce((area, c) => area + c.span.cols * c.span.rows, 0);
+  let bestRank = Number.POSITIVE_INFINITY;
+  let areaLeft = largest.reduce((area, a) => area + a, 0);
   let freeCells = cells;
   let holes = 0;
+  let rank = 0;
   let nodes = 0;
 
   const fits = (cell: number, span: Span): boolean => {
@@ -50,39 +55,44 @@ export function packSpace(
     while (cell < cells && occupied[cell]) cell++;
     // With no Tile left, every free Cell is a Hole: count them instead of recursing per Cell.
     if (cell === cells || areaLeft === 0) {
-      if (holes + freeCells < bestHoles) {
-        bestHoles = holes + freeCells;
+      const total = holes + freeCells;
+      if (total < bestHoles || (total === bestHoles && rank < bestRank)) {
+        bestHoles = total;
+        bestRank = rank;
         best = placements.slice();
       }
       return;
     }
-    if (holes + Math.max(0, freeCells - areaLeft) >= bestHoles) return;
+    // Holes and span ranks only grow deeper down, so a branch that cannot beat the best is cut.
+    const bound = holes + Math.max(0, freeCells - areaLeft);
+    if (bound > bestHoles || (bound === bestHoles && rank >= bestRank)) return;
 
     const tried = new Set<string>();
+    const col = cell % columns;
+    const row = (cell - col) / columns;
     for (let i = 0; i < candidates.length; i++) {
-      const candidate = candidates[i] as Candidate;
-      const key = `${candidate.span.cols}x${candidate.span.rows}`;
+      const key = keys[i] as string;
       if (used[i] || tried.has(key)) continue;
       tried.add(key);
-      if (!fits(cell, candidate.span)) continue;
-      const area = candidate.span.cols * candidate.span.rows;
-      const col = cell % columns;
-      mark(cell, candidate.span, 1);
+      const { tile, shape } = candidates[i] as Candidate;
+      const maxArea = largest[i] as number;
       used[i] = 1;
-      areaLeft -= area;
-      freeCells -= area;
-      placements.push({
-        tile: candidate.tile,
-        col,
-        row: (cell - col) / columns,
-        span: candidate.span,
+      areaLeft -= maxArea;
+      shape.forEach((span, spanRank) => {
+        if (!fits(cell, span)) return;
+        const area = span.cols * span.rows;
+        mark(cell, span, 1);
+        freeCells -= area;
+        rank += spanRank;
+        placements.push({ tile, col, row, span });
+        search(cell + 1);
+        placements.pop();
+        rank -= spanRank;
+        freeCells += area;
+        mark(cell, span, 0);
       });
-      search(cell + 1);
-      placements.pop();
-      freeCells += area;
-      areaLeft += area;
+      areaLeft += maxArea;
       used[i] = 0;
-      mark(cell, candidate.span, 0);
     }
 
     occupied[cell] = 1;

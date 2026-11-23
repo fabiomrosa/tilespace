@@ -41,8 +41,8 @@ Each package is created by the first slice that needs it.
 - **Search order:** first empty Cell row by row; candidates per DEC-09; Spans in Shape order; a Hole
   last. The Score is a tuple compared in order: `[holes, spanRank, displacement]`.
 - **Bound:** `holesSoFar + max(0, freeCells − areaLeft)` (areaLeft is the area of the remaining
-  candidates at their smallest Span) against the best tuple's Holes; equal Holes go on only while the
-  lower terms can still improve.
+  candidates at their largest Span, so the bound never overstates the Holes to come) against the
+  best tuple's Holes; equal Holes go on only while the lower terms can still improve.
 - **Node budget:** a count of search steps per Space (default chosen by the M1 benchmark); every
   loop is bounded by it.
 - **Last Space:** when every remaining Tile fits in one Space, it is packed with the same search;
