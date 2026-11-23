@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createTilespace } from "../src/index.ts";
 
 /** Lets the MutationObserver deliver its records. */
@@ -86,16 +86,26 @@ describe("repacking on added and removed Tiles", () => {
     expect(stage.children[1]?.hasAttribute("data-ts-current")).toBe(true);
   });
 
-  it("leaves a removed child alone when the repack fails", async () => {
+  it("leaves a removed child alone when the repack fails", () => {
+    // A fake observer, so the test calls the callback itself and sees what it throws.
+    let deliver = () => {};
+    class FakeMutationObserver {
+      constructor(callback: () => void) {
+        deliver = callback;
+      }
+      observe() {}
+      disconnect() {}
+    }
+    vi.stubGlobal("MutationObserver", FakeMutationObserver);
     const { stage, tilespace } = mount(["1x1", "1x1", "1x1"]);
+    vi.unstubAllGlobals();
     const removed = stage.children[0] as HTMLElement;
     const bad = document.createElement("div");
     bad.setAttribute("data-ts-shape", "2y1");
 
-    // The repack throws inside the observer (happy-dom swallows it), so the bad child is unplaced.
     removed.remove();
     stage.append(bad);
-    await flush();
+    expect(deliver).toThrow('tile 2 has data-ts-shape "2y1"');
     tilespace.goTo(1);
 
     expect(bad.hasAttribute("data-ts-span")).toBe(false);
