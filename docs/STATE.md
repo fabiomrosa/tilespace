@@ -16,9 +16,9 @@ or a `nodeBudget` that is not a positive integer throws a `tilespace:` error nam
 custom `score` replaces the default Score, with no cut and no stop at a filling with no Hole; a
 filling that places no Tile never counts, so every Tile is still placed. `validatePacking(packing,
 shapes, grid)` throws a `tilespace:` error naming the first broken invariant (for the engine to
-check a custom Packer, M2). Property tests (`fast-check`, 500 runs) check the PRODUCT packing
-invariants on random Shapes and Grids up to 4x4, and every Space's Holes against an exhaustive
-search (`test/exhaustive.ts`).
+check a custom Packer, M2). `npm run bench` compares `pack` with a first-fit baseline (`bench/`).
+Property tests (`fast-check`, 500 runs) check the PRODUCT packing invariants on random Shapes and
+Grids up to 4x4, and every Space's Holes against an exhaustive search (`test/exhaustive.ts`).
 
 ## Modules
 - `packages/core` (`@tilespace/core`): `pack` (`pack.ts`, clamps and calls the search), `packSpace`
@@ -33,8 +33,8 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T1.8 (custom Score and Packing validation):** a custom `score` gets a copy of the
-  Space's Placements and the Stage's Shapes; an empty filling never counts under it (a Score that
-  rewards Holes would otherwise drop Tiles). `validatePacking` checks Spans against the clamped
-  Shape and rejects an empty Space and off-Cell coordinates; it does not check the Holes invariant.
-- **Next:** T1.9 (benchmark against first-fit and the default Node budget).
+- **2026-11-23, T1.9 (benchmark):** `npm run bench` (Node runs `bench/pack.bench.ts` directly);
+  the default Node budget is 100,000 (`docs/decisions/0001-node-budget.md`). On the mix without 1x1
+  Tiles the search leaves 0.50 Holes per Space on 12x8 against first-fit's 4.90. A larger budget can
+  leave more Holes in later Spaces (the Space-by-Space priority).
+- **Next:** T1.10 (the playground draws Packings), the last M1 slice and the owner's check.

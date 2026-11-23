@@ -2,8 +2,8 @@ import { type Candidate, packSpace } from "./pack-space.ts";
 import type { Grid, Order, Packing, Placement, Score, Shape } from "./packing.ts";
 import { validate } from "./validate.ts";
 
-/** The default search steps per Space; T1.9 chooses its value. */
-const NODE_BUDGET = 1_000_000;
+/** The default search steps per Space, chosen by the benchmark (docs/decisions/0001). */
+const NODE_BUDGET = 100_000;
 
 /** How `pack` searches; every option has a default. */
 export type PackOptions = { order?: Order; nodeBudget?: number; score?: Score };
