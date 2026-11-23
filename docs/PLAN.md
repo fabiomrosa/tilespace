@@ -173,7 +173,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** PRODUCT "Engineering-critical invariants", CONVENTIONS §5.
 
 ### T1.8 · Custom Score and Packing validation
-- **Status:** waiting (T1.7)
+- **Status:** done (2026-11-23)
 - **Goal:** a user can rank fillings their own way, and a custom Packing can be checked against the
   invariants.
 - **Depends on:** T1.7.
