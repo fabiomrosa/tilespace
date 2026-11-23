@@ -98,7 +98,7 @@ describe("createTilespace", () => {
 
   it("restores the Stage and every Tile on destroy, keeping the same nodes", () => {
     const stage = stageOf(["2x2", "1x1", "1x1 2x1", null, "3x3"]);
-    stage.style.setProperty("gap", "3px", "important");
+    stage.style.setProperty("row-gap", "3px", "important");
     const first = tilesOf(stage)[0] as HTMLElement;
     first.setAttribute("data-ts-space", "mine");
     first.style.visibility = "collapse";

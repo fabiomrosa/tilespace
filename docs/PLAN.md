@@ -286,7 +286,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** CONVENTIONS §4, ARCHITECTURE "Configuration".
 
 ### T2.3 · Move between Spaces by API
-- **Status:** waiting (T2.1)
+- **Status:** done (2026-11-23)
 - **Goal:** a developer moves between Spaces with `next()`, `prev()` and `goTo(space)` and hears
   `change`.
 - **Depends on:** T2.1, DEC-11.

@@ -6,6 +6,7 @@ import {
   type Shape,
   validatePacking,
 } from "@tilespace/core";
+import { createEmitter } from "./emitter.ts";
 import { readShape, type ShapeOption, type Tile } from "./read-shape.ts";
 import { validateOptions } from "./validate-options.ts";
 import { createWriteLog } from "./write-log.ts";
@@ -16,13 +17,30 @@ export type TilespaceOptions = PackOptions & {
   rows: number;
   gap?: number;
   shape?: ShapeOption;
+  /** `next` from the last Space goes to the first, and `prev` from the first to the last. */
+  loop?: boolean;
   /** Replaces the default Packer; its Packing is checked with `validatePacking`. */
   packer?: (shapes: readonly Shape[], grid: Grid) => Packing;
 };
 
+/** The events a Tilespace emits, with what each listener receives. */
+export type TilespaceEvents = {
+  /** The Current space changed. */
+  change: { current: number };
+};
+
 /** One mounted instance over a Stage. */
 export type Tilespace = {
-  /** Puts back every style and attribute the Tilespace wrote. */
+  /** The Current space. */
+  readonly current: number;
+  next(): void;
+  prev(): void;
+  goTo(space: number): void;
+  on<E extends keyof TilespaceEvents>(
+    event: E,
+    listener: (detail: TilespaceEvents[E]) => void,
+  ): () => void;
+  /** Puts back every style and attribute the Tilespace wrote and removes its listeners. */
   destroy(): void;
 };
 
@@ -31,7 +49,7 @@ export type Tilespace = {
  * Grid, places each Tile with CSS grid, and shows Space 0.
  */
 export function createTilespace(stage: HTMLElement, options: TilespaceOptions): Tilespace {
-  const { columns, rows, gap = 0, shape, packer, ...packOptions } = options;
+  const { columns, rows, gap = 0, shape, packer, loop = false, ...packOptions } = options;
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
   validateOptions(stage, gap);
   const log = createWriteLog();
@@ -70,10 +88,54 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       log.style(el, "--ts-rows", String(span.rows));
       log.attribute(el, "data-ts-space", String(k));
       log.attribute(el, "data-ts-span", `${span.cols}x${span.rows}`);
-      if (k === 0) log.attribute(el, "data-ts-current", "");
-      else log.style(el, "visibility", "hidden");
     }
   });
 
-  return { destroy: () => log.restore() };
+  const events = createEmitter<TilespaceEvents>();
+  const last = packing.spaces.length - 1;
+  let current = 0;
+  let destroyed = false;
+  /** Shows one Space's Tiles and hides the others': an instant swap, no Transition. */
+  const show = (space: number) => {
+    packing.spaces.forEach((placements, k) => {
+      for (const { tile } of placements) {
+        const el = tiles[tile] as Tile;
+        if (k === space) {
+          log.resetStyle(el, "visibility");
+          log.attribute(el, "data-ts-current", "");
+        } else {
+          log.style(el, "visibility", "hidden");
+          log.resetAttribute(el, "data-ts-current");
+        }
+      }
+    });
+  };
+  const move = (space: number) => {
+    if (destroyed || space === current || space < 0) return;
+    current = space;
+    show(space);
+    events.emit("change", { current });
+  };
+  show(0);
+
+  return {
+    get current() {
+      return current;
+    },
+    next: () => move(current < last ? current + 1 : loop ? 0 : current),
+    prev: () => move(current > 0 ? current - 1 : loop ? last : current),
+    goTo(space) {
+      if (last < 0) throw new Error("tilespace: goTo needs a Space, but the Stage has no Tiles");
+      if (!Number.isInteger(space) || space < 0 || space > last) {
+        throw new Error(`tilespace: goTo needs a Space from 0 to ${last}, got ${space}`);
+      }
+      move(space);
+    },
+    on: (event, listener) => events.on(event, listener),
+    destroy() {
+      destroyed = true;
+      events.clear();
+      log.restore();
+    },
+  };
 }

@@ -60,10 +60,16 @@ Each package is created by the first slice that needs it.
 - `createTilespace(stage, options)` (`create-tilespace.ts`) reads each child's Shape
   (`read-shape.ts`: `data-ts-shape`, else the `shape` option, else `1x1`), packs, and writes the
   Stage's grid and each Tile's Placement.
-- Every style and attribute goes through one write log (`write-log.ts`). It records the value
-  before each write, and `destroy()` replays the log backwards, so what the user had set comes back
-  with its priority. It writes longhands only (`grid-column-start`, `row-gap`, `overflow-x`…): undoing
-  a shorthand would wipe the longhands the user had set.
+- Every style and attribute goes through one write log (`write-log.ts`). It saves each property's
+  and attribute's value from before the first write. `resetStyle` and `resetAttribute` put one back
+  (showing a Space puts back the user's own `visibility`), and `destroy()` puts back all of them,
+  with their priority. It writes longhands only (`grid-column-start`, `row-gap`, `overflow-x`…):
+  undoing a shorthand would wipe the longhands the user had set.
+- `next`, `prev` and `goTo` swap the Current space at once: the other Spaces' Tiles get
+  `visibility: hidden`. Events go through `emitter.ts` (`on` returns the unsubscribe function).
+  After `destroy()` a move does nothing. As with DOM events, a listener removed during an emit
+  (or by `destroy()`) is skipped; a move made inside a `change` listener reaches the later
+  listeners first; a listener that throws stops the ones after it, after the move is done.
 
 ## Request flow
 Mount and one Drag through the engine (M2):

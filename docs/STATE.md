@@ -24,7 +24,9 @@ with no Hole; a filling that places no Tile never counts, so every Tile is still
 Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
 `visibility: hidden`. `destroy()` puts back every style and attribute it wrote. A custom
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
-`validatePacking`. A missing
+`validatePacking`. `next()`, `prev()`
+and `goTo(space)` change the Current space at once (`loop` wraps at the ends), `current` reads it,
+and `on('change', fn)` hears each move. A missing
 Stage, a malformed `data-ts-shape` or an invalid `gap` throws a `tilespace:` error before anything
 is written.
 `npm run bench` compares `pack` with a first-fit baseline (`bench/`). Property tests (`fast-check`,
@@ -38,7 +40,8 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   `Shape`, `Grid`, `Placement`, `Packing`, `Order`, `Score` (`packing.ts`).
 - `packages/vanilla` (`@tilespace/vanilla`): `createTilespace`, `Tilespace`, `TilespaceOptions`
   (`create-tilespace.ts`), `ShapeOption` and `Tile` (`read-shape.ts`, with `readShape`, internal),
-  the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal). Its tests run in happy-dom.
+  the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal), the emitter (`emitter.ts`, internal),
+  `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
 
 ## Contract
@@ -48,8 +51,7 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T2.2 (reject invalid options):** the Stage, the `gap` and each `data-ts-shape` are
-  checked before the first write, and the custom `packer` option is added. `validatePacking`
-  checks the Grid and Shapes too. The `axis` and `transition` checks moved to T2.8 and T2.9, where
-  those options are added.
-- **Next:** T2.3 (move between Spaces by API).
+- **2026-11-23, T2.3 (move between Spaces by API):** `next`, `prev`, `goTo`, `current`, `loop` and
+  the `change` event. The write log now saves each original once, so one property can be put back
+  (the user's own `visibility` when a Space is shown).
+- **Next:** T2.4 (a responsive Grid).
