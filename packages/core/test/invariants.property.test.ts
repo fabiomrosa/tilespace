@@ -81,6 +81,7 @@ describe("pack invariants", () => {
 
   it("leaves no Space with more Holes than an exhaustive search with the Tiles left", () => {
     // PRODUCT asks it of every Space but the last; the last is packed by the same search (T1.4).
+    // Catches the T1.3 bound that took each Tile's smallest Span: put back, it fails every run.
     let comparedWithHoles = 0;
     fc.assert(
       fc.property(shapesArb, gridArb, (shapes, grid) => {
