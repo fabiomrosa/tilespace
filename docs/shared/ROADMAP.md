@@ -26,7 +26,7 @@ build, and the gate in CI.
 |---|---|
 | `tilespace` | T0.1 runnable skeleton |
 
-## M1 · Core
+## M1 · Core · done (2026-11-23)
 Everything in `packages/core`, pure and DOM-free, and a playground that draws Packings. The owner
 checks the Packings in the browser at the end (T1.10).
 

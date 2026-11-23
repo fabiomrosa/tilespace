@@ -36,7 +36,7 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T1.10 (the playground draws Packings):** `npm run dev` serves `playground/`; it was
-  checked in headless Chrome (drawn on load, redrawn on each input, `tilespace:` messages shown for
-  invalid Spans). Every M1 slice is done; the owner's browser check (T1.10 AC3) closes the milestone.
-- **Next:** the owner checks the playground, then "close M1" and "plan M2".
+- **2026-11-23, close M1:** the owner checked the playground (T1.10 AC3) and #12 merged; every M1
+  slice is done and `ROADMAP.md` marks M1 done. The unapplied retro proposals are listed in the
+  close pull request.
+- **Next:** the owner's ok on the close, then "plan M2".
