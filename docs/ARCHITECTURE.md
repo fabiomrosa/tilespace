@@ -7,11 +7,12 @@ only bind it to a UI layer (DEC-12, DEC-13).
 ## Stack
 Exact versions are pinned in the root `package.json` (the same toolchain as `../curvesel` and
 `../list-picker`): TypeScript 7.0.2, Vitest 5.1.1 with `@vitest/coverage-v8` 5.1.1, `fast-check`
-4.11.0, Biome 2.6.8, Vite 8.3.8.
+4.11.0, Biome 2.6.8, Vite 8.3.8, happy-dom 21.0.4.
 - **Language:** TypeScript 7, `strict` plus `noUncheckedIndexedAccess` and
   `exactOptionalPropertyTypes`, ES modules (`nodenext`), target ES2024. Node 26 (npm 11).
 - **Workspace:** npm workspaces, packages under `packages/`. The root `tsconfig.json` type-checks
   every package's `src` and `test`; each package's `tsconfig.json` extends it to build its `src`.
+  A package imports another by its name, through the other's `dist/`, so the gate builds first.
 - **Tests:** Vitest 5 with V8 coverage. Added when first needed: `fast-check` 4 for property tests
   of the PRODUCT invariants (M1), `happy-dom` for engine unit tests (M2), Playwright for
   real-browser tests (M2; Web Animations and CSS grid need a real browser).
@@ -53,6 +54,15 @@ Each package is created by the first slice that needs it.
   validates a custom Packing with `validatePacking` in development builds (every invariant but the
   Holes, which would need a search). A custom `score` has no bound and no stop at a filling with no
   Hole: only the Node budget bounds it, and a filling that places no Tile never counts.
+
+### The engine (`vanilla`)
+- `createTilespace(stage, options)` (`create-tilespace.ts`) reads each child's Shape
+  (`read-shape.ts`: `data-ts-shape`, else the `shape` option, else `1x1`), packs, and writes the
+  Stage's grid and each Tile's Placement.
+- Every style and attribute goes through one write log (`write-log.ts`). It records the value
+  before each write, and `destroy()` replays the log backwards, so what the user had set comes back
+  with its priority. It writes longhands only (`grid-column-start`, `row-gap`, `overflow-x`…): undoing
+  a shorthand would wipe the longhands the user had set.
 
 ## Request flow
 Mount and one Drag through the engine (M2):
