@@ -84,7 +84,8 @@ describe("pack invariants", () => {
     let comparedWithHoles = 0;
     fc.assert(
       fc.property(shapesArb, gridArb, (shapes, grid) => {
-        const packing = pack(shapes, grid);
+        // A budget high enough to be exact (PRODUCT), whatever default T1.9 chooses.
+        const packing = pack(shapes, grid, { nodeBudget: Number.MAX_SAFE_INTEGER });
         const fitted = clamp(shapes, grid);
         const spaceHoles = holes(packing, grid);
         let placed = new Set<number>();
