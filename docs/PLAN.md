@@ -155,7 +155,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-08, GOTCHAS "Toolchain".
 
 ### T1.7 · The PRODUCT invariants as property tests
-- **Status:** waiting (T1.6)
+- **Status:** done (2026-11-23)
 - **Goal:** the packing invariants hold for random Shapes and Grids, not only the fixtures.
 - **Depends on:** T1.6.
 - **In scope:** `fast-check` 4.11.0 pinned; properties for: no overlap and every Tile in bounds;
