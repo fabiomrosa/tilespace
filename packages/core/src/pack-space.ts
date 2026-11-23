@@ -1,18 +1,22 @@
-import type { Grid, Placement, Shape, Span } from "./packing.ts";
+import type { Grid, Order, Placement, Shape, Span } from "./packing.ts";
 
 /** A Tile waiting for a Space: its index in the Stage and its Shape, clamped to the Grid. */
 export type Candidate = { tile: number; shape: Shape };
 
+/** How a Space is searched: the order mode, the Node budget, and the Tiles placed in earlier Spaces. */
+export type SpaceSearch = { order: Order; nodeBudget: number; placedBefore: number };
+
 /**
  * Fills one Space with the Candidates by depth-first branch and bound (DEC-08): at the first empty
- * Cell, try the earliest Candidate of each distinct Shape with each of its Spans in order, then a
- * Hole. Keeps the best filling by the Score `[holes, spanRank]` found within `nodeBudget` steps;
- * a filling with no Hole stops the search.
+ * Cell, try the earliest Candidate of each distinct Shape (in `strict` mode only the next one) with
+ * each of its Spans in order, then a Hole. Keeps the best filling by the Score
+ * `[holes, spanRank, displacement]` found within the Node budget; a filling with no Hole stops the
+ * search.
  */
 export function packSpace(
   candidates: readonly Candidate[],
   grid: Grid,
-  nodeBudget: number,
+  { order, nodeBudget, placedBefore }: SpaceSearch,
 ): Placement[] {
   const { columns, rows } = grid;
   const cells = columns * rows;
@@ -24,10 +28,12 @@ export function packSpace(
   let best: Placement[] = [];
   let bestHoles = Number.POSITIVE_INFINITY;
   let bestRank = Number.POSITIVE_INFINITY;
+  let bestDisplacement = Number.POSITIVE_INFINITY;
   let areaLeft = largest.reduce((area, a) => area + a, 0);
   let freeCells = cells;
   let holes = 0;
   let rank = 0;
+  let displacement = 0;
   let nodes = 0;
 
   const fits = (cell: number, span: Span): boolean => {
@@ -48,6 +54,10 @@ export function packSpace(
     }
   };
 
+  /** Compares a Score with the best one, term by term: negative when it is better. */
+  const compare = (h: number, r: number, d: number): number =>
+    h - bestHoles || r - bestRank || d - bestDisplacement;
+
   const search = (from: number): void => {
     if (bestHoles === 0 || nodes >= nodeBudget) return;
     nodes++;
@@ -56,16 +66,16 @@ export function packSpace(
     // With no Tile left, every free Cell is a Hole: count them instead of recursing per Cell.
     if (cell === cells || areaLeft === 0) {
       const total = holes + freeCells;
-      if (total < bestHoles || (total === bestHoles && rank < bestRank)) {
+      if (compare(total, rank, displacement) < 0) {
         bestHoles = total;
         bestRank = rank;
+        bestDisplacement = displacement;
         best = placements.slice();
       }
       return;
     }
-    // Holes and span ranks only grow deeper down, so a branch that cannot beat the best is cut.
-    const bound = holes + Math.max(0, freeCells - areaLeft);
-    if (bound > bestHoles || (bound === bestHoles && rank >= bestRank)) return;
+    // Every term of the Score only grows deeper down, so a branch that cannot beat the best is cut.
+    if (compare(holes + Math.max(0, freeCells - areaLeft), rank, displacement) >= 0) return;
 
     const tried = new Set<string>();
     const col = cell % columns;
@@ -76,7 +86,10 @@ export function packSpace(
       tried.add(key);
       const { tile, shape } = candidates[i] as Candidate;
       const maxArea = largest[i] as number;
+      // Displacement: how many places the Tile moves from its order in the Stage.
+      const moved = Math.abs(placedBefore + placements.length - tile);
       used[i] = 1;
+      displacement += moved;
       areaLeft -= maxArea;
       shape.forEach((span, spanRank) => {
         if (!fits(cell, span)) return;
@@ -92,7 +105,9 @@ export function packSpace(
         mark(cell, span, 0);
       });
       areaLeft += maxArea;
+      displacement -= moved;
       used[i] = 0;
+      if (order === "strict") break;
     }
 
     occupied[cell] = 1;

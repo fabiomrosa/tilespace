@@ -119,7 +119,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-08, ARCHITECTURE "Last Space".
 
 ### T1.5 · Order modes and Displacement
-- **Status:** waiting (T1.4)
+- **Status:** done (2026-11-23)
 - **Goal:** `fill` may reorder Tiles at a Displacement cost; `strict` keeps the Stage's order.
 - **Depends on:** T1.4, DEC-09.
 - **In scope:** `pack(shapes, grid, { order })`, `'fill'` by default; the Score becomes

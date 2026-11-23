@@ -12,3 +12,6 @@ export type Placement = { tile: number; col: number; row: number; span: Span };
 
 /** The Placements of every Tile, Space by Space. */
 export type Packing = { spaces: Placement[][] };
+
+/** `fill` may reorder Tiles at a Displacement cost; `strict` keeps the Stage's order (DEC-09). */
+export type Order = "fill" | "strict";
