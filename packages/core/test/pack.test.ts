@@ -53,4 +53,35 @@ describe("pack", () => {
 
     expect(holes(space, grid)).toBe(9_999);
   });
+
+  it("places every Tile exactly once when they need several Spaces", () => {
+    const shapes: Shape[] = [[span(2, 1)], [span(2, 2)], [span(1, 1)], [span(1, 1)], [span(1, 2)]];
+
+    const packing = pack(shapes, { columns: 2, rows: 2 });
+
+    expect(packing.spaces).toEqual([
+      [
+        { tile: 0, col: 0, row: 0, span: span(2, 1) },
+        { tile: 2, col: 0, row: 1, span: span(1, 1) },
+        { tile: 3, col: 1, row: 1, span: span(1, 1) },
+      ],
+      [{ tile: 1, col: 0, row: 0, span: span(2, 2) }],
+      [{ tile: 4, col: 0, row: 0, span: span(1, 2) }],
+    ]);
+  });
+
+  it("fills every Space but the last with no Hole when the Tiles allow it", () => {
+    // Each Space can be filled only by moving its 2x2 ahead of the second 1x1.
+    const grid = { columns: 3, rows: 2 };
+    const one: Shape = [span(1, 1)];
+    const shapes: Shape[] = [one, one, [span(2, 2)], one, one, [span(2, 2)], one];
+
+    const packing = pack(shapes, grid);
+
+    expect(packing.spaces.map((space) => holes(space, grid))).toEqual([0, 0, 5]);
+  });
+
+  it("gives no Spaces when there are no Tiles", () => {
+    expect(pack([], { columns: 3, rows: 2 })).toEqual({ spaces: [] });
+  });
 });
