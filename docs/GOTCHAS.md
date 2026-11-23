@@ -10,6 +10,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - TypeScript 7 is the native (Go) compiler; the binary is still `tsc`. Source imports use the `.ts`
   extension (`rewriteRelativeImportExtensions` turns them into `.js` in `dist/`).
 - Vitest's default include also matches `*.spec.ts`: name Playwright files `e2e/*.e2e.ts`.
+- With no Vitest config file, an engine test picks its DOM with a first-line comment:
+  `// @vitest-environment happy-dom`.
 - The agent's shell is zsh: `${PIPESTATUS[0]}` is empty there (zsh has `$pipestatus[1]`). To see
   a command's exit code, run it without a pipe and read `$?`.
 - A synchronous loop that never ends hangs Vitest: its timeout cannot interrupt the thread. Bound
@@ -33,5 +35,16 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   (`Runtime.evaluate`), no Puppeteer needed.
 
 ## DOM
+- happy-dom drops an element's `style` attribute when its last property is removed; Chrome keeps
+  `style=""`. Chrome also writes inline style changes back to the attribute lazily, so
+  `removeAttribute("style")` right after `style.removeProperty` comes back as `style=""` unless the
+  attribute is read first (`getAttribute("style")`). The write log does both on `destroy()`, a fix
+  only a real browser can check.
+- Chrome expands an inline shorthand: with only `row-gap` set, `getPropertyValue("gap")` is `""`, and
+  `removeProperty("gap")` then removes the user's `row-gap`. happy-dom doesn't expand shorthands, so
+  a unit test can't see this; the engine writes longhands only.
+- `packages/vanilla` imports `@tilespace/core` through its `dist/` (package exports), so `core` must
+  be built before vanilla is type-checked or tested: `verify` builds first, and `npm test` runs
+  `pretest` (the build).
 - Reading layout (`getBoundingClientRect`, `offsetWidth`) right after a style write forces a
   synchronous layout.

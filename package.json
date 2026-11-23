@@ -9,11 +9,12 @@
     "node": ">=26"
   },
   "scripts": {
-    "verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run build",
+    "verify": "npm run lint && npm run build && npm run typecheck && npm run test:coverage",
     "dev": "vite playground",
     "lint": "biome ci .",
     "format": "biome check --write .",
     "typecheck": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage.enabled --coverage.include='packages/*/src/**' --coverage.thresholds.lines=80",
     "build": "npm run build --workspaces",
@@ -23,6 +24,7 @@
     "@biomejs/biome": "2.6.8",
     "@vitest/coverage-v8": "5.1.1",
     "fast-check": "4.11.0",
+    "happy-dom": "21.0.4",
     "typescript": "7.0.2",
     "vite": "8.3.8",
     "vitest": "5.1.1"

@@ -31,14 +31,14 @@ Agents: start with `AGENTS.md`.
 
 ## Running locally
 
-`packages/core` packs Tiles into Spaces (`pack`, `validatePacking`); the playground draws its
-Packings.
+`packages/core` packs Tiles into Spaces (`pack`, `validatePacking`); `packages/vanilla` mounts
+them over a Stage's children (`createTilespace`); the playground draws Packings.
 
 ```sh
 git clone git@github.com:fabiomrosa/tilespace.git
 cd tilespace
 npm ci
-npm test            # the tests once
+npm test            # build, then the tests once
 npm run format      # format and apply safe lint fixes
 npm run bench       # the packing benchmark against first-fit
 npm run dev         # the playground at http://localhost:5173: type Shapes, see the Packing
@@ -47,7 +47,7 @@ npm run dev         # the playground at http://localhost:5173: type Shapes, see 
 The playground packs on every keystroke, in the page's thread: a very large Node budget on a Stage
 that cannot fill a Space blocks the tab until the search ends.
 
-Check everything CI checks (format and lint, types, tests with the coverage floor, build):
+Check everything CI checks (format and lint, build, types, tests with the coverage floor):
 
 ```sh
 npm run verify
