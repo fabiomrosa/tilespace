@@ -1,5 +1,13 @@
-import { type PackOptions, pack } from "@tilespace/core";
+import {
+  type Grid,
+  type Packing,
+  type PackOptions,
+  pack,
+  type Shape,
+  validatePacking,
+} from "@tilespace/core";
 import { readShape, type ShapeOption, type Tile } from "./read-shape.ts";
+import { validateOptions } from "./validate-options.ts";
 import { createWriteLog } from "./write-log.ts";
 
 /** How a Tilespace is mounted: the Grid, the gap in CSS pixels, the Shapes and the Packer's options. */
@@ -8,6 +16,8 @@ export type TilespaceOptions = PackOptions & {
   rows: number;
   gap?: number;
   shape?: ShapeOption;
+  /** Replaces the default Packer; its Packing is checked with `validatePacking`. */
+  packer?: (shapes: readonly Shape[], grid: Grid) => Packing;
 };
 
 /** One mounted instance over a Stage. */
@@ -21,14 +31,24 @@ export type Tilespace = {
  * Grid, places each Tile with CSS grid, and shows Space 0.
  */
 export function createTilespace(stage: HTMLElement, options: TilespaceOptions): Tilespace {
-  const { columns, rows, gap = 0, shape, ...packOptions } = options;
+  const { columns, rows, gap = 0, shape, packer, ...packOptions } = options;
+  // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
+  validateOptions(stage, gap);
   const log = createWriteLog();
   const tiles = Array.from(stage.children) as Tile[];
-  const packing = pack(
-    tiles.map((tile, index) => readShape(tile, index, shape)),
-    { columns, rows },
-    packOptions,
-  );
+  const shapes = tiles.map((tile, index) => readShape(tile, index, shape));
+  const grid = { columns, rows };
+  let packing: Packing;
+  if (packer) {
+    // Copies: a packer that changes what it gets cannot change the Shapes or Grid checked below.
+    packing = packer(
+      shapes.map((s) => s.map((span) => ({ ...span }))),
+      { ...grid },
+    );
+    validatePacking(packing, shapes, grid);
+  } else {
+    packing = pack(shapes, grid, packOptions);
+  }
 
   log.style(stage, "display", "grid");
   log.style(stage, "grid-template-columns", `repeat(${columns}, 1fr)`);

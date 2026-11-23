@@ -1,7 +1,9 @@
 import type { Grid, Packing, Shape } from "./packing.ts";
+import { validateGrid, validateShapes } from "./validate.ts";
 
 /**
- * Throws a `tilespace:` error naming the first of these a Packing breaks for the Shapes and Grid: an
+ * Throws `pack`'s own `tilespace:` error for an invalid Grid or Shape, then one naming the first of
+ * these a Packing breaks for the Shapes and Grid: an
  * empty Space, a Tile unknown, placed twice or left unplaced, a Span not in its (clamped) Shape, a
  * Tile off the Grid's whole Cells, or two Tiles sharing a Cell. It does not search for Holes the
  * Tiles could have filled. The engine checks a custom Packer's result with it.
@@ -10,6 +12,8 @@ export function validatePacking(packing: Packing, shapes: readonly Shape[], grid
   const fail = (message: string): never => {
     throw new Error(`tilespace: packing ${message}`);
   };
+  validateGrid(grid);
+  validateShapes(shapes);
   const placed = new Set<number>();
   packing.spaces.forEach((space, s) => {
     if (space.length === 0) fail(`has an empty space ${s}`);

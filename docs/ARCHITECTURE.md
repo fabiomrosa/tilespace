@@ -51,8 +51,9 @@ Each package is created by the first slice that needs it.
 - **Last Space:** when every remaining Tile fits in one Space, it is packed with the same search;
   its Holes count but nothing is left to fill them.
 - A custom `packer(shapes, grid) → Packing` or a custom `score` replaces the default; the engine
-  validates a custom Packing with `validatePacking` in development builds (every invariant but the
-  Holes, which would need a search). A custom `score` has no bound and no stop at a filling with no
+  validates every custom Packing with `validatePacking`. That checks the Grid and Shapes as `pack`
+  does, then every invariant but the Holes, which would need a search. There is no development
+  build to limit it to. The custom Packer gets copies of the Shapes and Grid. A custom `score` has no bound and no stop at a filling with no
   Hole: only the Node budget bounds it, and a filling that places no Tile never counts.
 
 ### The engine (`vanilla`)
@@ -89,7 +90,10 @@ Spaces); the user persists.
 Options passed to `createTilespace` or the adapter: the Grid (`columns`, `rows`, or `minCellWidth`
 and `cellAspect`), `gap`, `shape`, `order`, `nodeBudget`, `packer`, `score`, `transition`, `axis`,
 `loop`. No environment. An invalid option (a missing Stage, a Span of 0, a negative gap) throws an
-`Error` with a plain message at mount, never fails silently.
+`Error` with a plain message at mount, never fails silently. Every check runs before the first
+write, so an invalid mount leaves the Stage untouched: the engine checks the Stage, the `gap` and
+each `data-ts-shape` (`validate-options.ts`, `read-shape.ts`), and `core` checks the Grid and the
+Packer's options.
 
 ## Security
 The library never reads or writes the Tiles' content and never uses `innerHTML`. No network access.
