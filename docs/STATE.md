@@ -21,4 +21,5 @@ None.
 - **2026-11-23, T0.1 (runnable skeleton):** the workspace, `packages/core`, Biome, Vitest with the
   80% line floor (CLI flags), and the CI `gate` job. No `vite` or `dev` script yet: the playground
   (T1.x) adds them.
-- **Next:** "plan M1" (the core packing); `docs/PLAN.md` has no further slice.
+- **2026-11-23, plan M1:** ten slices, T1.1 to T1.10, in `docs/PLAN.md`.
+- **Next:** T1.1 (pack one Space with fixed Spans).
