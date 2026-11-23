@@ -54,4 +54,23 @@ describe("pack with a custom Score", () => {
 
     expect(seen).toEqual([[[{ tile: 0, col: 0, row: 0, span: span(1, 1) }], [[span(1, 1)]]]]);
   });
+
+  it("keeps the Packing intact when the custom Score changes the Placements it is given", () => {
+    const packing = pack(shapes, grid, {
+      score: (placements) => {
+        for (const p of placements) {
+          p.col = 7;
+          p.span.cols = 9;
+        }
+        return [0];
+      },
+    });
+
+    expect(packing.spaces).toEqual([
+      [
+        { tile: 0, col: 0, row: 0, span: span(1, 1) },
+        { tile: 1, col: 1, row: 0, span: span(1, 1) },
+      ],
+    ]);
+  });
 });

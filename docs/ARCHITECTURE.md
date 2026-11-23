@@ -48,7 +48,9 @@ Each package is created by the first slice that needs it.
 - **Last Space:** when every remaining Tile fits in one Space, it is packed with the same search;
   its Holes count but nothing is left to fill them.
 - A custom `packer(shapes, grid) → Packing` or a custom `score` replaces the default; the engine
-  validates a custom Packing against the invariants in development builds.
+  validates a custom Packing with `validatePacking` in development builds (every invariant but the
+  Holes, which would need a search). A custom `score` has no bound and no stop at a filling with no
+  Hole: only the Node budget bounds it, and a filling that places no Tile never counts.
 
 ## Request flow
 Mount and one Drag through the engine (M2):

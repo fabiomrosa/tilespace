@@ -1,9 +1,10 @@
 import type { Grid, Packing, Shape } from "./packing.ts";
 
 /**
- * Throws a `tilespace:` error naming the first invariant a Packing breaks for these Shapes and Grid:
- * a Tile unknown, placed twice or left unplaced, a Span not in its (clamped) Shape, a Tile out of
- * the Grid, or two Tiles sharing a Cell. The engine checks a custom Packer's result with it.
+ * Throws a `tilespace:` error naming the first of these a Packing breaks for the Shapes and Grid: an
+ * empty Space, a Tile unknown, placed twice or left unplaced, a Span not in its (clamped) Shape, a
+ * Tile off the Grid's whole Cells, or two Tiles sharing a Cell. It does not search for Holes the
+ * Tiles could have filled. The engine checks a custom Packer's result with it.
  */
 export function validatePacking(packing: Packing, shapes: readonly Shape[], grid: Grid): void {
   const fail = (message: string): never => {
@@ -11,6 +12,7 @@ export function validatePacking(packing: Packing, shapes: readonly Shape[], grid
   };
   const placed = new Set<number>();
   packing.spaces.forEach((space, s) => {
+    if (space.length === 0) fail(`has an empty space ${s}`);
     const owner = new Map<number, number>();
     for (const { tile, col, row, span } of space) {
       const shape = shapes[tile];
@@ -22,7 +24,14 @@ export function validatePacking(packing: Packing, shapes: readonly Shape[], grid
           Math.min(s.cols, grid.columns) === span.cols && Math.min(s.rows, grid.rows) === span.rows,
       );
       if (!inShape) fail(`gives tile ${tile} the Span ${span.cols}x${span.rows}, not in its Shape`);
-      if (col < 0 || row < 0 || col + span.cols > grid.columns || row + span.rows > grid.rows) {
+      const whole = Number.isInteger(col) && Number.isInteger(row);
+      if (
+        !whole ||
+        col < 0 ||
+        row < 0 ||
+        col + span.cols > grid.columns ||
+        row + span.rows > grid.rows
+      ) {
         fail(`places tile ${tile} out of the Grid at col ${col}, row ${row}`);
       }
       for (let r = row; r < row + span.rows; r++) {

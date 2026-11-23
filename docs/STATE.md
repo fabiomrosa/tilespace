@@ -36,5 +36,5 @@ None.
 - **2026-11-23, T1.8 (custom Score and Packing validation):** a custom `score` gets a copy of the
   Space's Placements and the Stage's Shapes; an empty filling never counts under it (a Score that
   rewards Holes would otherwise drop Tiles). `validatePacking` checks Spans against the clamped
-  Shape.
+  Shape and rejects an empty Space and off-Cell coordinates; it does not check the Holes invariant.
 - **Next:** T1.9 (benchmark against first-fit and the default Node budget).

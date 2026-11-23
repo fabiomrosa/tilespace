@@ -57,6 +57,21 @@ describe("validatePacking", () => {
       "places tile 0 out of the Grid at col 1, row 0",
     ],
     [
+      "a Tile off whole Cells",
+      { spaces: [[at(0, 0, 0, 2, 1), at(1, 0.5, 1, 1, 1)]] },
+      "places tile 1 out of the Grid at col 0.5, row 1",
+    ],
+    [
+      "a Tile at NaN",
+      { spaces: [[at(0, 0, 0, 2, 1), at(1, Number.NaN, 1, 1, 1)]] },
+      "places tile 1 out of the Grid at col NaN, row 1",
+    ],
+    [
+      "an empty Space",
+      { spaces: [[at(0, 0, 0, 2, 1)], [], [at(1, 0, 0, 1, 1)]] },
+      "has an empty space 1",
+    ],
+    [
       "two Tiles overlapping",
       { spaces: [[at(0, 0, 0, 2, 1), at(1, 1, 0, 1, 1)]] },
       "overlaps tiles 1 and 0 in space 0 at col 1, row 0",

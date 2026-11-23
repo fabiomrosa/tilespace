@@ -80,7 +80,11 @@ export function packSpace(
       if (score) {
         // A Space that places no Tile would drop Tiles: it never counts, whatever the Score says.
         if (placements.length === 0) return;
-        const terms = score(placements.slice(), shapes);
+        // A copy, so a Score that changes what it is given cannot change the Packing or the search.
+        const terms = score(
+          placements.map((p) => ({ ...p, span: { ...p.span } })),
+          shapes,
+        );
         if (best === undefined || isLower(terms, bestTerms)) {
           bestTerms = terms;
           best = placements.slice();
