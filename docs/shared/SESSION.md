@@ -76,7 +76,9 @@ owner to confirm.
 5. Self-review with the repository's `tilespace-code-review` skill and fix what it finds.
 6. Run the `retro` skill; its proposals go in the pull request, never applied without the owner.
 7. Update the docs on the branch: `docs/STATE.md` (what exists, known issues, the "Last session"
-   handoff), `docs/PLAN.md` (this slice `done (<today>)`, "Later"), `docs/GOTCHAS.md` (new traps).
+   handoff), `docs/PLAN.md` (this slice `done (<today>)`, "Later"), `docs/GOTCHAS.md` (new traps),
+   and `docs/ARCHITECTURE.md` when the slice changes what it describes (not only the handoff, which
+   the next session overwrites).
 
 ## 4. Pull request and merge
 Nothing reaches `main` except a squash-merged pull request (DEC-04). Its title becomes the commit on

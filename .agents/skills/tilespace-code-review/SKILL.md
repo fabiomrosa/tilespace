@@ -47,7 +47,7 @@ reference. Any "no" is fixed before the pull request (or explicitly listed as a 
 ## Docs
 - [ ] `docs/STATE.md` (capabilities, modules, last session), `docs/PLAN.md` status
       (`done (<date>)`), decisions if any, `README.md` if run/config changed, `docs/GOTCHAS.md` for
-      new traps.
+      new traps, `docs/ARCHITECTURE.md` if what it describes changed.
 
 ## Tests
 - [ ] Every acceptance criterion has a test that was seen red (test-first, or the rule broken once).
