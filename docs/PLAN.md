@@ -67,7 +67,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-07, DEC-08, ARCHITECTURE "The packing", GOTCHAS "Toolchain" (unbounded loops).
 
 ### T1.2 · Reject invalid input
-- **Status:** waiting (T1.1)
+- **Status:** done (2026-11-23)
 - **Goal:** a bad Grid or Shape throws a plain `tilespace:` error instead of packing nonsense.
 - **Depends on:** T1.1.
 - **In scope:** `pack` throws an `Error` whose message starts with `tilespace:` and names the value
