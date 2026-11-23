@@ -19,12 +19,12 @@ export function packSpace(
   const occupied = new Uint8Array(cells);
   const used = new Uint8Array(candidates.length);
   const keys = candidates.map((c) => c.shape.map((s) => `${s.cols}x${s.rows}`).join(" "));
-  const smallest = candidates.map((c) => Math.min(...c.shape.map((s) => s.cols * s.rows)));
+  const largest = candidates.map((c) => Math.max(...c.shape.map((s) => s.cols * s.rows)));
   const placements: Placement[] = [];
   let best: Placement[] = [];
   let bestHoles = Number.POSITIVE_INFINITY;
   let bestRank = Number.POSITIVE_INFINITY;
-  let areaLeft = smallest.reduce((area, a) => area + a, 0);
+  let areaLeft = largest.reduce((area, a) => area + a, 0);
   let freeCells = cells;
   let holes = 0;
   let rank = 0;
@@ -75,9 +75,9 @@ export function packSpace(
       if (used[i] || tried.has(key)) continue;
       tried.add(key);
       const { tile, shape } = candidates[i] as Candidate;
-      const minArea = smallest[i] as number;
+      const maxArea = largest[i] as number;
       used[i] = 1;
-      areaLeft -= minArea;
+      areaLeft -= maxArea;
       shape.forEach((span, spanRank) => {
         if (!fits(cell, span)) return;
         const area = span.cols * span.rows;
@@ -91,7 +91,7 @@ export function packSpace(
         freeCells += area;
         mark(cell, span, 0);
       });
-      areaLeft += minArea;
+      areaLeft += maxArea;
       used[i] = 0;
     }
 
