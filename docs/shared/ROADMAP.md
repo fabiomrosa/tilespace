@@ -18,7 +18,7 @@ first-fit, fast enough to repack on every resize?). React and Angular adapters f
 - A milestone is planned before its first slice and closed after its last (SESSION §7); its heading
   then reads `M<n> · Name · done (YYYY-MM-DD)`.
 
-## M0 · Foundations
+## M0 · Foundations · done (2026-11-23)
 The npm workspace with `packages/core` empty, TypeScript strict, format, lint, tests with coverage,
 build, and the gate in CI.
 
@@ -34,6 +34,14 @@ checks the Packings in the browser at the end (T1.10).
 |---|---|
 | `tilespace` | T1.1 pack one Space with fixed Spans, T1.2 reject invalid input, T1.3 flexible Shapes, T1.4 several Spaces and the last one, T1.5 order modes and Displacement, T1.6 the Node budget option, T1.7 the PRODUCT invariants as property tests, T1.8 custom Score and Packing validation, T1.9 benchmark against first-fit and the default Node budget, T1.10 the playground draws Packings |
 
+## M2 · Vanilla engine and demo
+`packages/vanilla` over the Stage's children, its inputs and Transitions, and a demo page. The owner
+checks the demo in the browser midway (T2.6) and at the end (T2.11).
+
+| Repository | Slices |
+|---|---|
+| `tilespace` | T2.1 mount a Stage and place its Tiles, T2.2 reject invalid options, T2.3 move between Spaces by API, T2.4 a responsive Grid, T2.5 repack when Tiles are added or removed, T2.6 the demo page in a real browser, T2.7 the default Transition, T2.8 custom, none and reduced-motion Transitions, T2.9 keyboard and wheel, T2.10 the Drag scrubs the Transition, T2.11 the demo: showcase, gallery and dashboard |
+
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
   (OWNER_PLAN §0). Needed by T0.1.
@@ -41,19 +49,13 @@ checks the Packings in the browser at the end (T1.10).
   publish (M3).
 
 ## Later milestones (split when they start)
-- **M2 · Vanilla engine and demo.** Mount over the Stage's children, the CSS grid and Placements,
-  responsive Grids with `ResizeObserver`, repacking on added and removed children, `next`/`prev`/
-  `goTo` and events, the default Transition, custom and no Transition, reduced motion, keyboard,
-  wheel, the Drag scrubbing the Transition, the click guard, `loop`, `destroy()`, browser tests. A
-  demo page (a showcase, a gallery, a dashboard). The owner checks it in the browser midway and at
-  the end.
 - **M3 · v1 release.** ARIA (a labelled region, the Current space announced, `inert` on the hidden
   Spaces), the docs, the lab write-up, the first npm publish.
 - **M4 · React adapter.** **M5 · Angular adapter.**
 
 ## Recommended order (one session at a time)
-T0.1 (done), then T1.1 → T1.2 → T1.3 → T1.4 → T1.5 → T1.6 → T1.7 → T1.8 → T1.9 → T1.10, then
-"close M1" and "plan M2" with the owner.
+M0 and M1 (done), then T2.1 → T2.2 → T2.3 → T2.4 → T2.5 → T2.6 (the owner's midway check) → T2.7 →
+T2.8 → T2.9 → T2.10 → T2.11, then "close M2" and "plan M3" with the owner.
 
 ## Open decisions (see DECISIONS.md)
 | Id | Question | Status | Needed by |

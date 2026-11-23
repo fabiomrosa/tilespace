@@ -234,6 +234,226 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `playground/{index.html,main.ts}`, README "Running locally", PLAN, STATE.
 - **References:** ARCHITECTURE "Modules" (`playground/`), ROADMAP M1.
 
+---
+
+## M2 · Vanilla engine and demo
+
+### T2.1 · Mount a Stage and place its Tiles
+- **Status:** next
+- **Goal:** a developer mounts `createTilespace(stage, { columns, rows })` over their own elements
+  and sees Space 0 laid out as a CSS grid, the other Spaces hidden.
+- **Depends on:** M1 (done), DEC-06, DEC-07, DEC-13.
+- **In scope:**
+  - `packages/vanilla` (`@tilespace/vanilla`), with `happy-dom` pinned for its tests.
+  - Read each child's Shape from `data-ts-shape`, else the `shape(tile, index)` option, else `1x1`.
+  - Pack with `core`, passing `order`, `nodeBudget` and `score` through.
+  - Write what DEC-06 lists except ARIA and `touch-action`:
+    - on the Stage, the grid and its `gap`;
+    - on each Tile, `grid-column`, `grid-row`, `data-ts-space`, `data-ts-span`, `--ts-cols` and
+      `--ts-rows`;
+    - `visibility: hidden` on the Tiles outside Space 0, and `data-ts-current` on those inside it.
+  - `destroy()` restores every property and attribute it wrote, to its earlier value.
+- **Out of scope:** invalid options (T2.2), navigation (T2.3), a derived Grid (T2.4), `inert` and
+  ARIA (M3).
+- **Contract:** `createTilespace(stage, options) → Tilespace` with `destroy()`; consumes `pack`.
+- **Acceptance criteria:**
+  1. The Tiles get the Placements `pack` returns, Space 0 is shown, and the others are hidden.
+  2. `data-ts-shape`, the `shape` option and the `1x1` default each give the Tile's Shape.
+  3. After `destroy()`, the Stage and every Tile are as before mounting, including styles the user
+     had set; the Tiles are the same nodes in the same order.
+- **Files:** ~10: `packages/vanilla/{package.json,tsconfig.json,src/index.ts,src/create-tilespace.ts,
+  src/read-shape.ts,test/mount.test.ts}`, root `package.json`, lockfile, ARCHITECTURE (the files),
+  PLAN, STATE.
+- **References:** ARCHITECTURE "Request flow" 1 and 5, CONVENTIONS §2–§5.
+
+### T2.2 · Reject invalid options
+- **Status:** waiting (T2.1)
+- **Goal:** a wrong mount fails at once with a message naming the value.
+- **Depends on:** T2.1.
+- **In scope:**
+  - A `tilespace:` error for a missing Stage, a malformed `data-ts-shape` (`2y1`, `0x1`), a
+    negative or non-finite `gap`, and an unknown `axis` or `transition`.
+  - The Grid and Packer options rely on `core`'s own errors.
+  - A custom `packer(shapes, grid)` option, its Packing checked with `validatePacking` on every
+    pack. ARCHITECTURE's "in development builds" becomes "always": there is no build flag.
+- **Out of scope:** the options' behaviour beyond the packer (later slices).
+- **Contract:** consumes `validatePacking`.
+- **Acceptance criteria:**
+  1. Each invalid option throws its `tilespace:` message, and nothing is written to the Stage.
+  2. A custom `packer` places the Tiles, and a broken one throws `validatePacking`'s message.
+- **Files:** ~6: `src/{create-tilespace.ts,read-shape.ts,validate-options.ts}`,
+  `test/options.test.ts`, ARCHITECTURE "Configuration", PLAN, STATE.
+- **References:** CONVENTIONS §4, ARCHITECTURE "Configuration".
+
+### T2.3 · Move between Spaces by API
+- **Status:** waiting (T2.1)
+- **Goal:** a developer moves between Spaces with `next()`, `prev()` and `goTo(space)` and hears
+  `change`.
+- **Depends on:** T2.1, DEC-11.
+- **In scope:**
+  - `next`, `prev`, `goTo`, and a `current` getter.
+  - The `loop` option.
+  - An instant swap: `visibility` and `data-ts-current` move to the new Space's Tiles.
+  - The `change` event (`{ current }`) and `on(event, listener)`, which returns an unsubscribe
+    function; `destroy()` removes the listeners.
+- **Out of scope:** Transitions (T2.7), input devices (T2.9, T2.10).
+- **Contract:** `next()`, `prev()`, `goTo(space)`, `current`, `on('change', fn)`.
+- **Acceptance criteria:**
+  1. `next` and `prev` move by one Space and stop at the ends, or wrap with `loop`.
+  2. `goTo` moves to the Space; out of range, it throws a `tilespace:` error.
+  3. `change` fires once per move and never for a move to the Current space.
+- **Files:** ~5: `src/create-tilespace.ts`, `src/emitter.ts`, `test/navigation.test.ts`, PLAN, STATE.
+- **References:** ARCHITECTURE "Request flow" 4, CONVENTIONS §3 (events).
+
+### T2.4 · A responsive Grid
+- **Status:** waiting (T2.3)
+- **Goal:** the Grid follows the Stage's size, and the Tiles repack when it changes.
+- **Depends on:** T2.3.
+- **In scope:**
+  - `minCellWidth` and `cellAspect`:
+    - `columns = max(1, floor((width + gap) / (minCellWidth + gap)))`;
+    - the Cell height is the Cell width divided by `cellAspect`;
+    - the rows fill the Stage's height in the same way.
+  - A `ResizeObserver` on the Stage. A changed Grid repacks, and the Current space becomes the one
+    holding the Tile that was first on screen.
+  - The `pack` event (`{ spaces }`).
+- **Out of scope:** child mutations (T2.5).
+- **Contract:** `on('pack', fn)`; the options `minCellWidth`, `cellAspect`.
+- **Acceptance criteria:**
+  1. A Stage of a given size derives the expected `columns` and `rows`.
+  2. A resize that changes the Grid repacks, keeps the first visible Tile on screen and fires
+     `pack`; one that doesn't change it does nothing.
+  3. `destroy()` disconnects the observer.
+- **Files:** ~6: `src/{create-tilespace.ts,derive-grid.ts}`, `test/{derive-grid.test.ts,resize.test.ts}`,
+  PLAN, STATE.
+- **References:** ARCHITECTURE "Request flow" 2.
+
+### T2.5 · Repack when Tiles are added or removed
+- **Status:** waiting (T2.4)
+- **Goal:** a developer adds or removes children and the Tilespace follows.
+- **Depends on:** T2.4, DEC-12.
+- **In scope:**
+  - A `MutationObserver` on the Stage's child list.
+  - An added child is adopted. A removed one gets back what the library wrote.
+  - Repack, keeping the first visible Tile on screen when it remains.
+- **Out of scope:** attribute changes to `data-ts-shape` after mount (Later, if needed).
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. Adding a child places it and fires `pack`.
+  2. Removing a child leaves it as it was before mounting and repacks the rest.
+  3. `destroy()` disconnects the observer.
+- **Files:** ~4: `src/create-tilespace.ts`, `test/mutation.test.ts`, PLAN, STATE.
+- **References:** ARCHITECTURE "Request flow" 2.
+
+### T2.6 · The demo page in a real browser
+- **Status:** waiting (T2.5)
+- **Goal:** the owner sees the engine on a real page, midway through M2.
+- **Depends on:** T2.5.
+- **In scope:**
+  - `demo/` (Vite, like the playground) with a showcase of mixed Shapes and `prev` and `next`
+    buttons.
+  - Playwright pinned, with Chromium, and `npm run e2e` in the gate and in CI.
+  - One e2e flow: mount, check that CSS grid places the Tiles where the Packing says, then
+    `next`, then a resize.
+- **Out of scope:** Transitions; the gallery and dashboard examples (T2.11).
+- **Contract:** consumes the engine's public API.
+- **Acceptance criteria:**
+  1. The e2e test passes in CI: the Tiles' rendered boxes match their Placements.
+  2. The owner checks the demo in the browser (the M2 midway check).
+- **Files:** ~10: `demo/{index.html,main.ts}`, `e2e/mount.e2e.ts`, `playwright.config.ts`, root
+  `package.json`, lockfile, `ci.yml`, README, ARCHITECTURE (the demo), PLAN, STATE.
+- **References:** ARCHITECTURE "Stack" (Playwright), CONVENTIONS §5.
+
+### T2.7 · The default Transition
+- **Status:** waiting (T2.6)
+- **Goal:** changing Space slides the Tiles, staggered, instead of swapping.
+- **Depends on:** T2.6, DEC-10.
+- **In scope:**
+  - The default Transition: Web Animations on `translate` and `opacity`, along the axis, staggered
+    by each Tile's Cell distance from the edge it enters from.
+  - Visibility is handed over at the end, and nothing stays written.
+  - A new request during a Transition finishes it at once and starts the next.
+  - `destroy()` cancels it.
+- **Out of scope:** custom, none and reduced motion (T2.8); the Drag (T2.10).
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. `next()` runs Animations on the leaving and entering Tiles, and at the end only the new Space
+     is visible, with no inline `translate` or `opacity` left.
+  2. A second `next()` mid-Transition ends on the Space after.
+  3. In the browser, the e2e flow sees the Animation run and finish.
+- **Files:** ~6: `src/{create-tilespace.ts,default-transition.ts}`, `test/transition.test.ts`,
+  `e2e/transition.e2e.ts`, PLAN, STATE.
+- **References:** ARCHITECTURE "Request flow" 4, the 2017 stagger (ARCHITECTURE "Lessons").
+
+### T2.8 · Custom, none and reduced-motion Transitions
+- **Status:** waiting (T2.7)
+- **Goal:** a developer replaces the Transition or turns it off, and reduced motion is respected.
+- **Depends on:** T2.7.
+- **In scope:**
+  - `transition: (context) → Animation[]`, whose context holds the leaving and entering Tiles with
+    their Placements, the direction and the Stage's size.
+  - `transition: false` swaps instantly.
+  - `prefers-reduced-motion` gives a short cross-fade.
+- **Contract:** the `TransitionContext` type, exported.
+- **Acceptance criteria:**
+  1. A custom Transition's Animations are played, then cleaned up.
+  2. `false` swaps with no Animation.
+  3. Reduced motion uses the cross-fade.
+- **Files:** ~5: `src/{create-tilespace.ts,index.ts,default-transition.ts}`,
+  `test/custom-transition.test.ts`, PLAN, STATE.
+- **References:** DEC-10.
+
+### T2.9 · Keyboard and wheel
+- **Status:** waiting (T2.7)
+- **Goal:** a user moves between Spaces with the arrow keys, Page Up and Down, or one wheel gesture.
+- **Depends on:** T2.7, DEC-11.
+- **In scope:**
+  - The keys, when focus is inside the Stage.
+  - One Space per wheel gesture: trackpad momentum counts as one gesture, ended by a quiet gap.
+  - `axis` picks the arrow keys.
+- **Contract:** the `axis` option.
+- **Acceptance criteria:**
+  1. Each key moves once, only with focus inside the Stage.
+  2. A burst of wheel events moves one Space.
+  3. `destroy()` removes the listeners.
+- **Files:** ~5: `src/{create-tilespace.ts,keyboard.ts,wheel.ts}`, `test/input.test.ts`, PLAN, STATE.
+- **References:** DEC-11.
+
+### T2.10 · The Drag scrubs the Transition
+- **Status:** waiting (T2.8)
+- **Goal:** a user drags a Space under the finger and lets go to commit or cancel.
+- **Depends on:** T2.8, T2.9, DEC-10, DEC-11.
+- **In scope:**
+  - Pointer events past a threshold along the axis.
+  - The Transition paused, with its `currentTime` following the distance.
+  - On release, play forward past half the distance or on a flick, otherwise in reverse.
+  - The click after a Drag is stopped in the capture phase.
+  - `touch-action` for the other axis, restored on `destroy()`.
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. A drag past half the distance commits, and a short slow one cancels.
+  2. A flick commits.
+  3. A click below the threshold reaches the Tile, and the one after a Drag doesn't.
+  4. In the browser, the e2e flow drags with the mouse and commits.
+- **Files:** ~5: `src/{create-tilespace.ts,drag.ts}`, `test/drag.test.ts`, `e2e/drag.e2e.ts`, PLAN,
+  STATE.
+- **References:** DEC-10, DEC-11, ARCHITECTURE "Request flow" 3.
+
+### T2.11 · The demo: showcase, gallery and dashboard
+- **Status:** waiting (T2.10)
+- **Goal:** the owner checks the whole engine on the demo page (the M2 end check).
+- **Depends on:** T2.10.
+- **In scope:**
+  - Three examples on the demo page: a showcase, a gallery of images, and a dashboard of widgets
+    with their own inputs and state, which survive navigation.
+  - Every input and Transition reachable from the page.
+- **Contract:** consumes the engine.
+- **Acceptance criteria:**
+  1. An e2e flow types into a dashboard widget, moves away and back, and finds its value kept.
+  2. The owner checks the demo in the browser (the M2 end check).
+- **Files:** ~6: `demo/{index.html,main.ts,examples.ts}`, `e2e/demo.e2e.ts`, README, PLAN, STATE.
+- **References:** PRODUCT "Headless, children keep their behaviour", ROADMAP M2.
+
 ## Later
 - T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the
   best filling, so it is invisible at the public seam until `nodeBudget` exists. Proposal for T1.6:

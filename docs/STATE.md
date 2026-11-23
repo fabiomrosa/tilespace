@@ -36,7 +36,6 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, close M1:** the owner checked the playground (T1.10 AC3) and #12 merged; every M1
-  slice is done and `ROADMAP.md` marks M1 done. The unapplied retro proposals are listed in the
-  close pull request.
-- **Next:** the owner's ok on the close, then "plan M2".
+- **2026-11-23, after M1:** M1 closed (#13); the six retro proposals merged as #14–#19; PRODUCT's
+  Node budget and invariant 3 wording settled (#20); M2 planned in `docs/PLAN.md`.
+- **Next:** the owner's ok on the M2 plan, then T2.1.
