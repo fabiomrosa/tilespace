@@ -67,14 +67,14 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-07, DEC-08, ARCHITECTURE "The packing", GOTCHAS "Toolchain" (unbounded loops).
 
 ### T1.2 · Reject invalid input
-- **Status:** waiting (T1.1)
+- **Status:** done (2026-11-23)
 - **Goal:** a bad Grid or Shape throws a plain `tilespace:` error instead of packing nonsense.
 - **Depends on:** T1.1.
 - **In scope:** `pack` throws an `Error` whose message starts with `tilespace:` and names the value
   (CONVENTIONS §4) for: `columns` or `rows` not a positive integer; an empty Shape; a Span whose
   `cols` or `rows` is not a positive integer.
-- **Out of scope:** the engine's options (M2); `columns > 32` is not an error (the occupancy falls
-  back to a `Uint8Array`, ARCHITECTURE).
+- **Out of scope:** the engine's options (M2); `columns > 32` is not an error (the occupancy is a
+  `Uint8Array`, ARCHITECTURE).
 - **Contract:** `pack` as in T1.1, throwing on the inputs above.
 - **Acceptance criteria:**
   1. Each invalid input above throws with a message naming the value.
