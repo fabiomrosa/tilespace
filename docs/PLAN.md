@@ -84,7 +84,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** CONVENTIONS §4, ARCHITECTURE "Configuration".
 
 ### T1.3 · Flexible Shapes
-- **Status:** waiting (T1.1)
+- **Status:** done (2026-11-23)
 - **Goal:** a Tile with several Spans gets the one that fills best, preferring its earlier Spans.
 - **Depends on:** T1.1, DEC-07.
 - **In scope:** each candidate tries each Span of its Shape that fits, in Shape order; the Score
@@ -235,3 +235,6 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Modules" (`playground/`), ROADMAP M1.
 
 ## Later
+- T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the
+  best filling, so it is invisible at the public seam until `nodeBudget` exists. Proposal for T1.6:
+  a budget that finds the optimum only with the Shape deduplication.
