@@ -26,6 +26,14 @@ build, and the gate in CI.
 |---|---|
 | `tilespace` | T0.1 runnable skeleton |
 
+## M1 · Core
+Everything in `packages/core`, pure and DOM-free, and a playground that draws Packings. The owner
+checks the Packings in the browser at the end (T1.10).
+
+| Repository | Slices |
+|---|---|
+| `tilespace` | T1.1 pack one Space with fixed Spans, T1.2 reject invalid input, T1.3 flexible Shapes, T1.4 several Spaces and the last one, T1.5 order modes and Displacement, T1.6 the Node budget option, T1.7 the PRODUCT invariants as property tests, T1.8 custom Score and Packing validation, T1.9 benchmark against first-fit and the default Node budget, T1.10 the playground draws Packings |
+
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
   (OWNER_PLAN §0). Needed by T0.1.
@@ -33,11 +41,6 @@ build, and the gate in CI.
   publish (M3).
 
 ## Later milestones (split when they start)
-- **M1 · Core.** Everything in `packages/core`, pure and DOM-free: the Grid and Shapes, one Space
-  packed by the search with fixed Spans, then flexible Shapes, several Spaces and the last one, the
-  Order modes and Displacement, the Node budget, a custom Packer and Score, the PRODUCT invariants
-  as property tests, a benchmark against first-fit, and a playground that draws Packings. The owner
-  checks the Packings in the browser at the end.
 - **M2 · Vanilla engine and demo.** Mount over the Stage's children, the CSS grid and Placements,
   responsive Grids with `ResizeObserver`, repacking on added and removed children, `next`/`prev`/
   `goTo` and events, the default Transition, custom and no Transition, reduced motion, keyboard,
@@ -49,7 +52,8 @@ build, and the gate in CI.
 - **M4 · React adapter.** **M5 · Angular adapter.**
 
 ## Recommended order (one session at a time)
-T0.1, then "plan M1" with the owner.
+T0.1 (done), then T1.1 → T1.2 → T1.3 → T1.4 → T1.5 → T1.6 → T1.7 → T1.8 → T1.9 → T1.10, then
+"close M1" and "plan M2" with the owner.
 
 ## Open decisions (see DECISIONS.md)
 | Id | Question | Status | Needed by |
