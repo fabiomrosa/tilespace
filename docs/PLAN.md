@@ -6,7 +6,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 ---
 
 ### T0.1 · Runnable skeleton
-- **Status:** next
+- **Status:** done (2026-11-23)
 - **Goal:** an empty project that builds, formats, tests and runs, with its gate in CI.
 - **Depends on:** DEC-13 (accepted), P1.
 - **In scope:**
