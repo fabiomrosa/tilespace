@@ -44,6 +44,9 @@ npm run bench       # the packing benchmark against first-fit
 npm run dev         # the playground at http://localhost:5173: type Shapes, see the Packing
 ```
 
+The playground packs on every keystroke, in the page's thread: a very large Node budget on a Stage
+that cannot fill a Space blocks the tab until the search ends.
+
 Check everything CI checks (format and lint, types, tests with the coverage floor, build):
 
 ```sh
