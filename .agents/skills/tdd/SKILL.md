@@ -35,6 +35,7 @@ When the shape of that interface is itself in question, the project's `docs/ARCH
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
 - **Refactoring is not part of the loop.** It belongs to the review stage (the project's `tilespace-code-review` skill), not the red → green implementation cycle.
 - **Every red is seen.** Run the new test and watch it fail for the expected reason before writing the code; that is the proof SESSION §3.2 asks for.
+- **Every fixture discriminates.** A rule that only ranks results (the best, not the first; a tie-break) needs an input where breaking the rule changes the output: find the smallest by differential search, the code against a scratch copy missing the rule, and assert the difference (`expect(withRule).not.toEqual(withoutRule)`).
 - **Break code safely.** Before breaking code on purpose to see a test fail, commit (or copy the file to the scratchpad); restore from that, never with `git checkout <file>`, which also wipes uncommitted work.
 
 ## Common rationalizations
@@ -53,4 +54,4 @@ When the shape of that interface is itself in question, the project's `docs/ARCH
 - Several tests written before the first implementation (horizontal slicing).
 
 ---
-Adapted from mattpocock/skills `engineering/tdd` (MIT, see `../THIRD_PARTY_NOTICES.md`). Changed for this workflow: the seams come from the slice entry and CONVENTIONS instead of a per-test question; references point to the workflow's docs and skills; "every red is seen" added; the rationalizations and red flags follow the pattern of addyosmani/agent-skills. `tests.md` and `mocking.md` are unchanged.
+Adapted from mattpocock/skills `engineering/tdd` (MIT, see `../THIRD_PARTY_NOTICES.md`). Changed for this workflow: the seams come from the slice entry and CONVENTIONS instead of a per-test question; references point to the workflow's docs and skills; "every red is seen" added; "every fixture discriminates" added; the rationalizations and red flags follow the pattern of addyosmani/agent-skills. `tests.md` and `mocking.md` are unchanged.
