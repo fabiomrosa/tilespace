@@ -31,8 +31,8 @@ Agents: start with `AGENTS.md`.
 
 ## Running locally
 
-The workspace builds and tests; `packages/core` is still empty (M1 adds the Grid, Shapes and the
-Packer).
+`packages/core` packs Tiles into Spaces (`pack`, `validatePacking`); the playground draws its
+Packings.
 
 ```sh
 git clone git@github.com:fabiomrosa/tilespace.git
@@ -41,6 +41,7 @@ npm ci
 npm test            # the tests once
 npm run format      # format and apply safe lint fixes
 npm run bench       # the packing benchmark against first-fit
+npm run dev         # the playground at http://localhost:5173: type Shapes, see the Packing
 ```
 
 Check everything CI checks (format and lint, types, tests with the coverage floor, build):

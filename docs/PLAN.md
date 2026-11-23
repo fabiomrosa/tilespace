@@ -216,7 +216,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   goal".
 
 ### T1.10 · The playground draws Packings
-- **Status:** waiting (T1.8)
+- **Status:** done (2026-11-23)
 - **Goal:** the owner checks Packings in the browser: type Shapes and a Grid, see every Space drawn.
 - **Depends on:** T1.8.
 - **In scope:** Vite 8.3.8 pinned and `npm run dev` (`vite playground`, no config file); one page

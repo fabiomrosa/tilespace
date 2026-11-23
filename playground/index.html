@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>tilespace playground</title>
+    <style>
+      body { font: 14px/1.4 system-ui, sans-serif; margin: 16px; color: #222; background: #fafafa; }
+      form { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 16px; }
+      label { display: flex; flex-direction: column; gap: 4px; }
+      input[type="number"] { width: 6em; }
+      #shapes { width: min(40em, 90vw); }
+      #error { color: #b00020; min-height: 1.4em; }
+      .space { margin: 0 0 20px; }
+      .space h2 { font-size: 14px; margin: 0 0 6px; }
+      .grid { display: grid; gap: 4px; background: repeating-linear-gradient(45deg, #eee 0 6px, #ddd 6px 12px); padding: 4px; width: max-content; }
+      .tile { background: hsl(var(--hue) 60% 75%); border-radius: 4px; display: grid; place-items: center; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>tilespace playground</h1>
+    <form id="controls">
+      <label>Columns <input id="columns" type="number" min="1" value="6" /></label>
+      <label>Rows <input id="rows" type="number" min="1" value="4" /></label>
+      <label>
+        Shapes (Tiles by commas, Spans by spaces)
+        <input id="shapes" value="2x2 1x1, 1x2, 2x1, 3x1 2x1, 1x1, 2x2, 1x2, 2x1, 1x1, 2x3 2x2, 1x1, 2x1" />
+      </label>
+      <label>
+        Order
+        <select id="order"><option>fill</option><option>strict</option></select>
+      </label>
+      <label>Node budget <input id="budget" type="number" min="1" value="100000" /></label>
+      <label>Seed <input id="seed" type="number" min="1" value="1" /></label>
+      <button id="random" type="button">Random Tiles</button>
+    </form>
+    <p id="error" role="alert"></p>
+    <div id="spaces"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -26,6 +26,12 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - Claude Code's auto mode denies a blanket `git checkout -- .`. To break a file once and restore it
   (a "seen red" check), copy it to the scratchpad first and copy it back.
 
+## Browser checks
+- No browser tool in the agent's session: headless Chrome works. `--dump-dom` with
+  `--virtual-time-budget=5000` gives the page after its scripts run; `--screenshot` a PNG; for
+  input, `--remote-debugging-port` and Node's built-in `WebSocket` drive the DevTools protocol
+  (`Runtime.evaluate`), no Puppeteer needed.
+
 ## DOM
 - Reading layout (`getBoundingClientRect`, `offsetWidth`) right after a style write forces a
   synchronous layout.
