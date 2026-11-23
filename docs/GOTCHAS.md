@@ -19,6 +19,10 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   counted the trailing Holes at once; thousands of 1x1 Tiles on a huge Grid still could.
 - Node 26 runs a `.ts` file directly (type stripping): a scratch script can import `src/*.ts`
   without a build, as long as it uses no TypeScript-only syntax such as `enum`.
+- An exhaustive oracle without a bound hangs on a few Tiles with Holes inevitable (7 Tiles on 3x4
+  took 44 s): `test/exhaustive.ts` cuts by the Cells the unused Tiles cannot cover and tries equal
+  Shapes and Spans once. A weak generator that stresses the oracle can hang Vitest (synchronous).
+- In zsh, `for a in "1 2"; do cmd $a; done` passes one argument: write `${=a}` to split it.
 - Claude Code's auto mode denies a blanket `git checkout -- .`. To break a file once and restore it
   (a "seen red" check), copy it to the scratchpad first and copy it back.
 
