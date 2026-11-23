@@ -45,4 +45,12 @@ describe("pack", () => {
 
     expect(pack(shapes, grid)).toEqual(pack(shapes, grid));
   });
+
+  it("returns when the Grid has more Cells than the call stack has frames", () => {
+    const grid = { columns: 100, rows: 100 };
+
+    const space = pack([[span(1, 1)]], grid).spaces[0] ?? [];
+
+    expect(holes(space, grid)).toBe(9_999);
+  });
 });

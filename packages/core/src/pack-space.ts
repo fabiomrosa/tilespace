@@ -48,9 +48,10 @@ export function packSpace(
     nodes++;
     let cell = from;
     while (cell < cells && occupied[cell]) cell++;
-    if (cell === cells) {
-      if (holes < bestHoles) {
-        bestHoles = holes;
+    // With no Tile left, every free Cell is a Hole: count them instead of recursing per Cell.
+    if (cell === cells || areaLeft === 0) {
+      if (holes + freeCells < bestHoles) {
+        bestHoles = holes + freeCells;
         best = placements.slice();
       }
       return;
