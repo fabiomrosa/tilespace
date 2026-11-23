@@ -1,6 +1,6 @@
 /**
  * The lab's benchmark (T1.9): Holes and time per Space of `pack` at several Node budgets against
- * first-fit, over seeded random Tiles. Fixtures are built before any timing; each side is warmed up;
+ * first-fit, over seeded random Tiles. Fixtures are built before any timing; each side is warmed up on five fixtures;
  * the side that runs first alternates per seed; times are medians (CONVENTIONS §5).
  * Run: `npm run bench`.
  */
@@ -99,7 +99,9 @@ for (const [mix, kinds] of MIXES)
       ]),
     ];
     const runs = new Map<string, Run[]>(sides.map(([name]) => [name, []]));
-    for (const [, packer] of sides) run(packer, fixtures[0] as Shape[], grid); // warm-up
+    // Warm-up: a few runs of every side, so the timed runs use optimized code.
+    for (const [, packer] of sides)
+      for (const shapes of fixtures.slice(0, 5)) run(packer, shapes, grid);
     fixtures.forEach((shapes, seed) => {
       const order = seed % 2 === 0 ? sides : sides.toReversed();
       for (const [name, packer] of order) runs.get(name)?.push(run(packer, shapes, grid));

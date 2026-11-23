@@ -9,8 +9,8 @@ that CI runs in the `gate` job, beside the size, frozen-files, title and secret 
 `pack(shapes, grid, { order, nodeBudget, score })` places every Tile, Space after Space with the
 Tiles left (the last Space holds what remains). In each Space every Tile gets a Span of its Shape
 (clamped to the Grid), with the best Score `[holes, spanRank, displacement]` that the depth-first
-search of DEC-08 finds under the Node budget (`nodeBudget` steps per Space, 1,000,000 by default
-until T1.9). `order: 'fill'` (default) may reorder Tiles at a Displacement cost; `'strict'` keeps
+search of DEC-08 finds under the Node budget (`nodeBudget` steps per Space, 100,000 by default,
+`docs/decisions/0001-node-budget.md`). `order: 'fill'` (default) may reorder Tiles at a Displacement cost; `'strict'` keeps
 the Stage's order. A Grid or Span that is not a positive integer, an empty Shape, an unknown order
 or a `nodeBudget` that is not a positive integer throws a `tilespace:` error naming the value. A
 custom `score` replaces the default Score, with no cut and no stop at a filling with no Hole; a
