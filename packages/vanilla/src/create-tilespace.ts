@@ -39,7 +39,7 @@ export type TilespaceOptions = PackOptions & {
 export type TilespaceEvents = {
   /** The Current space changed. */
   change: { current: number };
-  /** The Tiles were packed again (a new Grid): the number of Spaces. */
+  /** The Tiles were packed again (a new Grid, or children added or removed): the number of Spaces. */
   pack: { spaces: number };
 };
 
@@ -60,7 +60,8 @@ export type Tilespace = {
 
 /**
  * Mounts a Tilespace over the Stage's children, as they are (DEC-06): packs their Shapes into the
- * Grid, places each Tile with CSS grid, and shows Space 0. A derived Grid follows the Stage's size.
+ * Grid, places each Tile with CSS grid, and shows Space 0. A derived Grid follows the Stage's size,
+ * and added or removed children repack.
  */
 export function createTilespace(stage: HTMLElement, options: TilespaceOptions): Tilespace {
   const {
@@ -79,11 +80,12 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
   validateOptions(stage, gap, fit);
   const log = createWriteLog();
-  const tiles = Array.from(stage.children) as Tile[];
-  const shapes = tiles.map((tile, index) => readShape(tile, index, shape));
+  let tiles = Array.from(stage.children) as Tile[];
+  const shapesOf = (children: Tile[]) =>
+    children.map((tile, index) => readShape(tile, index, shape));
   const gridNow = (): Grid =>
     fit ? deriveGrid(contentSize(stage), fit) : ({ columns, rows } as Grid);
-  const packFor = (grid: Grid): Packing => {
+  const packFor = (grid: Grid, shapes: Shape[]): Packing => {
     if (!packer) return pack(shapes, grid, packOptions);
     // Copies: a packer that changes what it gets cannot change the Shapes or Grid checked below.
     const packing = packer(
@@ -94,7 +96,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     return packing;
   };
   let grid = gridNow();
-  let packing = packFor(grid);
+  let packing = packFor(grid, shapesOf(tiles));
 
   /** Writes the Grid and every Tile's Placement. */
   const place = () => {
@@ -103,6 +105,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     packing.spaces.forEach((space, k) => {
       for (const { tile, col, row, span } of space) {
         const el = tiles[tile] as Tile;
+        // A Tile that left the Stage (and a repack that then failed) is the user's again.
+        if (el.parentNode !== stage) continue;
         log.style(el, "grid-column-start", String(col + 1));
         log.style(el, "grid-column-end", `span ${span.cols}`);
         log.style(el, "grid-row-start", String(row + 1));
@@ -119,6 +123,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     packing.spaces.forEach((placements, k) => {
       for (const { tile } of placements) {
         const el = tiles[tile] as Tile;
+        if (el.parentNode !== stage) continue;
         if (k === space) {
           log.resetStyle(el, "visibility");
           log.attribute(el, "data-ts-current", "");
@@ -150,26 +155,38 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     show(space);
     events.emit("change", { current });
   };
-  /** A new Grid repacks; the Current space becomes the one holding the Tile first on screen. */
-  const repack = () => {
-    const next = gridNow();
-    if (destroyed || (next.columns === grid.columns && next.rows === grid.rows)) return;
-    const first = packing.spaces[current]?.[0]?.tile;
-    // Packed first: a packer that throws leaves the old Grid, so the next resize tries again.
-    packing = packFor(next);
-    grid = next;
+  /**
+   * Packs again for a Grid and the Stage's children; the Current space becomes the one holding the
+   * Tile first on screen, or the nearest one if it left.
+   */
+  const repack = (next: Grid, children: Tile[]) => {
+    const first = tiles[packing.spaces[current]?.[0]?.tile ?? -1];
     const before = current;
-    current = Math.max(
-      0,
-      packing.spaces.findIndex((space) => space.some((p) => p.tile === first)),
-    );
+    // Packed first: a packer that throws leaves the old state, so the next change tries again.
+    packing = packFor(next, shapesOf(children));
+    [tiles, grid] = [children, next];
+    const index = packing.spaces.findIndex((space) => space.some((p) => tiles[p.tile] === first));
+    current = index >= 0 ? index : Math.max(0, Math.min(before, last()));
     place();
     show(current);
     events.emit("pack", { spaces: packing.spaces.length });
     if (current !== before) events.emit("change", { current });
   };
-  const observer = fit ? new ResizeObserver(repack) : undefined;
-  observer?.observe(stage);
+  const resized = () => {
+    const next = gridNow();
+    if (next.columns !== grid.columns || next.rows !== grid.rows) repack(next, tiles);
+  };
+  const resizes = fit ? new ResizeObserver(resized) : undefined;
+  resizes?.observe(stage);
+  // A Tile that left gets back what was written on it; an added child is adopted.
+  const mutations = new MutationObserver(() => {
+    const children = Array.from(stage.children) as Tile[];
+    // Text, comments, or a child put back where it was: the Tiles are the same.
+    if (children.length === tiles.length && children.every((c, i) => c === tiles[i])) return;
+    for (const tile of tiles) if (!children.includes(tile)) log.release(tile);
+    repack(grid, children);
+  });
+  mutations.observe(stage, { childList: true });
 
   return {
     get current() {
@@ -187,7 +204,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     on: (event, listener) => events.on(event, listener),
     destroy() {
       destroyed = true;
-      observer?.disconnect();
+      resizes?.disconnect();
+      mutations.disconnect();
       events.clear();
       log.restore();
     },

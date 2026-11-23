@@ -48,6 +48,9 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   a unit test can't see this; the engine writes longhands only.
 - A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
   in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.
+- Under Vitest, an error thrown in a happy-dom `MutationObserver` callback escapes as an uncaught
+  exception and fails the run (no `error` event on `window`). To test a throwing callback, stub the
+  observer and call its callback yourself.
 - happy-dom's `getComputedStyle` ignores inline padding on an element outside the document.
 - `packages/vanilla` imports `@tilespace/core` through its `dist/` (package exports), so `core` must
   be built before vanilla is type-checked or tested: `verify` builds first, and `npm test` runs

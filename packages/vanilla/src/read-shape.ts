@@ -11,6 +11,10 @@ const SPAN = /^[1-9]\d*x[1-9]\d*$/;
 
 /** A Tile's Shape (DEC-07): its `data-ts-shape` (`"2x2 2x1 1x1"`), else the option, else `1x1`. */
 export function readShape(tile: Tile, index: number, option?: ShapeOption): Shape {
+  // Only an element with an inline style can be placed (an HTML or SVG element).
+  if (!tile.style) {
+    throw new Error(`tilespace: tile ${index} is <${tile.localName}>, not an HTML or SVG element`);
+  }
   const attribute = tile.getAttribute("data-ts-shape");
   if (attribute !== null) {
     const spans = attribute.trim().split(/\s+/);

@@ -8,6 +8,8 @@ export type WriteLog = {
   resetStyle(el: Tile, name: string): void;
   /** Puts back one attribute's value from before the first write. */
   resetAttribute(el: Tile, name: string): void;
+  /** Puts back everything written on one element and forgets it (a Tile that left the Stage). */
+  release(el: Tile): void;
   restore(): void;
 };
 
@@ -31,6 +33,14 @@ export function createWriteLog(): WriteLog {
   const putAttribute = (el: Tile, name: string, value: string | null) => {
     if (value === null) el.removeAttribute(name);
     else el.setAttribute(name, value);
+  };
+
+  // An element that had no style attribute gets none back. Chrome syncs the attribute from the
+  // style lazily: it must be read before it is removed (GOTCHAS "DOM"); happy-dom drops it alone.
+  const dropEmptyStyle = (el: Tile, had: boolean | undefined) => {
+    if (had !== false || el.style.length > 0) return;
+    el.getAttribute("style");
+    el.removeAttribute("style");
   };
 
   return {
@@ -58,20 +68,16 @@ export function createWriteLog(): WriteLog {
       const saved = attributes.get(el);
       if (saved?.has(name)) putAttribute(el, name, saved.get(name) ?? null);
     },
+    release(el) {
+      for (const [name, saved] of styles.get(el) ?? []) putStyle(el, name, saved);
+      for (const [name, value] of attributes.get(el) ?? []) putAttribute(el, name, value);
+      dropEmptyStyle(el, hadStyle.get(el));
+      styles.delete(el);
+      attributes.delete(el);
+      hadStyle.delete(el);
+    },
     restore() {
-      for (const [el, saved] of styles) for (const [name, s] of saved) putStyle(el, name, s);
-      for (const [el, saved] of attributes)
-        for (const [name, v] of saved) putAttribute(el, name, v);
-      // An element that had no style attribute gets none back. Chrome syncs the attribute from the
-      // style lazily: it must be read before it is removed (GOTCHAS "DOM"); happy-dom drops it alone.
-      for (const [el, had] of hadStyle) {
-        if (had || el.style.length > 0) continue;
-        el.getAttribute("style");
-        el.removeAttribute("style");
-      }
-      styles.clear();
-      attributes.clear();
-      hadStyle.clear();
+      for (const el of new Set([...styles.keys(), ...attributes.keys()])) this.release(el);
     },
   };
 }
