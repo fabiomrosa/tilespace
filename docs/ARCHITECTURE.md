@@ -43,8 +43,8 @@ Each package is created by the first slice that needs it.
 - **Bound:** `holesSoFar + max(0, freeCells − areaLeft)` (areaLeft is the area of the remaining
   candidates at their largest Span, so the bound never overstates the Holes to come) against the
   best tuple's Holes; equal Holes go on only while the lower terms can still improve.
-- **Node budget:** a count of search steps per Space (default chosen by the M1 benchmark); every
-  loop is bounded by it.
+- **Node budget:** a count of search steps per Space (default 100,000, chosen by the T1.9 benchmark,
+  `docs/decisions/0001-node-budget.md`); every loop is bounded by it.
 - **Last Space:** when every remaining Tile fits in one Space, it is packed with the same search;
   its Holes count but nothing is left to fill them.
 - A custom `packer(shapes, grid) → Packing` or a custom `score` replaces the default; the engine

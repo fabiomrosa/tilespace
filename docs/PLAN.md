@@ -196,7 +196,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** PRODUCT "Replaceable strategy", ARCHITECTURE "The packing".
 
 ### T1.9 · Benchmark against first-fit and the default Node budget
-- **Status:** waiting (T1.6)
+- **Status:** done (2026-11-23)
 - **Goal:** the lab's first answer: Holes and time of the search against first-fit, and the default
   Node budget chosen from them.
 - **Depends on:** T1.6.

@@ -40,6 +40,7 @@ cd tilespace
 npm ci
 npm test            # the tests once
 npm run format      # format and apply safe lint fixes
+npm run bench       # the packing benchmark against first-fit
 ```
 
 Check everything CI checks (format and lint, types, tests with the coverage floor, build):
