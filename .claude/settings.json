@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.py\""}
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-edits.py\""}
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-git.py\""}
+        ]
+      }
+    ]
+  }
+}

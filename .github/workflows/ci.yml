@@ -1,0 +1,99 @@
+# The gate of every pull request (SESSION §3). The first slice adds the `gate` job. The checks run in
+# CI, not in an agent's hooks, so they hold for any agent (DEC-02). The agent merges only when every
+# job is green (SESSION §4).
+name: CI
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # gate:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 20
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #     - run: npm run verify
+
+  title:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Pull request title (SESSION §4)
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|refactor|perf|test|docs|build|ci|chore|revert)\([A-Za-z0-9.-]+\)!?: [^[:upper:][:space:]](.*[^.])?$'
+          if [[ "$TITLE" =~ $pattern ]]; then echo "title: ok"; else
+            echo "Title must be '<type>(<slice id or topic>): <short name>', e.g. 'feat(T1.2): sign in'; the short name starts in lowercase, with no final period."
+            exit 1
+          fi
+
+  size:
+    if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'oversized-ok')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Pull request size (SESSION §0)
+        run: scripts/check-pr-size.py "${{ github.base_ref }}"
+
+  frozen:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Frozen files are unchanged (.agents/protected.json)
+        run: scripts/check-frozen.py "${{ github.base_ref }}"
+
+  main-via-pr:
+    # Detection, not prevention: on GitHub Free with a private repository main cannot be protected,
+    # so a push that skipped the pull request turns main red here (DEC-04).
+    if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Every commit on main comes from a merged pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          merged=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '[.[] | select(.merged_at != null)] | length')
+          if [ "$merged" -gt 0 ]; then echo "main: via pull request"; else
+            echo "${{ github.sha }} reached main without a merged pull request (DEC-04). Revert it through a pull request."
+            exit 1
+          fi
+
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GITLEAKS_VERSION: 8.30.1
+      GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Secret scan (every commit)
+        run: |
+          curl -sSfL -o gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks git --redact --no-banner .
