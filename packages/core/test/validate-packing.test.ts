@@ -38,6 +38,16 @@ describe("validatePacking", () => {
     validatePacking({ spaces: [[at(0, 0, 0, 2, 1)], [at(1, 0, 0, 2, 2)]] }, shapes, grid);
   });
 
+  it("rejects an invalid Grid or Shape with pack's own message", () => {
+    const packing = { spaces: [[at(0, 0, 0, 1, 1)]] };
+    expect(() => validatePacking(packing, [[span(1, 1)]], { columns: 0, rows: 1 })).toThrow(
+      new Error("tilespace: grid.columns must be a positive integer, got 0"),
+    );
+    expect(() => validatePacking(packing, [[span(1, 0)]], { columns: 1, rows: 1 })).toThrow(
+      new Error("tilespace: shapes[0][0].rows must be a positive integer, got 0"),
+    );
+  });
+
   it.each<[string, Packing, string]>([
     ["a Tile twice", { spaces: [[at(0, 0, 0, 2, 1)], [at(0, 0, 0, 2, 1)]] }, "places tile 0 twice"],
     ["a Tile missing", { spaces: [[at(0, 0, 0, 2, 1)]] }, "leaves tile 1 unplaced"],

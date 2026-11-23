@@ -267,7 +267,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Request flow" 1 and 5, CONVENTIONS §2–§5.
 
 ### T2.2 · Reject invalid options
-- **Status:** waiting (T2.1)
+- **Status:** done (2026-11-23)
 - **Goal:** a wrong mount fails at once with a message naming the value.
 - **Depends on:** T2.1.
 - **In scope:**
@@ -394,6 +394,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
     their Placements, the direction and the Stage's size.
   - `transition: false` swaps instantly.
   - `prefers-reduced-motion` gives a short cross-fade.
+  - A `transition` that is neither `false` nor a function throws a `tilespace:` error (moved here
+    from T2.2, which had no such option yet).
 - **Contract:** the `TransitionContext` type, exported.
 - **Acceptance criteria:**
   1. A custom Transition's Animations are played, then cleaned up.
@@ -410,7 +412,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **In scope:**
   - The keys, when focus is inside the Stage.
   - One Space per wheel gesture: trackpad momentum counts as one gesture, ended by a quiet gap.
-  - `axis` picks the arrow keys.
+  - `axis` picks the arrow keys. A value other than `horizontal` or `vertical` throws a
+    `tilespace:` error (moved here from T2.2, which had no such option yet).
 - **Contract:** the `axis` option.
 - **Acceptance criteria:**
   1. Each key moves once, only with focus inside the Stage.

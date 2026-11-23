@@ -15,14 +15,18 @@ cost; `'strict'` keeps the Stage's order. A Grid or Span that is not a positive 
 Shape, an unknown order or a `nodeBudget` that is not a positive integer throws a `tilespace:` error
 naming the value. A custom `score` replaces the default Score, with no cut and no stop at a filling
 with no Hole; a filling that places no Tile never counts, so every Tile is still placed.
-`validatePacking(packing, shapes, grid)` throws a `tilespace:` error naming the first broken
-invariant (for the engine to check a custom Packer, M2). `npm run dev` serves the playground
+`validatePacking(packing, shapes, grid)` throws `pack`'s error for an invalid Grid or Shape, then a
+`tilespace:` error naming the first broken invariant (for the engine to check a custom Packer, M2). `npm run dev` serves the playground
 (`playground/`, Vite): type a Grid and Shapes and see every Space drawn with its Holes and Score.
 `createTilespace(stage, { columns, rows, gap, shape, order, nodeBudget, score })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
 Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
-`visibility: hidden`. `destroy()` puts back every style and attribute it wrote.
+`visibility: hidden`. `destroy()` puts back every style and attribute it wrote. A custom
+`packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
+`validatePacking`. A missing
+Stage, a malformed `data-ts-shape` or an invalid `gap` throws a `tilespace:` error before anything
+is written.
 `npm run bench` compares `pack` with a first-fit baseline (`bench/`). Property tests (`fast-check`,
 500 runs) check the PRODUCT packing invariants on random Shapes and Grids up to 4x4, and every
 Space's Holes against an exhaustive search (`test/exhaustive.ts`).
@@ -34,7 +38,7 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   `Shape`, `Grid`, `Placement`, `Packing`, `Order`, `Score` (`packing.ts`).
 - `packages/vanilla` (`@tilespace/vanilla`): `createTilespace`, `Tilespace`, `TilespaceOptions`
   (`create-tilespace.ts`), `ShapeOption` and `Tile` (`read-shape.ts`, with `readShape`, internal),
-  the write log (`write-log.ts`, internal). Its tests run in happy-dom.
+  the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
 
 ## Contract
@@ -44,7 +48,8 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T2.1 (mount a Stage and place its Tiles):** `packages/vanilla` exists, with
-  `createTilespace` and `destroy()`. The gate now builds before it type-checks, because vanilla
-  resolves `core` through its `dist/`. Not yet checked in a real browser: that comes with T2.6.
-- **Next:** T2.2 (reject invalid options).
+- **2026-11-23, T2.2 (reject invalid options):** the Stage, the `gap` and each `data-ts-shape` are
+  checked before the first write, and the custom `packer` option is added. `validatePacking`
+  checks the Grid and Shapes too. The `axis` and `transition` checks moved to T2.8 and T2.9, where
+  those options are added.
+- **Next:** T2.3 (move between Spaces by API).

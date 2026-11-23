@@ -8,12 +8,22 @@ export function validate(
   grid: Grid,
   { order, nodeBudget }: Options,
 ): void {
-  positiveInteger(grid.columns, "grid.columns");
-  positiveInteger(grid.rows, "grid.rows");
+  validateGrid(grid);
   if (order !== "fill" && order !== "strict") {
     throw new Error(`tilespace: order must be 'fill' or 'strict', got ${order}`);
   }
   positiveInteger(nodeBudget, "nodeBudget");
+  validateShapes(shapes);
+}
+
+/** Throws a `tilespace:` error when the Grid's columns or rows are not positive integers. */
+export function validateGrid(grid: Grid): void {
+  positiveInteger(grid.columns, "grid.columns");
+  positiveInteger(grid.rows, "grid.rows");
+}
+
+/** Throws a `tilespace:` error naming the first empty Shape or Span that is not whole Cells. */
+export function validateShapes(shapes: readonly Shape[]): void {
   shapes.forEach((shape, i) => {
     if (shape.length === 0) throw new Error(`tilespace: shapes[${i}] must have at least one Span`);
     shape.forEach((span, j) => {
