@@ -70,6 +70,11 @@ Each package is created by the first slice that needs it.
   After `destroy()` a move does nothing. As with DOM events, a listener removed during an emit
   (or by `destroy()`) is skipped; a move made inside a `change` listener reaches the later
   listeners first; a listener that throws stops the ones after it, after the move is done.
+- A derived Grid (`minCellWidth`, `cellAspect`; `derive-grid.ts`) is measured from the Stage's
+  content box at mount, before any write, and a `ResizeObserver` on the Stage measures it again.
+  A changed Grid repacks, emits `pack` (`{ spaces }`), and moves the Current space to the one now
+  holding the Tile that was first on screen, emitting `change` if its index changed. A fixed Grid
+  observes nothing. The Stage's height must not come from its content (the rows derive from it).
 
 ## Request flow
 Mount and one Drag through the engine (M2):
