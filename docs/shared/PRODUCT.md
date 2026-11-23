@@ -72,7 +72,7 @@ frame budget, written down.
 | Score | How the Packer ranks two fillings of a Space: Holes, then Span preference, then Displacement |
 | Displacement | How many places a Tile moved from its order in the Stage |
 | Order mode | `fill` (may reorder, at a Displacement cost) or `strict` (keeps the order) |
-| Node budget | The most search steps the Packer takes per Space before keeping the best filling found |
+| Node budget | The search steps the Packer takes per Space before keeping the best filling found; it always completes its first filling, at most one step more per Cell |
 | Transition | The animation of the Tiles leaving one Space and entering the next |
 | Drag | The gesture: from pointer down past the threshold until release; it scrubs the Transition |
 | Adapter | A thin layer that binds `core` and the engine to a UI layer (vanilla, React, Angular) |
@@ -81,7 +81,8 @@ frame budget, written down.
 - No two Tiles of a Space share a Cell, and every Tile lies inside the Grid.
 - Every Tile is placed exactly once, with a Span from its Shape (clamped to the Grid).
 - No Space but the last has a Hole the Tiles could have filled: with the same Tiles left, no filling
-  of that Space has fewer Holes (within the Node budget, which the tests set high enough to be exact).
+  of that Space has fewer Holes (with the default Score, and within the Node budget, which the tests
+  set high enough to be exact).
 - In `strict` mode, reading the Spaces in order and each Space by its Placements gives the Stage's
   order.
 - The Packer is deterministic: the same Shapes and Grid give the same Packing.
