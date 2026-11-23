@@ -47,7 +47,8 @@ packages/<name>/
 | A real interaction | the demo page in Playwright | `e2e/<flow>.e2e.ts` |
 
 **Property tests** assert that they reached their interesting outcomes (a minimum count of each),
-so a weak generator fails instead of passing blind.
+so a weak generator fails instead of passing blind. A property that guards a fixed bug names it in
+a comment, and that bug, put back once, fails every run (aim the generator at it if it doesn't).
 
 **Benchmarks** build their fixtures outside the timing, warm up each side, alternate which side runs
 first, and report a median; a decision record states the method next to the numbers.
