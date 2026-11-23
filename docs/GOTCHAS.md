@@ -33,6 +33,9 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   `--virtual-time-budget=5000` gives the page after its scripts run; `--screenshot` a PNG; for
   input, `--remote-debugging-port` and Node's built-in `WebSocket` drive the DevTools protocol
   (`Runtime.evaluate`), no Puppeteer needed.
+- `--dump-dom` with `--virtual-time-budget` renders no frame: `requestAnimationFrame` and
+  `ResizeObserver` never fire there. For anything that needs a frame, run Chrome in real time with
+  `--remote-debugging-port`, wait, and read the page with `Runtime.evaluate`.
 
 ## DOM
 - happy-dom drops an element's `style` attribute when its last property is removed; Chrome keeps
@@ -43,6 +46,9 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - Chrome expands an inline shorthand: with only `row-gap` set, `getPropertyValue("gap")` is `""`, and
   `removeProperty("gap")` then removes the user's `row-gap`. happy-dom doesn't expand shorthands, so
   a unit test can't see this; the engine writes longhands only.
+- A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
+  in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.
+- happy-dom's `getComputedStyle` ignores inline padding on an element outside the document.
 - `packages/vanilla` imports `@tilespace/core` through its `dist/` (package exports), so `core` must
   be built before vanilla is type-checked or tested: `verify` builds first, and `npm test` runs
   `pretest` (the build).

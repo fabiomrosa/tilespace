@@ -18,7 +18,8 @@ with no Hole; a filling that places no Tile never counts, so every Tile is still
 `validatePacking(packing, shapes, grid)` throws `pack`'s error for an invalid Grid or Shape, then a
 `tilespace:` error naming the first broken invariant (for the engine to check a custom Packer, M2). `npm run dev` serves the playground
 (`playground/`, Vite): type a Grid and Shapes and see every Space drawn with its Holes and Score.
-`createTilespace(stage, { columns, rows, gap, shape, order, nodeBudget, score })`
+`createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
+score, packer, loop })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
 Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
@@ -26,7 +27,9 @@ Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and 
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
 `validatePacking`. `next()`, `prev()`
 and `goTo(space)` change the Current space at once (`loop` wraps at the ends), `current` reads it,
-and `on('change', fn)` hears each move. A missing
+and `on('change', fn)` hears each move. With `minCellWidth` (and `cellAspect`, 1 by default) the
+Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
+repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. A missing
 Stage, a malformed `data-ts-shape` or an invalid `gap` throws a `tilespace:` error before anything
 is written.
 `npm run bench` compares `pack` with a first-fit baseline (`bench/`). Property tests (`fast-check`,
@@ -40,7 +43,7 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   `Shape`, `Grid`, `Placement`, `Packing`, `Order`, `Score` (`packing.ts`).
 - `packages/vanilla` (`@tilespace/vanilla`): `createTilespace`, `Tilespace`, `TilespaceOptions`
   (`create-tilespace.ts`), `ShapeOption` and `Tile` (`read-shape.ts`, with `readShape`, internal),
-  the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal), the emitter (`emitter.ts`, internal),
+  the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal), `deriveGrid` (`derive-grid.ts`, internal), the emitter (`emitter.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
 
@@ -51,7 +54,7 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T2.3 (move between Spaces by API):** `next`, `prev`, `goTo`, `current`, `loop` and
-  the `change` event. The write log now saves each original once, so one property can be put back
-  (the user's own `visibility` when a Space is shown).
-- **Next:** T2.4 (a responsive Grid).
+- **2026-11-23, T2.4 (a responsive Grid):** `minCellWidth`, `cellAspect`, the `ResizeObserver`
+  and the `pack` event. Checked in a real-time headless Chrome over the DevTools protocol, since
+  `--dump-dom` renders no frame and so fires no `ResizeObserver` (GOTCHAS "Browser checks").
+- **Next:** T2.5 (repack when Tiles are added or removed).

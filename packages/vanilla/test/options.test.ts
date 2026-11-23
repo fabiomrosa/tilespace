@@ -29,6 +29,24 @@ describe("createTilespace options", () => {
       { gap: Number.POSITIVE_INFINITY },
       "gap must be a finite number of pixels ≥ 0, got Infinity",
     ],
+    [
+      "a minCellWidth of 0",
+      [null],
+      { minCellWidth: 0 },
+      "minCellWidth must be a finite number of pixels > 0, got 0",
+    ],
+    [
+      "a cellAspect below 0",
+      [null],
+      { minCellWidth: 100, cellAspect: -1 },
+      "cellAspect must be a finite number > 0, got -1",
+    ],
+    [
+      "a cellAspect of Infinity",
+      [null],
+      { minCellWidth: 100, cellAspect: Number.POSITIVE_INFINITY },
+      "cellAspect must be a finite number > 0, got Infinity",
+    ],
     ["a negative gap", [null], { gap: -1 }, "gap must be a finite number of pixels ≥ 0, got -1"],
     [
       "a gap of NaN",
