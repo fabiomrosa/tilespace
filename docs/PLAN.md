@@ -102,7 +102,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-07, DEC-08.
 
 ### T1.4 · Several Spaces and the last one
-- **Status:** waiting (T1.3)
+- **Status:** done (2026-11-23)
 - **Goal:** every Tile is placed: Space after Space with the Tiles left, the last Space holding what
   remains.
 - **Depends on:** T1.3.
