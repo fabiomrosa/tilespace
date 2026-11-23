@@ -39,7 +39,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 ## M1 · Core
 
 ### T1.1 · Pack one Space with fixed Spans
-- **Status:** next
+- **Status:** done (2026-11-23)
 - **Goal:** `pack(shapes, grid)` fills one Space with Tiles of one Span each, with the fewest Holes.
 - **Depends on:** T0.1, DEC-07, DEC-08.
 - **In scope:**

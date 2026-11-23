@@ -1,2 +1,3 @@
 /** The public API of `@tilespace/core`. */
-export { packageName } from "./package-name.ts";
+export { pack } from "./pack.ts";
+export type { Grid, Packing, Placement, Shape, Span } from "./packing.ts";
