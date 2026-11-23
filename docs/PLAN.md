@@ -329,7 +329,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Request flow" 2.
 
 ### T2.5 · Repack when Tiles are added or removed
-- **Status:** waiting (T2.4)
+- **Status:** done (2026-11-23)
 - **Goal:** a developer adds or removes children and the Tilespace follows.
 - **Depends on:** T2.4, DEC-12.
 - **In scope:**

@@ -29,7 +29,8 @@ Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and 
 and `goTo(space)` change the Current space at once (`loop` wraps at the ends), `current` reads it,
 and `on('change', fn)` hears each move. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
-repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. A missing
+repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
+removing a child repacks the same way, and a removed child gets back what the library wrote. A missing
 Stage, a malformed `data-ts-shape` or an invalid `gap` throws a `tilespace:` error before anything
 is written.
 `npm run bench` compares `pack` with a first-fit baseline (`bench/`). Property tests (`fast-check`,
@@ -54,7 +55,8 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T2.4 (a responsive Grid):** `minCellWidth`, `cellAspect`, the `ResizeObserver`
-  and the `pack` event. Checked in a real-time headless Chrome over the DevTools protocol, since
-  `--dump-dom` renders no frame and so fires no `ResizeObserver` (GOTCHAS "Browser checks").
-- **Next:** T2.5 (repack when Tiles are added or removed).
+- **2026-11-23, T2.5 (repack when Tiles are added or removed):** a `MutationObserver` on the
+  Stage's child list. Checked in a real-time headless Chrome: an added `2x1` was placed, the Current
+  space followed its Tile, and a removed Tile came back as it was before mounting. T2.1 to T2.5
+  give the engine for the owner's midway check, with the demo page in T2.6.
+- **Next:** T2.6 (the demo page in a real browser, the owner's midway check).

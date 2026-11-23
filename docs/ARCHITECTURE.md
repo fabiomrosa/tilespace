@@ -75,6 +75,12 @@ Each package is created by the first slice that needs it.
   A changed Grid repacks, emits `pack` (`{ spaces }`), and moves the Current space to the one now
   holding the Tile that was first on screen, emitting `change` if its index changed. A fixed Grid
   observes nothing. The Stage's height must not come from its content (the rows derive from it).
+- A `MutationObserver` on the Stage's child list repacks with its children as they now are: a
+  Tile that left gets back what was written on it (`release` in the write log), and an added child
+  is adopted. The Current space follows the Tile first on screen, or stays the nearest Space if
+  that Tile left. The engine writes only attributes, so its writes never trigger it. Text, comments
+  or a child put back where it was change nothing. A repack that throws (a malformed
+  `data-ts-shape`) keeps the old Packing, and a Tile that left is never written again.
 
 ## Request flow
 Mount and one Drag through the engine (M2):

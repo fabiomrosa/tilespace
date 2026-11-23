@@ -114,6 +114,17 @@ describe("createTilespace options", () => {
     expect(later.firstElementChild?.getAttribute("data-ts-span")).toBe("1x1");
   });
 
+  it("throws for a child that is neither an HTML nor an SVG element", () => {
+    const stage = stageOf([null]);
+    stage.append(document.createElementNS("http://example.com/x", "x"));
+    const before = stage.outerHTML;
+
+    expect(() => createTilespace(stage, grid)).toThrow(
+      new Error("tilespace: tile 1 is <x>, not an HTML or SVG element"),
+    );
+    expect(stage.outerHTML).toBe(before);
+  });
+
   it("places the Tiles with a custom packer", () => {
     const stage = stageOf([null, null]);
     const calls: [readonly Shape[], unknown][] = [];
