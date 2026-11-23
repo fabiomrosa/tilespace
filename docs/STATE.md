@@ -4,11 +4,12 @@ What exists in this repository now. The code wins over this file: if they disagr
 Every slice's pull request updates it (SESSION §3).
 
 ## Capabilities
-None yet: the repository holds only docs, skills, hooks and the CI checks (size, frozen files,
-secrets).
+An npm workspace that builds, formats, lints, type-checks and tests, with one gate (`npm run verify`)
+that CI runs in the `gate` job, beside the size, frozen-files, title and secret checks. No packing
+behaviour yet.
 
 ## Modules
-None yet.
+- `packages/core` (`@tilespace/core`): empty; exports only `packageName`, for the smoke test.
 
 ## Contract
 None yet.
@@ -17,6 +18,7 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, bootstrap:** the repository starts from the AI-flow boilerplate: `AGENTS.md`
-  (`CLAUDE.md` imports it), skills in `.agents/skills/`, hooks in `.claude/hooks/`, and CI checks.
-- **Next:** T0.1 (runnable skeleton).
+- **2026-11-23, T0.1 (runnable skeleton):** the workspace, `packages/core`, Biome, Vitest with the
+  80% line floor (CLI flags), and the CI `gate` job. No `vite` or `dev` script yet: the playground
+  (T1.x) adds them.
+- **Next:** "plan M1" (the core packing); `docs/PLAN.md` has no further slice.

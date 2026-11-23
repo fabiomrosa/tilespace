@@ -14,6 +14,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   a command's exit code, run it without a pipe and read `$?`.
 - A synchronous loop that never ends hangs Vitest: its timeout cannot interrupt the thread. Bound
   every search loop in `core` by a count (the packer's node budget).
+- Claude Code's auto mode denies a blanket `git checkout -- .`. To break a file once and restore it
+  (a "seen red" check), copy it to the scratchpad first and copy it back.
 
 ## DOM
 - Reading layout (`getBoundingClientRect`, `offsetWidth`) right after a style write forces a
