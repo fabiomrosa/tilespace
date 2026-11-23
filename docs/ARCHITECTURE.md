@@ -16,7 +16,9 @@ Exact versions are pinned in the root `package.json` (the same toolchain as `../
   of the PRODUCT invariants (M1), `happy-dom` for engine unit tests (M2), Playwright for
   real-browser tests (M2; Web Animations and CSS grid need a real browser).
 - **Format and lint:** Biome 2.
-- **Build:** `tsc` per package, to ESM plus type declarations in `dist/`.
+- **Build:** `tsc` per package, to ESM plus type declarations in `dist/`. `core` builds with
+  `"lib": ["es2024"]`, so a DOM name in its `src` fails the build (`npm run verify`), not the
+  root typecheck.
 - **Playground:** Vite (dev server only, `npm run dev`), no config file: `vite playground`.
 
 ## Modules
