@@ -14,8 +14,7 @@ integer, or an empty Shape, throws a `tilespace:` error naming the value.
 ## Modules
 - `packages/core` (`@tilespace/core`): `pack` (`pack.ts`, clamps and calls the search), `packSpace`
   (`pack-space.ts`, one Space, internal), `validate` (`validate.ts`, the input checks, internal),
-  and the types `Span`, `Shape`, `Grid`, `Placement`,
-  `Packing` (`packing.ts`).
+  and the types `Span`, `Shape`, `Grid`, `Placement`, `Packing` (`packing.ts`).
 
 ## Contract
 None yet.

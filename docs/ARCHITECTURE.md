@@ -35,8 +35,8 @@ Each package is created by the first slice that needs it.
 - `pack(shapes, grid, options) → Packing`. `shapes[i]` is Tile `i`'s Shape, a non-empty list of
   Spans `{ cols, rows }`; `grid` is `{ columns, rows }`. A Packing is `{ spaces: Placement[][] }`,
   a Placement `{ tile, col, row, span }` (0-based Cells). Spans are clamped to the Grid first.
-- One Space at a time (DEC-08): the occupancy of a Space is a bitmask per row (`columns ≤ 32`) or a
-  `Uint8Array`; the search keeps one occupancy and undoes each step on the way back, so its memory
+- One Space at a time (DEC-08): the occupancy of a Space is one `Uint8Array` of its Cells, for any
+  width (T1.1); the search keeps one occupancy and undoes each step on the way back, so its memory
   is its depth.
 - **Search order:** first empty Cell row by row; candidates per DEC-09; Spans in Shape order; a Hole
   last. The Score is a tuple compared in order: `[holes, spanRank, displacement]`.
