@@ -90,8 +90,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **In scope:** each candidate tries each Span of its Shape that fits, in Shape order; the Score
   becomes `[holes, spanRank]` (the sum of the chosen Spans' indexes); the bound uses each remaining
   Tile's largest Span (the most it can cover); candidates are the earliest remaining Tile of each
-  distinct Shape (a Shape is
-  its list of Spans).
+  distinct Shape (a Shape is its list of Spans).
 - **Out of scope:** Displacement (T1.5).
 - **Contract:** `pack` as in T1.1.
 - **Acceptance criteria:**
