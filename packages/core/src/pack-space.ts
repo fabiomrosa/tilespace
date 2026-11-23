@@ -25,7 +25,7 @@ export function packSpace(
   const keys = candidates.map((c) => c.shape.map((s) => `${s.cols}x${s.rows}`).join(" "));
   const largest = candidates.map((c) => Math.max(...c.shape.map((s) => s.cols * s.rows)));
   const placements: Placement[] = [];
-  let best: Placement[] = [];
+  let best: Placement[] | undefined;
   let bestHoles = Number.POSITIVE_INFINITY;
   let bestRank = Number.POSITIVE_INFINITY;
   let bestDisplacement = Number.POSITIVE_INFINITY;
@@ -59,7 +59,9 @@ export function packSpace(
     h - bestHoles || r - bestRank || d - bestDisplacement;
 
   const search = (from: number): void => {
-    if (bestHoles === 0 || nodes >= nodeBudget) return;
+    // The budget stops the search only once it has a filling, so the first path, which takes the
+    // first Candidate that fits at each Cell or a Hole, always completes the Space.
+    if (bestHoles === 0 || (nodes >= nodeBudget && best !== undefined)) return;
     nodes++;
     let cell = from;
     while (cell < cells && occupied[cell]) cell++;
@@ -120,5 +122,5 @@ export function packSpace(
   };
 
   search(0);
-  return best;
+  return best ?? [];
 }

@@ -137,7 +137,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-09, PRODUCT "Engineering-critical invariants".
 
 ### T1.6 · The Node budget option
-- **Status:** waiting (T1.5)
+- **Status:** done (2026-11-23)
 - **Goal:** the user bounds the search per Space and still gets a complete, valid Packing.
 - **Depends on:** T1.5.
 - **In scope:** `nodeBudget` in `PackOptions` (a positive integer, `tilespace:` error otherwise);
