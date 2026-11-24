@@ -96,5 +96,5 @@ None.
   Transition, axis and `loop` controls. Checked in Chromium: a dashboard note and counter survive a
   move away and back, and the examples and Transitions switch from the page.
 - **2026-11-24, the owner's end check of M2:** two changes asked for, planned as T2.12 (the fill
-  direction follows the axis) and T2.13 (the Space moves, then the cards settle).
+  follows the axis: columns on a horizontal one, as on the Xbox dashboard) and T2.13 (the Space moves, then the cards settle).
 - **Next:** T2.12, then T2.13, then closing M2.

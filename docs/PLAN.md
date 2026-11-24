@@ -491,17 +491,21 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 
 ### T2.12 · The fill direction follows the axis
 - **Status:** waiting (owner's ok on this plan)
-- **Goal:** on a vertical axis the Tiles fill column by column, as on a horizontal one they fill
-  row by row (the owner's M2 end check).
+- **Goal:** the Tiles gather at the edge the flow starts from, masonry included: column by column
+  on a horizontal axis, as on the Xbox dashboard; row by row on a vertical one (the owner's M2 end
+  check).
 - **Depends on:** T2.11, DEC-08 (amended).
-- **In scope:** the engine packs a vertical axis transposed (columns and rows, and every Span,
-  swapped) and transposes the Placements back; `core` is unchanged. A custom `packer` gets the real
-  Shapes and Grid.
+- **In scope:** the engine packs a horizontal axis transposed (columns and rows, and every Span,
+  swapped) and transposes the Placements back; a vertical axis packs as `core` does today. `core`
+  is unchanged. A custom `packer` gets the real Shapes and Grid.
 - **Contract:** none new.
 - **Acceptance criteria:**
-  1. On a vertical axis, 1x1 Tiles on a 2x2 Grid fill (0,0), (0,1), (1,0), (1,1) by column.
-  2. A `2x1` Tile keeps its Span on a vertical axis.
-- **Files:** ~6: `src/create-tilespace.ts`, `test/fill.test.ts`, ARCHITECTURE, PLAN, STATE, the demo.
+  1. On a horizontal axis, 1x1 Tiles on a 2x2 Grid fill (0,0), (0,1), (1,0), (1,1) by column; on
+     a vertical axis, by row.
+  2. A `2x1` Tile keeps its Span on either axis.
+  3. In the demo, the last Space's Holes are checked: at the end of the flow, or a follow-up slice
+     adds a Score tie-break that puts them there.
+- **Files:** ~6: `src/create-tilespace.ts`, `test/fill.test.ts`, ARCHITECTURE, PLAN, STATE, e2e.
 
 ### T2.13 · The Space moves, then the cards settle
 - **Status:** waiting (T2.12)

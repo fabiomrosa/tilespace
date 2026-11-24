@@ -78,8 +78,9 @@ Tile is `1x1`. A Span wider or taller than the Grid is clamped to it.
 
 ## DEC-08 · The Packer: depth-first branch and bound, Space by Space — Accepted (owner, 2026-11-23)
 The Packer fills one Space at a time, in order, with the Tiles left. For each Space it searches
-depth-first: take the first empty Cell (row by row; column by column on a vertical axis, DEC-11,
-amended by the owner 2026-11-24), try each candidate Tile with each Span of its
+depth-first: take the first empty Cell along the flow (column by column on a horizontal axis, as
+on the Xbox dashboard, so the Tiles gather at the left and Holes fall at the end; row by row on a
+vertical axis; DEC-11, amended by the owner 2026-11-24), try each candidate Tile with each Span of its
 Shape that fits there, then a Hole; recurse; keep the best complete filling by the Score, compared
 in order: Holes, then the sum of Span preference ranks, then the Displacement. A branch is cut when
 its Holes so far plus the Cells the remaining Tiles cannot cover already reach the best; a Space
