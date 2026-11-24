@@ -86,12 +86,43 @@ test("never tabs into a hidden Space, even to a child that sets itself visible",
 
   await page.locator("#stage").focus();
   const reached: string[] = [];
+  let left = false;
   for (let i = 0; i < 6; i++) {
     await page.keyboard.press("Tab");
     reached.push(await page.evaluate(() => document.activeElement?.id ?? ""));
+    left ||= await page.evaluate(
+      () => !document.getElementById("stage")?.contains(document.activeElement),
+    );
   }
 
   expect(reached).not.toContain("stray");
-  // The Tab did move through the page: past the Stage's own Tiles and out of it.
-  expect(reached.some((id) => id !== "")).toBe(true);
+  // The Tab went past every Tile of the Stage and out of it.
+  expect(left).toBe(true);
+});
+
+test.describe("on a touch screen", () => {
+  test.use({ hasTouch: true });
+
+  test("gives the focus back to a Tile's button when a Drag is cancelled", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Start" }).focus();
+    const box = await page.locator("#stage").boundingBox();
+    const [x, y] = [(box?.x ?? 0) + 300, (box?.y ?? 0) + 100];
+    const touch = await page.context().newCDPSession(page);
+    const at = (dx: number) => [{ x: x + dx, y }];
+
+    // A short, slow Drag: past the threshold, then released before half, so it is cancelled.
+    await touch.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: at(0) });
+    for (const dx of [-20, -40, -60]) {
+      await touch.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: at(dx) });
+      await page.waitForTimeout(100);
+    }
+    // The move has begun: the button's Tile is inert, and the browser blurred the button.
+    expect(await page.evaluate(() => document.activeElement?.id)).not.toBe("timer");
+    await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await page.waitForFunction(() => document.getAnimations().length === 0);
+
+    await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
+    expect(await page.evaluate(() => document.activeElement?.id)).toBe("timer");
+  });
 });

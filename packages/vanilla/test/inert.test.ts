@@ -71,6 +71,7 @@ describe("inert", () => {
       tilespace.next();
 
       expect(inert(tiles)).toEqual([0, 2, 3]);
+      tilespace.destroy();
       document.body.replaceChildren();
     }
   });
@@ -80,10 +81,28 @@ describe("inert", () => {
 
     pointer(stage, "pointerdown", 300, 0);
     pointer(stage, "pointermove", 260, 1000);
+    // The Drag has begun the move: only the entering Tile can be reached.
+    expect(inert(tiles)).toEqual([0, 2, 3]);
     pointer(stage, "pointerup", 260, 2000);
     await finish(tiles);
 
     expect(inert(tiles)).toEqual([1, 2, 3]);
+  });
+
+  it("gives the focus back to where it was in the Current space when a Drag is cancelled", async () => {
+    const { stage, tiles } = mount();
+    const button = document.createElement("button");
+    tiles[0]?.append(button);
+    button.focus();
+
+    pointer(stage, "pointerdown", 300, 0);
+    pointer(stage, "pointermove", 260, 1000);
+    // A browser blurs an element whose ancestor turns `inert`; happy-dom doesn't.
+    button.blur();
+    pointer(stage, "pointerup", 260, 2000);
+    await finish(tiles);
+
+    expect(document.activeElement).toBe(button);
   });
 
   it("restores each Tile's own inert on destroy", () => {
@@ -94,6 +113,8 @@ describe("inert", () => {
     const before = stage.outerHTML;
     const tilespace = createTilespace(stage, { columns: 1, rows: 1, transition: false });
     tilespace.next();
+    // The user's own `inert` stays while its Space is the current one.
+    expect(stage.children[1]?.hasAttribute("inert")).toBe(true);
 
     tilespace.destroy();
 

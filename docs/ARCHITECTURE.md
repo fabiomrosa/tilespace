@@ -116,8 +116,9 @@ Each package is created by the first slice that needs it.
   inside it. The arrows of the `axis` (`horizontal` by default: Left and Right; `vertical`: Up and
   Down) and Page Up and Down move one Space and stop the page scrolling. A held key (`repeat`), a
   modifier, a key typed in a field (in a shadow root too) or one already handled is left alone.
-  The engine makes nothing focusable: a focused element in a Tile loses the focus when its Tile
-  hides, so a page that wants the keys to keep moving makes the Stage focusable (the demo does).
+  The engine makes nothing focusable: a focused element in a Tile loses the focus when a move
+  begins (its Tile turns `inert`), and gets it back if the move is cancelled; a page that wants
+  the keys to keep moving makes the Stage focusable (the demo does).
 - `wheel.ts` moves one Space per wheel gesture, along the larger delta: a gesture ends after 200 ms
   with no wheel event, so trackpad momentum is one gesture. A gesture that moved stops the page
   scrolling; one that moved nothing (at an end) lets the page scroll, so with `loop` the wheel

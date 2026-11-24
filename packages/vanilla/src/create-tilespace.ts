@@ -193,15 +193,24 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   let current = 0;
   let destroyed = false;
   /** A Transition between two Spaces; `space` is the one shown when it is settled. */
-  type Run = { animations: Animation[]; space: number; to: number; error?: unknown };
+  /** `focus`: the element focused in a leaving Tile, focused again if the move is cancelled. */
+  type Run = {
+    animations: Animation[];
+    space: number;
+    to: number;
+    focus?: HTMLElement;
+    error?: unknown;
+  };
   let running: Run | undefined;
   /** Ends the running Transition at once: its Animations are cancelled and its Space shown. */
   const settle = () => {
     if (!running) return;
-    const { animations, space } = running;
+    const { animations, space, to, focus } = running;
     running = undefined;
     for (const animation of animations) animation.cancel();
     show(space);
+    // Cancelled: `inert` blurred the focus out of the Space that stays.
+    if (focus && space !== to) focus.focus({ preventScroll: true });
   };
   // Copies: a Transition that changes its Placements cannot change the Packing.
   const tilesIn = (space: number) =>
@@ -222,6 +231,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     const leaving = tilesIn(current);
     const entering = tilesIn(to);
     // Only the entering Tiles can be reached while it runs; `show` puts back the cancelled ones.
+    const active = stage.ownerDocument.activeElement;
+    const focus = leaving.some(({ tile }) => tile.contains(active)) ? active : null;
     for (const { tile } of leaving) log.attribute(tile, "inert", "");
     for (const { tile } of entering) {
       log.resetStyle(tile, "visibility");
@@ -242,6 +253,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       });
     }
     const run: Run = { animations: [], space: current, to };
+    if (focus instanceof HTMLElement) run.focus = focus;
     running = run;
     try {
       if (transition) {

@@ -642,10 +642,10 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Out of scope:** ARIA attributes (T3.2).
 - **Contract:** none (DEC-06 already lists `inert`).
 - **Acceptance criteria:**
-  1. At rest every Tile outside the Current space is `inert`, and none inside it is, after mount and
-     after each move, with and without `peek`.
+  1. At rest every Tile outside the Current space is `inert`, and none inside it the library made
+     `inert` (a user's own stays), after mount and after each move, with and without `peek`.
   2. During a move only the entering Tiles are not `inert`; a cancelled Drag leaves the same Tiles
-     `inert` as before it.
+     `inert` as before it, and gives the focus back to where it was.
   3. In Chromium, a focusable child with `visibility: visible` inside a Tile of another Space is
      never reached by Tab (red today: it shows and takes focus).
   4. `destroy()` restores each Tile's own `inert`, set or not.
