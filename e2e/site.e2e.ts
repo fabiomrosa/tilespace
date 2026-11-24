@@ -12,6 +12,11 @@ test("serves the site's build under the Pages base path", async ({ page }) => {
   expect(scripts.length).toBeGreaterThan(0);
   for (const path of scripts) expect(path).toMatch(/^\/tilespace\//);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("tilespace");
+  // The engine's build runs on the page: the wall is a mounted Tilespace.
+  await expect(page.getByRole("region", { name: /^Live tile wall/ })).toHaveAttribute(
+    "aria-roledescription",
+    "carousel",
+  );
 });
 
 /** The page's background, from the tokens: light #F6F6F3, dark #0F1115. */
@@ -121,4 +126,72 @@ test("copies the install line", async ({ page, context }) => {
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "npm install @tilespace/vanilla",
   );
+});
+
+test.describe("the hero wall", () => {
+  const wall = (page: Page) => page.getByRole("region", { name: /^Live tile wall/ });
+  const columns = (page: Page) =>
+    wall(page).evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
+
+  test("bleeds the next Space past the right edge, and moves with the buttons and keys", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    const counter = page.getByText(/^Space \d+ of \d+$/);
+    await expect(counter).toHaveText(/^Space 1 of ([2-9]|\d\d)$/);
+    const spaces = Number((await counter.textContent())?.split(" of ")[1]);
+    // The count the packer made, as the Tiles show it.
+    const packed = await wall(page).evaluate(
+      (el) => new Set(Array.from(el.children, (t) => t.getAttribute("data-ts-space"))).size,
+    );
+    expect(spaces).toBe(packed);
+
+    const seen = await wall(page).evaluate((el) => {
+      const right = el.getBoundingClientRect().right;
+      const next = Array.from(el.children).filter((t) => t.getAttribute("data-ts-space") === "1");
+      return next.some((t) => {
+        const box = t.getBoundingClientRect();
+        return box.left > right && box.left < innerWidth;
+      });
+    });
+    expect(seen).toBe(true);
+
+    await page.getByRole("button", { name: "Next Space" }).click();
+    await expect(counter).toHaveText(`Space 2 of ${spaces}`);
+    await wall(page).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(counter).toHaveText(`Space 3 of ${spaces}`);
+  });
+
+  test("mounts the phone's 4-column Grid when the screen narrows", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    expect(await columns(page)).toBe(10);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    await expect.poll(() => columns(page)).toBe(4);
+  });
+
+  test.describe("with JavaScript off", () => {
+    test.use({ javaScriptEnabled: false });
+
+    test("shows fallback tiles and no sideways scroll", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("./");
+
+      await expect(page.locator("#wall > div").first()).toBeVisible();
+      // A grid of cells at the wall's phone height, not a column of stacked tiles.
+      const [display, height] = await page
+        .locator("#wall")
+        .evaluate((el) => [getComputedStyle(el).display, el.getBoundingClientRect().height]);
+      expect([display, height]).toEqual(["grid", 312]);
+      const [scroll, client] = await page.evaluate(() => [
+        document.documentElement.scrollWidth,
+        document.documentElement.clientWidth,
+      ]);
+      expect(scroll).toBeLessThanOrEqual(client);
+    });
+  });
 });

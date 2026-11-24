@@ -1,3 +1,4 @@
+import { mountHero } from "./demos/hero.ts";
 import { setUpMenu } from "./menu.ts";
 import { setUpTheme } from "./theme.ts";
 
@@ -24,3 +25,5 @@ copy.addEventListener("click", async () => {
     getSelection()?.selectAllChildren(copy.previousElementSibling as Element);
   }
 });
+
+mountHero(byId("wall"), byId("wall-prev"), byId("wall-next"), byId("wall-count"));
