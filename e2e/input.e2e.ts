@@ -68,3 +68,30 @@ test("leaves a wheel gesture to a scroller inside a shadow root in a Tile", asyn
     )
     .toBeGreaterThan(0);
 });
+
+test("never tabs into a hidden Space, even to a child that sets itself visible", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    const stage = document.getElementById("stage") as HTMLElement;
+    const hidden = stage.querySelector('[data-ts-space="1"]') as HTMLElement;
+    const button = document.createElement("button");
+    button.id = "stray";
+    button.textContent = "Stray";
+    // A hidden parent's `visibility` doesn't stop a child that sets its own: only `inert` does.
+    button.style.visibility = "visible";
+    hidden.append(button);
+  });
+
+  await page.locator("#stage").focus();
+  const reached: string[] = [];
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press("Tab");
+    reached.push(await page.evaluate(() => document.activeElement?.id ?? ""));
+  }
+
+  expect(reached).not.toContain("stray");
+  // The Tab did move through the page: past the Stage's own Tiles and out of it.
+  expect(reached.some((id) => id !== "")).toBe(true);
+});

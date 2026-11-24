@@ -153,7 +153,10 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   let reach = peek ? size() + spaceGap : 0;
   const at = (distance: number) =>
     axis === "horizontal" ? `${distance}px 0px` : `0px ${distance}px`;
-  /** Shows one Space's Tiles and hides the others'; with `peek`, its neighbours rest beside it. */
+  /**
+   * Shows one Space's Tiles and hides the others', `inert`; with `peek`, its neighbours rest beside
+   * it, `inert` too.
+   */
   const show = (space: number) => {
     const before = space > 0 ? space - 1 : loop ? last() : -1;
     const after = space < last() ? space + 1 : loop ? 0 : -1;
@@ -166,13 +169,10 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
         else log.style(el, "visibility", "hidden");
         if (k === space) log.attribute(el, "data-ts-current", "");
         else log.resetAttribute(el, "data-ts-current");
-        if (side !== 0) {
-          log.style(el, "translate", at(side * reach));
-          log.attribute(el, "inert", "");
-        } else {
-          log.resetStyle(el, "translate");
-          log.resetAttribute(el, "inert");
-        }
+        if (side !== 0) log.style(el, "translate", at(side * reach));
+        else log.resetStyle(el, "translate");
+        if (k === space) log.resetAttribute(el, "inert");
+        else log.attribute(el, "inert", "");
       }
     });
   };
@@ -221,6 +221,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     settle();
     const leaving = tilesIn(current);
     const entering = tilesIn(to);
+    // Only the entering Tiles can be reached while it runs; `show` puts back the cancelled ones.
+    for (const { tile } of leaving) log.attribute(tile, "inert", "");
     for (const { tile } of entering) {
       log.resetStyle(tile, "visibility");
       // A peeking Space comes into the Stage; the Transition moves it from there.
@@ -236,7 +238,6 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
           if (el.parentNode !== stage) continue;
           log.style(el, "visibility", "hidden");
           log.resetStyle(el, "translate");
-          log.resetAttribute(el, "inert");
         }
       });
     }
