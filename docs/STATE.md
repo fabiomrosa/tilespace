@@ -94,4 +94,6 @@ None.
   `aria-roledescription="carousel"` and `aria-label` from the `label` option, each only where the
   user set none. The demo names each example and keeps its live "Space n of N" (DEC-14's recipe).
   Not checked in VoiceOver: the agent can't drive it.
-- **Next:** T3.3.
+- **2026-11-24, the owner:** no v1 without the site, so the site comes before the packages' slices
+  and the publish (T3.7a next).
+- **Next:** T3.7a.

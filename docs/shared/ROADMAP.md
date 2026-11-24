@@ -43,13 +43,13 @@ checks the demo in the browser midway (T2.6) and at the end (T2.11).
 | `tilespace` | T2.1 mount a Stage and place its Tiles, T2.2 reject invalid options, T2.3 move between Spaces by API, T2.4 a responsive Grid, T2.5 repack when Tiles are added or removed, T2.6 the demo page in a real browser, T2.7 the default Transition, T2.8 custom, none and reduced-motion Transitions, T2.9 keyboard and wheel, T2.10 the Drag scrubs the Transition, T2.11 the demo: showcase, gallery and dashboard; split for size: T2.9b the wheel, T2.10a a move is begin then end; from the owner's end check: T2.12 the fill follows the axis, T2.12b Holes at the end of the flow, T2.13 the Space moves then the cards settle, T2.13b the owner's pace, T2.13c the cards settle in reverse going back, T2.14 peek, T2.14b `spaceGap`, T2.14c and T2.14d the demo's peek |
 
 ## M3 · v1 release
-Hidden Spaces `inert`, ARIA on the Stage, publishable packages with their READMEs, the lab
-write-up, the first npm publish, then the project's site on GitHub Pages from the owner's design
-handoff. The owner pushes the release tag (T3.6).
+Hidden Spaces `inert`, ARIA on the Stage, the project's site on GitHub Pages from the owner's design
+handoff, publishable packages with their READMEs, the lab write-up, then the first npm publish:
+no v1 without the site (the owner). The owner pushes the release tag (T3.6).
 
 | Repository | Slices |
 |---|---|
-| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.6 the first publish, T3.7a the site's pipeline to GitHub Pages, T3.7b its tokens, theme, header and footer, T3.8 its hero wall, T3.9a its playground's examples, T3.9b its control bar, T3.10 its first section, T3.11 its quick start and lab, T3.12 its accessibility and motion checks |
+| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.7a the site's pipeline to GitHub Pages, T3.7b its tokens, theme, header and footer, T3.8 its hero wall, T3.9a its playground's examples, T3.9b its control bar, T3.10 its first section, T3.11 its quick start and lab, T3.12 its accessibility and motion checks, T3.6 the first publish |
 
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
@@ -66,7 +66,7 @@ handoff. The owner pushes the release tag (T3.6).
 - **M4 · React adapter.** **M5 · Angular adapter.**
 
 ## Recommended order (one session at a time)
-M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 → T3.6 → T3.7a → T3.7b → T3.8 → T3.9a → T3.9b → T3.10 → T3.11 → T3.12 (the owner tags v1.0.0), then
+M0, M1 and M2 (done), then T3.1 → T3.2 → T3.7a → T3.7b → T3.8 → T3.9a → T3.9b → T3.10 → T3.3 → T3.4a → T3.4b → T3.5 → T3.11 → T3.12 → T3.6 (the owner tags v1.0.0), then
 "close M3" and "plan M4".
 
 ## Open decisions (see DECISIONS.md)

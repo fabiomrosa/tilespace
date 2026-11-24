@@ -673,9 +673,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-06, DEC-14, the WAI-ARIA APG carousel pattern.
 
 ### T3.3 · The packages are publishable
-- **Status:** waiting (T3.2)
+- **Status:** waiting (T3.10)
 - **Goal:** `npm pack` gives two tarballs a fresh project installs and imports, with types.
-- **Depends on:** T3.2 (the order of M3), DEC-13, DEC-15.
+- **Depends on:** T3.10 (the order of M3: the site first), DEC-13, DEC-15.
 - **In scope:** a `LICENSE` in each package folder (npm packs only the package's own) and at the
   root; in both `package.json`: version `1.0.0`, no `private`, `license`, `repository` (with
   `directory`, matching the GitHub repository for provenance), `description`, `keywords`,
@@ -742,9 +742,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** decision 0001, CONVENTIONS §5 "Benchmarks", ROADMAP "The end goal".
 
 ### T3.6 · The first publish
-- **Status:** waiting (T3.5, P2, P3)
+- **Status:** waiting (T3.12, P2, P3)
 - **Goal:** `npm install @tilespace/vanilla` works for anyone.
-- **Depends on:** T3.5, DEC-15, P2, P3.
+- **Depends on:** T3.12 (no v1 without the site, the owner 2026-11-24), DEC-15, P2, P3.
 - **In scope:** `.github/workflows/release.yml`: on a `v*` tag, check that the tag matches both
   packages' version and that the tagged commit is on `main` (an ancestor of `origin/main`), run
   the gate, then `npm publish --provenance --access public` for `core`, then `vanilla`
@@ -762,9 +762,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-15.
 
 ### T3.7a · The site's pipeline to GitHub Pages
-- **Status:** waiting (T3.6, P4)
+- **Status:** next
 - **Goal:** an empty `site/` page builds in the gate and deploys to GitHub Pages from `main`.
-- **Depends on:** T3.6, DEC-16, P4.
+- **Depends on:** T3.2, DEC-16; P4 for the deploy (T3.7b's AC3).
 - **In scope:** `site/` as the private workspace package `tilespace-site` (root `workspaces`
   `["packages/*", "site"]`, so it builds after the packages; root `tsconfig.json` includes it),
   Vite with `base: '/tilespace/'`, importing `@tilespace/vanilla` by name (its `dist`: the site's
@@ -874,9 +874,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` row 2.
 
 ### T3.11 · The site's quick start and lab
-- **Status:** waiting (T3.10)
+- **Status:** waiting (T3.10, T3.5)
 - **Goal:** the code shown is the code run, and the lab's answer is on the page.
-- **Depends on:** T3.10.
+- **Depends on:** T3.10, T3.5 (the lab card's numbers).
 - **In scope:** one snippet source (the real API: `peek: true` with the page's CSS, DEC-16) that
   `demos/quickstart.ts` runs and the page prints; its live result with a counter, moving by keys,
   wheel and drag, and fallback tiles; the lab card in HTML/SVG with `docs/LAB.md`'s numbers (the
