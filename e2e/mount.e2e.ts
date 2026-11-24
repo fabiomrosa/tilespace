@@ -16,17 +16,15 @@ const read = (page: Page) =>
     const tiles = Array.from(stage.children);
     return {
       grid: {
+        // Chrome resolves `repeat(n, 1fr)` to n pixel tracks.
         columns: style.gridTemplateColumns.split(" ").length,
         rows: style.gridTemplateRows.split(" ").length,
       },
       stage: box(stage),
       shapes: tiles.map((t) => t.getAttribute("data-ts-shape") ?? ""),
       boxes: tiles.map(box),
-      current: tiles.flatMap((t, i) =>
-        t.hasAttribute("data-ts-current") && getComputedStyle(t).visibility === "visible"
-          ? [i]
-          : [],
-      ),
+      visible: tiles.flatMap((t, i) => (getComputedStyle(t).visibility === "visible" ? [i] : [])),
+      marked: tiles.flatMap((t, i) => (t.hasAttribute("data-ts-current") ? [i] : [])),
     };
   });
 
@@ -50,9 +48,9 @@ const expectSpace = async (page: Page, space: number) => {
     height: (seen.stage.height - GAP * (grid.rows - 1)) / grid.rows,
   };
 
-  expect(seen.current.toSorted((a, b) => a - b)).toEqual(
-    placements.map((p) => p.tile).toSorted((a, b) => a - b),
-  );
+  const tiles = placements.map((p) => p.tile).toSorted((a, b) => a - b);
+  expect(seen.visible).toEqual(tiles);
+  expect(seen.marked).toEqual(tiles);
   for (const { tile, col, row, span } of placements) {
     const box = seen.boxes[tile];
     expect(box?.x).toBeCloseTo(seen.stage.x + col * (cell.width + GAP), 0);
@@ -89,8 +87,9 @@ test("leaves the Stage as the page wrote it after destroy", async ({ page, reque
 
   await page.getByRole("button", { name: "Destroy" }).click();
 
-  // No `style=""` left on a Tile, and the Stage's own longhands back. Chrome serializes the restored
-  // `row-gap` and `column-gap` as `gap`, so the page's source goes through the same serializer.
+  // No `style=""` left on a Tile, and the page's own longhands back: the Stage's lone `row-gap` (lost
+  // if the engine wrote the `gap` shorthand) and a Tile's `grid-column-start`. Chrome may serialize
+  // inline styles differently from the source, so the source goes through the same serializer.
   const [now, before] = await page.evaluate((source) => {
     const parsed = new DOMParser().parseFromString(source, "text/html");
     for (const el of parsed.querySelectorAll<HTMLElement>("[style]")) {

@@ -49,8 +49,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   only a real browser can check.
 - Chrome expands an inline shorthand: with only `row-gap` set, `getPropertyValue("gap")` is `""`, and
   `removeProperty("gap")` then removes the user's `row-gap`. happy-dom doesn't expand shorthands, so
-  a unit test can't see this; the engine writes longhands only. Chrome also serializes `row-gap` and
-  `column-gap` of one value as `gap`, so compare a restored `style` through the same serializer
+  a unit test can't see this; the engine writes longhands only. Chrome may serialize a restored inline
+  style differently from the page's source, so compare it through the same serializer
   (`e2e/mount.e2e.ts`).
 - A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
   in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.

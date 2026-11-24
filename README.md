@@ -44,7 +44,7 @@ npm run format      # format and apply safe lint fixes
 npm run bench       # the packing benchmark against first-fit
 npm run dev         # the playground at http://localhost:5173: type Shapes, see the Packing
 npm run demo        # the demo at http://localhost:5173: Tiles of mixed Shapes, Prev and Next
-npm run e2e         # the demo's flows in Chromium (once: npx playwright install chromium)
+npm run e2e         # the demo's flows in Chromium (after npm run build; once: npx playwright install chromium)
 ```
 
 The playground packs on every keystroke, in the page's thread: a very large Node budget on a Stage

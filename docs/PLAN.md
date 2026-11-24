@@ -346,7 +346,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Request flow" 2.
 
 ### T2.6 · The demo page in a real browser
-- **Status:** next
+- **Status:** done (2026-11-23)
 - **Goal:** the owner sees the engine on a real page, midway through M2.
 - **Depends on:** T2.5.
 - **In scope:**
