@@ -396,6 +396,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   - `prefers-reduced-motion` gives a short cross-fade.
   - A `transition` that is neither `false` nor a function throws a `tilespace:` error (moved here
     from T2.2, which had no such option yet).
+  - The context holds copies of the Placements and the Grid (a user callback gets copies), and a
+    Transition that throws leaves the move swapped instantly, not both Spaces showing (T2.7 review).
 - **Contract:** the `TransitionContext` type, exported.
 - **Acceptance criteria:**
   1. A custom Transition's Animations are played, then cleaned up.

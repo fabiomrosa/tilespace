@@ -172,10 +172,15 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     const from = current;
     current = space;
     const entering = tilesIn(space);
+    const leaving = tilesIn(from);
     // Both Spaces show while the Transition runs; the leaving one is hidden at its end.
-    for (const { tile } of entering) log.resetStyle(tile, "visibility");
+    for (const { tile } of leaving) log.resetAttribute(tile, "data-ts-current");
+    for (const { tile } of entering) {
+      log.resetStyle(tile, "visibility");
+      log.attribute(tile, "data-ts-current", "");
+    }
     const animations = defaultTransition({
-      leaving: tilesIn(from),
+      leaving,
       entering,
       direction,
       grid,
