@@ -426,7 +426,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Split:** the first version (keyboard and wheel) came to 458 lines; the wheel is T2.9b.
 
 ### T2.9b · The wheel
-- **Status:** waiting (T2.9)
+- **Status:** done (2026-11-24)
 - **Goal:** one wheel gesture moves one Space.
 - **Depends on:** T2.9, DEC-11.
 - **In scope:**

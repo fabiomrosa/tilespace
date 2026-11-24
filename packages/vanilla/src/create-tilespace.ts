@@ -12,6 +12,7 @@ import { createEmitter } from "./emitter.ts";
 import { listenKeys } from "./keyboard.ts";
 import { readShape, type ShapeOption, type Tile } from "./read-shape.ts";
 import { validateOptions } from "./validate-options.ts";
+import { listenWheel } from "./wheel.ts";
 import { createWriteLog } from "./write-log.ts";
 
 /**
@@ -276,6 +277,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     return current !== before;
   };
   const removeKeys = listenKeys(stage, axis, step);
+  const removeWheel = listenWheel(stage, step);
 
   return {
     get current() {
@@ -300,6 +302,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       resizes?.disconnect();
       mutations.disconnect();
       removeKeys();
+      removeWheel();
       events.clear();
       settle();
       log.restore();
