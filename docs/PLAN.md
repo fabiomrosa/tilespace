@@ -833,7 +833,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` row 1.
 
 ### T3.8b · The site's hero wall
-- **Status:** next
+- **Status:** done (2026-11-24)
 - **Goal:** the hero shows a live wall that bleeds past the screen's right edge and moves by
   buttons, keys, wheel and drag.
 - **Depends on:** T3.8a.
@@ -935,6 +935,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` "Done when", "Motion and accessibility".
 
 ## Later
+- With `peek`, `begin()` hides every Space but the two moving, and the next neighbour comes back
+  only at `settle`: after a Next, the bleed past the edge is empty for the whole cascade (1.5 s and
+  more on the site's hero, T3.8b review). Bring the new neighbour in when the slide ends.
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.
   It costs ~32% per Space at 12x8 with 1x1 Tiles (1.7 → 2.3 ms at the default budget).
