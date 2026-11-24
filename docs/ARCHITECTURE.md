@@ -99,11 +99,22 @@ Each package is created by the first slice that needs it.
   handles it (`preventDefault`), and a pinch zoom (`ctrlKey`), are left alone. Chrome lets only a
   scroll sequence's first event be cancelled, so a gesture that starts mid-sequence may also
   scroll the page.
-- In the engine, a move is `begin` (both Spaces showing, the Transition built) then `end` (the
-  Current space, `data-ts-current` and `change`). A Transition runs inside `begin`, so it still
+- `drag.ts`: a primary pointer pressed on the Stage becomes a Drag once it goes 10 px along the
+  axis (a press that goes across it first is the page's). The Drag captures the pointer, grabs the
+  Transition towards the neighbouring Space paused, and scrubs it: the distance over the Stage's
+  size sets every Animation's `currentTime` as a fraction of the longest one's end. On release it
+  commits past half the distance or on a flick (0.5 px/ms over the last 100 ms), otherwise it
+  cancels and plays the Transition back. `current`, `data-ts-current` and `change` switch only on
+  commit. The click after a Drag is stopped at the Stage in the capture phase; one below the
+  threshold reaches the Tile. The Drag clears any text selection it would make. A move, a repack
+  or `destroy()` during a Drag ends its Transition and drops the rest of it. The Stage gets
+  `touch-action: pan-y pinch-zoom` (`pan-x` on a vertical axis), so a touch Drag doesn't scroll the
+  page.
+- In the engine, a move is `begin` (both Spaces showing, the Transition built) then `end`, which
+  commits (the Current space, `data-ts-current` and `change`) or cancels, playing it back. A Transition runs inside `begin`, so it still
   sees the old `current` and `data-ts-current`.
-- `axis` also turns the default slide and its stagger vertical. `destroy()` removes the key and
-  wheel listeners and the gesture's timer.
+- `axis` also turns the default slide and its stagger vertical. `destroy()` removes the key, wheel
+  and pointer listeners and the gesture's timer.
 - A move reads the Stage's size before its own writes; a move made from a `pack` or `change`
   listener, after the engine's writes in the same task, forces a layout. Events go through
   `emitter.ts` (`on` returns the unsubscribe function). After `destroy()` a move does nothing. As

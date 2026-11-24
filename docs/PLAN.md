@@ -455,7 +455,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Split:** from T2.10, whose first version came to 473 lines.
 
 ### T2.10 · The Drag scrubs the Transition
-- **Status:** waiting (T2.8)
+- **Status:** done (2026-11-24)
 - **Goal:** a user drags a Space under the finger and lets go to commit or cancel.
 - **Depends on:** T2.8, T2.9, DEC-10, DEC-11.
 - **In scope:**
