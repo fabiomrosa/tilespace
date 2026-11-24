@@ -45,8 +45,9 @@ reference. Any "no" is fixed before the pull request (or explicitly listed as a 
 ## Public API
 - [ ] Changes to a package's `src/index.ts` are listed in the pull request, additive or breaking.
 - [ ] A user callback (a Score, a Packer, a Transition, an event handler) gets copies, never the
-      library's own objects it could change, in the library's real coordinates, never an internal
-      transform; its return value is checked before the library keeps it.
+      library's own objects it could change.
+- [ ] A user callback sees the library's real coordinates, never an internal transform.
+- [ ] A user callback's return value is checked before the library keeps it.
 
 ## Security and privacy
 - [ ] No secrets in the code, the demo or the logs; no `innerHTML` with user values.
