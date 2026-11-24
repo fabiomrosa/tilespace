@@ -15,7 +15,8 @@ export function listenKeys(stage: HTMLElement, axis: Axis, step: (direction: 1 |
     const direction = KEYS[axis][event.key];
     if (!direction || event.repeat || event.defaultPrevented) return;
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    const target = event.target as HTMLElement;
+    // The innermost target: in a shadow root `target` is only the host.
+    const target = event.composedPath()[0] as HTMLElement;
     if (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
     event.preventDefault();
     step(direction);

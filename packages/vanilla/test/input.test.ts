@@ -63,15 +63,20 @@ describe("the keyboard", () => {
 
   it("ignores a key outside the Stage, repeated, with a modifier, in a field or already handled", () => {
     const { stage, tilespace } = mount();
-    const input = document.createElement("input");
-    stage.firstElementChild?.append(input);
+    const tile = stage.firstElementChild as HTMLElement;
+    const editable = document.createElement("div");
+    editable.contentEditable = "true";
+    const fields = ["input", "textarea", "select"].map((name) => document.createElement(name));
+    tile.append(...fields, editable);
     const outside = document.createElement("button");
     document.body.append(outside);
 
     key(outside, "ArrowRight");
     key(stage, "ArrowRight", { repeat: true });
-    key(stage, "ArrowRight", { altKey: true });
-    const typed = key(input, "ArrowRight");
+    for (const modifier of ["altKey", "ctrlKey", "metaKey", "shiftKey"]) {
+      key(stage, "ArrowRight", { [modifier]: true });
+    }
+    const typed = [...fields, editable].map((field) => key(field, "ArrowRight"));
     const handled = new KeyboardEvent("keydown", {
       key: "ArrowRight",
       bubbles: true,
@@ -81,7 +86,8 @@ describe("the keyboard", () => {
     stage.dispatchEvent(handled);
 
     expect(tilespace.current).toBe(0);
-    expect(typed.defaultPrevented).toBe(false);
+    expect(typed.every((event) => !event.defaultPrevented)).toBe(true);
+    // A field in a shadow root: `e2e/input.e2e.ts` (happy-dom doesn't retarget).
   });
 });
 
@@ -116,6 +122,31 @@ describe("the wheel", () => {
     expect(down.defaultPrevented).toBe(true);
     expect(momentum.defaultPrevented).toBe(true);
     expect(tilespace.current).toBe(1);
+  });
+
+  it("leaves a gesture to what it starts on when that scrolls or handles it", () => {
+    vi.useFakeTimers();
+    const { stage, tilespace } = mount();
+    const list = document.createElement("div");
+    list.style.overflowY = "auto";
+    Object.defineProperty(list, "scrollHeight", { value: 400 });
+    Object.defineProperty(list, "clientHeight", { value: 40 });
+    const map = document.createElement("div");
+    map.addEventListener("wheel", (event) => event.preventDefault());
+    stage.firstElementChild?.append(list, map);
+
+    const scrolled = wheel(list, 40);
+    wheel(list, 40);
+    vi.advanceTimersByTime(300);
+    wheel(map, 40);
+    vi.advanceTimersByTime(300);
+    expect(tilespace.current).toBe(0);
+    // Scrolled to its end, the list can't take the gesture: the Tilespace does.
+    Object.defineProperty(list, "scrollTop", { value: 360 });
+    wheel(list, 40);
+
+    expect(tilespace.current).toBe(1);
+    expect(scrolled.defaultPrevented).toBe(false);
   });
 
   it("ignores a pinch zoom", () => {
