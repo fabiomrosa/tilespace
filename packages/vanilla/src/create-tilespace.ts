@@ -36,11 +36,16 @@ export type TilespaceOptions = PackOptions & {
   /** A Cell's width divided by its height, for a derived Grid; 1 by default. */
   cellAspect?: number;
   gap?: number;
+  /**
+   * The distance between two Spaces, in CSS pixels: where a neighbour rests with `peek`, and how
+   * far beyond the Stage the default slide travels. `gap` by default.
+   */
+  spaceGap?: number;
   shape?: ShapeOption;
   /** The arrow keys and the default slide: `horizontal` (default) or `vertical`. */
   axis?: Axis;
   /**
-   * The Spaces before and after the Current one show beside the Stage, one Stage size plus the gap
+   * The Spaces before and after the Current one show beside the Stage, one Stage size plus the `spaceGap`
    * away, `inert`: the Stage overflows, and a container of the user's clips how much shows.
    */
   peek?: boolean;
@@ -90,6 +95,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     minCellWidth,
     cellAspect = 1,
     gap = 0,
+    spaceGap = gap,
     shape,
     packer,
     loop = false,
@@ -101,7 +107,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const fit: GridFit | undefined =
     minCellWidth === undefined ? undefined : { minCellWidth, cellAspect, gap };
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
-  validateOptions(stage, gap, fit, transition, axis, peek);
+  validateOptions(stage, gap, fit, transition, axis, peek, spaceGap);
   const log = createWriteLog();
   let tiles = Array.from(stage.children) as Tile[];
   const shapesOf = (children: Tile[]) =>
@@ -144,7 +150,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const last = () => packing.spaces.length - 1;
   const size = () => (axis === "horizontal" ? stage.clientWidth : stage.clientHeight);
   /** How far a neighbouring Space rests from the Stage: read before any write of the same task. */
-  let reach = peek ? size() + gap : 0;
+  let reach = peek ? size() + spaceGap : 0;
   const at = (distance: number) =>
     axis === "horizontal" ? `${distance}px 0px` : `0px ${distance}px`;
   /** Shows one Space's Tiles and hides the others'; with `peek`, its neighbours rest beside it. */
@@ -211,7 +217,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const begin = (to: number, direction: 1 | -1): Run => {
     // Read before any write, so the move forces no layout.
     const [width, height] = [stage.clientWidth, stage.clientHeight];
-    if (peek) reach = (axis === "horizontal" ? width : height) + gap;
+    if (peek) reach = (axis === "horizontal" ? width : height) + spaceGap;
     settle();
     const leaving = tilesIn(current);
     const entering = tilesIn(to);
@@ -246,7 +252,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
           grid: { ...grid },
           width,
           height,
-          gap,
+          spaceGap,
           peek,
         };
         const out = transition(context);
@@ -315,8 +321,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     if (current !== before) events.emit("change", { current });
   };
   const resized = () => {
-    // Read before any write: the neighbours rest one Stage size plus the gap away.
-    if (peek) reach = size() + gap;
+    // Read before any write: the neighbours rest one Stage size plus the `spaceGap` away.
+    if (peek) reach = size() + spaceGap;
     const next = gridNow();
     if (next.columns !== grid.columns || next.rows !== grid.rows) repack(next, tiles);
     // The same Grid on a new size: the neighbours move to rest beside it, once nothing moves.

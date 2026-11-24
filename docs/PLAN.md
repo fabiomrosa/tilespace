@@ -586,6 +586,19 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~9: `src/{create-tilespace.ts,default-transition.ts,validate-options.ts}`,
   `test/peek.test.ts`, `e2e/peek.e2e.ts`, the demo, ARCHITECTURE, PLAN, STATE.
 
+### T2.14b · The gap between Spaces
+- **Status:** done (2026-11-24)
+- **Goal:** the Spaces can sit farther apart than the Tiles (the owner, after T2.14).
+- **Depends on:** T2.14, DEC-10 (amended).
+- **In scope:** `spaceGap` (CSS pixels, `gap` by default): where a neighbour rests with `peek`, and
+  how far beyond the Stage the default slide travels; `TransitionContext.gap` becomes `spaceGap`.
+  The demo's Space gap field.
+- **Contract:** the `spaceGap` option.
+- **Acceptance criteria:** 1. With `spaceGap: 50`, a neighbour rests and the slide starts a Stage
+  size plus 50 px away. 2. An invalid `spaceGap` throws before any write.
+- **Files:** ~9: `src/{create-tilespace.ts,default-transition.ts,validate-options.ts}`, two tests,
+  the demo, DECISIONS, PLAN, STATE.
+
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.

@@ -115,4 +115,5 @@ None.
 - **2026-11-24, T2.14 (peek):** the neighbouring Spaces rest beside the Stage, `inert`, in the
   user's clipping container; the default slide travels a Stage size plus the gap. The demo has a
   Peek checkbox. Checked in Chromium.
+- **2026-11-24, T2.14b:** `spaceGap`, the distance between Spaces (`gap` by default).
 - **Next:** the owner's look at the demo, then closing M2.

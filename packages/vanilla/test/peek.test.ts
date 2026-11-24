@@ -142,6 +142,22 @@ describe("peek", () => {
     expect(look(tiles)[2]).toBe("peek 510px 0px");
   });
 
+  it("puts the Spaces a spaceGap apart, beside and in the slide", () => {
+    const { tilespace, tiles } = mount({ spaceGap: 50 }, false);
+    expect(look(tiles)[1]).toBe("peek 450px 0px");
+
+    tilespace.next();
+
+    const effect = tiles[1]?.getAnimations()[0]?.effect as KeyframeEffect | undefined;
+    expect(effect?.getKeyframes()[0]?.translate).toBe("450px 0px");
+  });
+
+  it.each([-1, Number.NaN])("throws for a spaceGap of %s", (spaceGap) => {
+    expect(() => mount({ spaceGap })).toThrow(
+      new Error(`tilespace: spaceGap must be a finite number of pixels ≥ 0, got ${spaceGap}`),
+    );
+  });
+
   it("throws for a peek that is not true or false", () => {
     expect(() => mount({ peek: "yes" as unknown as boolean })).toThrow(
       new Error("tilespace: peek must be true or false, got yes"),

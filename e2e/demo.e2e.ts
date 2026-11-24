@@ -32,8 +32,8 @@ test("switches examples and Transitions from the page", async ({ page }) => {
   await page.keyboard.press("ArrowLeft");
   await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
 
-  await page.getByLabel("Gap").fill("24");
-  await page.getByLabel("Gap").dispatchEvent("change");
+  await page.getByLabel("Gap", { exact: true }).fill("24");
+  await page.getByLabel("Gap", { exact: true }).dispatchEvent("change");
   await expect(page.locator("#gallery")).toHaveCSS("column-gap", "24px");
   await page.getByLabel("Holes").selectOption("order");
 
