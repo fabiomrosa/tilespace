@@ -215,7 +215,25 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     settle();
     const leaving = tilesIn(current);
     const entering = tilesIn(to);
-    for (const { tile } of entering) log.resetStyle(tile, "visibility");
+    for (const { tile } of entering) {
+      log.resetStyle(tile, "visibility");
+      // A peeking Space comes into the Stage; the Transition moves it from there.
+      log.resetStyle(tile, "translate");
+      log.resetAttribute(tile, "inert");
+    }
+    // Only the two Spaces show while it runs: another neighbour would sit under the leaving one.
+    if (peek) {
+      packing.spaces.forEach((placements, k) => {
+        if (k === current || k === to) return;
+        for (const { tile } of placements) {
+          const el = tiles[tile] as Tile;
+          if (el.parentNode !== stage) continue;
+          log.style(el, "visibility", "hidden");
+          log.resetStyle(el, "translate");
+          log.resetAttribute(el, "inert");
+        }
+      });
+    }
     const run: Run = { animations: [], space: current, to };
     running = run;
     try {
@@ -283,7 +301,6 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
    * Tile first on screen, or the nearest one if it left.
    */
   const repack = (next: Grid, children: Tile[]) => {
-    if (peek) reach = size() + gap;
     settle();
     const first = tiles[packing.spaces[current]?.[0]?.tile ?? -1];
     const before = current;
@@ -298,13 +315,12 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     if (current !== before) events.emit("change", { current });
   };
   const resized = () => {
+    // Read before any write: the neighbours rest one Stage size plus the gap away.
+    if (peek) reach = size() + gap;
     const next = gridNow();
     if (next.columns !== grid.columns || next.rows !== grid.rows) repack(next, tiles);
-    else if (peek) {
-      // The same Grid on a new size: the neighbours move to rest beside it.
-      reach = size() + gap;
-      show(running ? running.space : current);
-    }
+    // The same Grid on a new size: the neighbours move to rest beside it, once nothing moves.
+    else if (peek && !running) show(current);
   };
   // With `peek` the neighbours follow the Stage's size, on a fixed Grid too.
   const resizes = fit || peek ? new ResizeObserver(resized) : undefined;

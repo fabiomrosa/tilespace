@@ -89,10 +89,13 @@ Each package is created by the first slice that needs it.
   the Current one (wrapping with `loop`) rest one Stage size plus the gap away along the axis, in
   an inline `translate`, `inert`, visible; a container of the user's clips how much shows. The
   distance is read before the writes of each task that shows a Space (mount, a move's `begin`, a
-  repack, a resize), and a `ResizeObserver` follows the Stage on a fixed Grid too. The default
+  resize), and a `ResizeObserver` follows the Stage on a fixed Grid too. The default
   slide always travels a Stage size plus the gap, so the next Space comes from where it rests; with
-  `peek` it keeps full opacity, since those Tiles were in view. First version: the neighbours are
-  visual only, and the Space beyond the entering one appears at the Transition's end.
+  `peek` it keeps full opacity, since those Tiles were in view. While a Transition runs, the
+  entering Space sits in the Stage (the Transition moves it from there) and any other neighbour
+  hides. First version: the neighbours are visual only; the Space beyond the entering one appears
+  at the Transition's end; with `loop` and two Spaces, the other Space always rests after, so a
+  `prev` brings it in from the other side.
 - Both Spaces show while a Transition runs. At its end (its Animations finish, or one is cancelled)
   the Animations are cancelled and the old Space gets `visibility: hidden`, so nothing stays
   written. A move, a repack or `destroy()` during a Transition first ends it at once.

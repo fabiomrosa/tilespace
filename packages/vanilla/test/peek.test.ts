@@ -119,6 +119,29 @@ describe("peek", () => {
     expect(frames(0).map((f) => f.opacity)).toEqual(["1", "1"]);
   });
 
+  it("brings the entering Space into the Stage and hides the far neighbour while it moves", () => {
+    // A Transition that only fades: the entering Tiles must already sit in the Stage.
+    const fade: TilespaceOptions["transition"] = ({ entering }) =>
+      entering.map(({ tile }) => tile.animate([{ opacity: 0 }, { opacity: 1 }], 300));
+    const { tilespace, tiles } = mount({ loop: true, transition: fade }, false);
+    tilespace.next();
+    for (const tile of tiles) for (const a of tile.getAnimations()) a.finish();
+
+    tilespace.next();
+
+    // Space 1 leaves, Space 2 enters in place; Space 0 (the far neighbour) hides meanwhile.
+    expect(look(tiles).slice(0, 3)).toEqual(["hidden", "current", "current"]);
+  });
+
+  it("measures the Stage again when a move begins", () => {
+    const { tilespace, tiles, resize } = mount();
+
+    resize(500);
+    tilespace.next();
+
+    expect(look(tiles)[2]).toBe("peek 510px 0px");
+  });
+
   it("throws for a peek that is not true or false", () => {
     expect(() => mount({ peek: "yes" as unknown as boolean })).toThrow(
       new Error("tilespace: peek must be true or false, got yes"),
