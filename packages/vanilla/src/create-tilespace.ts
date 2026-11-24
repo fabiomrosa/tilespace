@@ -198,7 +198,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     animations: Animation[];
     space: number;
     to: number;
-    focus?: HTMLElement;
+    focus?: HTMLOrSVGElement;
     error?: unknown;
   };
   let running: Run | undefined;
@@ -209,8 +209,12 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     running = undefined;
     for (const animation of animations) animation.cancel();
     show(space);
-    // Cancelled: `inert` blurred the focus out of the Space that stays.
-    if (focus && space !== to) focus.focus({ preventScroll: true });
+    // Cancelled: `inert` blurred the focus out of the Space that stays. Unless the user has put it
+    // somewhere since, it goes back.
+    const now = stage.ownerDocument.activeElement;
+    if (focus && space !== to && (now === null || now === stage.ownerDocument.body)) {
+      focus.focus({ preventScroll: true });
+    }
   };
   // Copies: a Transition that changes its Placements cannot change the Packing.
   const tilesIn = (space: number) =>
@@ -232,7 +236,9 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     const entering = tilesIn(to);
     // Only the entering Tiles can be reached while it runs; `show` puts back the cancelled ones.
     const active = stage.ownerDocument.activeElement;
-    const focus = leaving.some(({ tile }) => tile.contains(active)) ? active : null;
+    // The element itself, inside any shadow roots: their host can't take the focus back.
+    let focus = leaving.some(({ tile }) => tile.contains(active)) ? active : null;
+    while (focus?.shadowRoot?.activeElement) focus = focus.shadowRoot.activeElement;
     for (const { tile } of leaving) log.attribute(tile, "inert", "");
     for (const { tile } of entering) {
       log.resetStyle(tile, "visibility");
@@ -253,7 +259,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       });
     }
     const run: Run = { animations: [], space: current, to };
-    if (focus instanceof HTMLElement) run.focus = focus;
+    if (focus && "focus" in focus) run.focus = focus as Element & HTMLOrSVGElement;
     running = run;
     try {
       if (transition) {

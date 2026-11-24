@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 test("moves one Space per key and per wheel gesture", async ({ page }) => {
   // Narrow, so there are Spaces to spare: a burst that moved more than once would show.
@@ -103,26 +103,62 @@ test("never tabs into a hidden Space, even to a child that sets itself visible",
 test.describe("on a touch screen", () => {
   test.use({ hasTouch: true });
 
-  test("gives the focus back to a Tile's button when a Drag is cancelled", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: "Start" }).focus();
+  /** A short, slow touch Drag on the Stage: past the threshold, released before half. */
+  const cancelledDrag = async (page: Page, meanwhile = async () => {}) => {
     const box = await page.locator("#stage").boundingBox();
     const [x, y] = [(box?.x ?? 0) + 300, (box?.y ?? 0) + 100];
     const touch = await page.context().newCDPSession(page);
     const at = (dx: number) => [{ x: x + dx, y }];
-
-    // A short, slow Drag: past the threshold, then released before half, so it is cancelled.
     await touch.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: at(0) });
     for (const dx of [-20, -40, -60]) {
       await touch.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: at(dx) });
       await page.waitForTimeout(100);
     }
-    // The move has begun: the button's Tile is inert, and the browser blurred the button.
-    expect(await page.evaluate(() => document.activeElement?.id)).not.toBe("timer");
+    // The move has begun: the focused Tile is inert, and the browser blurred its element.
+    expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
     await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await meanwhile();
     await page.waitForFunction(() => document.getAnimations().length === 0);
-
     await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
-    expect(await page.evaluate(() => document.activeElement?.id)).toBe("timer");
+  };
+  const focused = (page: Page) =>
+    page.evaluate(() => {
+      let active = document.activeElement;
+      while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+      return `${active?.tagName}#${active?.id}`;
+    });
+
+  test("gives the focus back to a Tile's button when a Drag is cancelled", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Start" }).focus();
+
+    await cancelledDrag(page);
+
+    expect(await focused(page)).toBe("BUTTON#timer");
+  });
+
+  test("gives it back to a field inside a shadow root too", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      const host = document.createElement("span");
+      const input = document.createElement("input");
+      input.id = "shadowed";
+      host.attachShadow({ mode: "open" }).append(input);
+      document.getElementById("timer")?.after(host);
+      input.focus();
+    });
+
+    await cancelledDrag(page);
+
+    expect(await focused(page)).toBe("INPUT#shadowed");
+  });
+
+  test("leaves the focus where the user put it while the Drag played back", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Start" }).focus();
+
+    await cancelledDrag(page, () => page.locator("#next").focus());
+
+    expect(await focused(page)).toBe("BUTTON#next");
   });
 });
