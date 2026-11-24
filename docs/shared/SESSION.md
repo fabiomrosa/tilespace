@@ -34,8 +34,7 @@ owner to confirm.
   slices list the operations they consume. "None" when there is no contract.
 - **Acceptance criteria:** numbered, observable; each becomes at least one test.
 - **Files:** the files it expects to add or change, docs included (PLAN, STATE and any it updates),
-  and the lines, from the last similar slice (tests and docs often add 1.5× the source's); over 15
-  files or 350 lines → split it.
+  and the lines, estimated from the last similar slice; over the size limit → split it.
 - **References:** design screens, decisions, docs sections.
 ```
 
