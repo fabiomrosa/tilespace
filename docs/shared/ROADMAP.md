@@ -42,21 +42,32 @@ checks the demo in the browser midway (T2.6) and at the end (T2.11).
 |---|---|
 | `tilespace` | T2.1 mount a Stage and place its Tiles, T2.2 reject invalid options, T2.3 move between Spaces by API, T2.4 a responsive Grid, T2.5 repack when Tiles are added or removed, T2.6 the demo page in a real browser, T2.7 the default Transition, T2.8 custom, none and reduced-motion Transitions, T2.9 keyboard and wheel, T2.10 the Drag scrubs the Transition, T2.11 the demo: showcase, gallery and dashboard; split for size: T2.9b the wheel, T2.10a a move is begin then end; from the owner's end check: T2.12 the fill follows the axis, T2.12b Holes at the end of the flow, T2.13 the Space moves then the cards settle, T2.13b the owner's pace, T2.13c the cards settle in reverse going back, T2.14 peek, T2.14b `spaceGap`, T2.14c and T2.14d the demo's peek |
 
+## M3 · v1 release
+Hidden Spaces `inert`, ARIA on the Stage, publishable packages with their READMEs, the lab
+write-up and the first npm publish. The owner pushes the release tag (T3.6).
+
+| Repository | Slices |
+|---|---|
+| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.6 the first publish |
+
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
   (OWNER_PLAN §0). Needed by T0.1.
-- **P2** · The npm scope `@tilespace` (or the unscoped fallback names, DEC-13). Needed by the first
-  publish (M3).
+- **P2** · The npm organization `@tilespace` (or the unscoped fallback names, DEC-13), on an account
+  with 2FA. Needed by the first publish (T3.6).
+- **P3** · A granular npm access token with publish rights to `@tilespace` and "bypass 2FA" (npm has
+  no classic automation tokens; a granular one lasts at most 90 days), as the repository secret
+  `NPM_TOKEN`. Needed by T3.6; after it, trusted publishing can replace it.
 
 ## Later milestones (split when they start)
-- **M3 · v1 release.** ARIA (a labelled region, the Current space announced, `inert` on the hidden
-  Spaces), the docs, the lab write-up, the first npm publish.
 - **M4 · React adapter.** **M5 · Angular adapter.**
 
 ## Recommended order (one session at a time)
-M0, M1 and M2 (done), then "plan M3" with the owner.
+M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 → T3.6 (the owner tags v1.0.0), then
+"close M3" and "plan M4".
 
 ## Open decisions (see DECISIONS.md)
 | Id | Question | Status | Needed by |
 |---|---|---|---|
-| – | None open | – | – |
+| DEC-14 | ARIA on the Stage, and who announces the Current space | Accepted | T3.2 |
+| DEC-15 | License, versions and how a release publishes | Accepted | T3.3, T3.6 |

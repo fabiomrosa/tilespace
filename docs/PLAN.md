@@ -625,6 +625,143 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   the next Space starts a `spaceGap` past it, and the page does not scroll sideways.
 - **Files:** ~5: the demo, `e2e/peek.e2e.ts`, PLAN, STATE.
 
+## M3 · v1 release
+
+### T3.1 · Hidden Spaces are inert
+- **Status:** next
+- **Goal:** at rest, a keyboard or screen-reader user reaches only the Current space's Tiles, even
+  through a descendant that sets `visibility: visible` inside a hidden Tile (PRODUCT invariant
+  "hidden and inert").
+- **Depends on:** M2 (done), DEC-06.
+- **In scope:**
+  - `inert` on every Tile outside the Current space (the peeking neighbours already have it),
+    removed when its Space becomes current, restored on `destroy()`.
+  - During a move: the entering Tiles lose it in `begin`; the leaving Tiles get it in `begin` and
+    lose it again if the move is cancelled; the `peek` branch of `begin` keeps the other Spaces'
+    Tiles `inert`.
+- **Out of scope:** ARIA attributes (T3.2).
+- **Contract:** none (DEC-06 already lists `inert`).
+- **Acceptance criteria:**
+  1. At rest every Tile outside the Current space is `inert`, and none inside it is, after mount and
+     after each move, with and without `peek`.
+  2. During a move only the entering Tiles are not `inert`; a cancelled Drag leaves the same Tiles
+     `inert` as before it.
+  3. In Chromium, a focusable child with `visibility: visible` inside a Tile of another Space is
+     never reached by Tab (red today: it shows and takes focus).
+  4. `destroy()` restores each Tile's own `inert`, set or not.
+- **Files:** ~6, ~150 lines: `create-tilespace.ts`, `test/inert.test.ts` (new), `e2e/input.e2e.ts`,
+  ARCHITECTURE, PLAN, STATE.
+- **References:** PRODUCT "Engineering-critical invariants", DEC-06.
+
+### T3.2 · The Stage is a labelled carousel region
+- **Status:** waiting (T3.1)
+- **Goal:** a screen reader names the Stage, and the demo shows how to announce the Current space.
+- **Depends on:** T3.1, DEC-14.
+- **In scope:** what DEC-14 decides: the Stage's `role`, `aria-roledescription` and an `aria-label`
+  from a `label` option, each only where the user set none, restored on `destroy()`; the demo's
+  live region, fed by the `change` event, as the recipe. A manual check in VoiceOver.
+- **Out of scope:** ARIA on the Tiles (they are the user's, DEC-06); a live region of the library's.
+- **Contract:** the `label` option (a string, `"Tiles"` by default), validated at mount.
+- **Acceptance criteria:**
+  1. After mount the Stage has DEC-14's attributes with `aria-label` `"Tiles"`, or the `label`
+     given; an attribute the user set is kept.
+  2. In Chromium, `getByRole("region", { name })` finds the Stage.
+  3. A non-string `label` throws at mount.
+  4. `destroy()` restores the Stage's ARIA attributes.
+- **Files:** ~8, ~200 lines: `create-tilespace.ts`, `validate-options.ts`, `test/aria.test.ts`
+  (new), `test/options.test.ts`, `e2e/aria.e2e.ts` (new), the demo, ARCHITECTURE, PLAN, STATE.
+- **References:** DEC-06, DEC-14, the WAI-ARIA APG carousel pattern.
+
+### T3.3 · The packages are publishable
+- **Status:** waiting (T3.2)
+- **Goal:** `npm pack` gives two tarballs a fresh project installs and imports, with types.
+- **Depends on:** T3.2 (the order of M3), DEC-13, DEC-15.
+- **In scope:** a `LICENSE` in each package folder (npm packs only the package's own) and at the
+  root; in both `package.json`: version `1.0.0`, no `private`, `license`, `repository` (with
+  `directory`, matching the GitHub repository for provenance), `description`, `keywords`,
+  `sideEffects: false`, the `core` dependency as `^1.0.0`; a `scripts/check-pack.sh`, run by the
+  gate, that packs both, installs them in a scratch project and imports each export, type-checked.
+- **Out of scope:** the README of each package (T3.4a, T3.4b); publishing (T3.6).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Each tarball holds `dist`, `package.json` and `LICENSE` only (seen red with a test file left
+     in `files`).
+  2. The scratch project type-checks and runs an import of `createTilespace` and `pack`.
+- **Files:** ~9, ~150 lines: three `LICENSE`, both `package.json`, the root `package.json`,
+  `scripts/check-pack.sh`, ARCHITECTURE, PLAN, STATE.
+- **References:** DEC-13, DEC-15.
+
+### T3.4a · The README of `core`
+- **Status:** waiting (T3.3)
+- **Goal:** a developer packs Tiles with `@tilespace/core` from its README alone.
+- **Depends on:** T3.3.
+- **In scope:** `packages/core/README.md`: install, `pack`, every option, a custom Packer and Score,
+  `validatePacking`, the errors; the root README points to it.
+- **Out of scope:** the engine (T3.4b).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Every export of `core`'s `index.ts` and every `PackOptions` field is in the README (a test
+     lists them, seen red with one removed).
+  2. Each snippet runs as a test (`test/readme.test.ts`).
+- **Files:** ~5, ~200 lines: the README, `test/readme.test.ts`, root `README.md`, PLAN, STATE.
+- **References:** `packages/core/src/index.ts`, DEC-07, DEC-08, DEC-09.
+
+### T3.4b · The README of `vanilla`
+- **Status:** waiting (T3.2, T3.4a)
+- **Goal:** a developer mounts a Tilespace from `@tilespace/vanilla`'s README alone.
+- **Depends on:** T3.2, T3.4a.
+- **In scope:** `packages/vanilla/README.md`: install, a first Stage, every option and event,
+  `data-ts-shape`, a custom Transition, `peek` and clipping, ARIA, `label` and the announcing
+  recipe, what the library writes, `destroy()`; the root README points to it.
+- **Out of scope:** a docs site; the lab write-up (T3.5).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Every `TilespaceOptions` field and every event is in the README (a test lists them, seen red
+     with one removed).
+  2. The quick-start snippet, as a page, mounts in Chromium (`e2e/readme.e2e.ts`).
+- **Files:** ~6, ~300 lines: the README, the listing test, `e2e/readme.e2e.ts`, root `README.md`,
+  PLAN, STATE.
+- **References:** `packages/vanilla/src/index.ts`, DEC-06, DEC-10, DEC-11, DEC-14.
+
+### T3.5 · The lab write-up
+- **Status:** waiting (T3.4b)
+- **Goal:** the written answer to the lab's question: does a bounded depth-first search fill the
+  Spaces better than first-fit, fast enough to repack on every resize?
+- **Depends on:** T3.4b (the README links it).
+- **In scope:** `npm run bench` again with today's Score (the `early` term costs ~32%); one timing in
+  Chromium of a repack on resize on the demo; `docs/LAB.md` with the question, the method, the
+  numbers, what the 2017 wall did, and the answer; the root README links it.
+- **Out of scope:** changing the default Node budget (a new decision and slice if the numbers ask
+  for it).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Each claim in `docs/LAB.md` names the table rows it rests on, pasted from the script's output.
+  2. The resize timing is a median of repeated runs, with the machine named.
+- **Files:** ~5, ~250 lines: `docs/LAB.md`, a timing script (`e2e/` or `bench/`), README, PLAN,
+  STATE.
+- **References:** decision 0001, CONVENTIONS §5 "Benchmarks", ROADMAP "The end goal".
+
+### T3.6 · The first publish
+- **Status:** waiting (T3.5, P2, P3)
+- **Goal:** `npm install @tilespace/vanilla` works for anyone.
+- **Depends on:** T3.5, DEC-15, P2, P3.
+- **In scope:** `.github/workflows/release.yml`: on a `v*` tag, check that the tag matches both
+  packages' version and that the tagged commit is on `main` (an ancestor of `origin/main`), run
+  the gate, then `npm publish --provenance --access public` for `core`, then `vanilla`
+  (`permissions: id-token: write`); `CHANGELOG.md` with 1.0.0. The owner pushes the tag `v1.0.0`;
+  the agent then installs both from npm in a scratch project.
+- **Out of scope:** automated versioning; trusted publishing (after the first publish, if the owner
+  wants to drop the token); hosting the demo, which goes on GitHub Pages in the owner's site (the
+  owner, 2026-11-24).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Before publishing, a tag on a commit outside `main` or with a different version fails (seen
+     red on a test tag with the publish step as `--dry-run`).
+  2. After the owner's tag, both packages are on npm at 1.0.0 with provenance, and a scratch
+     project installs and imports them.
+- **Files:** ~5, ~120 lines: `release.yml`, `CHANGELOG.md`, README, PLAN, STATE.
+- **References:** DEC-15.
+
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.

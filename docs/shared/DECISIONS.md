@@ -162,3 +162,28 @@ taken, `tilespace` (core and vanilla), `tilespace-react`, `tilespace-angular`.
 ---
 
 ## Proposed (waiting for the owner)
+
+## DEC-14 · The Stage is a labelled carousel region; the user announces the Current space — Accepted (owner, 2026-11-24)
+The Stage gets `role="region"`, `aria-roledescription="carousel"` and an `aria-label` from a
+`label` option (`"Tiles"` by default), each only where the user set none. The library writes no
+ARIA on the Tiles and no live region: the user announces the Current space from the `change` event
+in a live region of their page, the recipe the demo and the README show.
+- **Why:** this is the outer part of the WAI-ARIA APG carousel pattern. Its per-slide groups need an
+  element per Space, which the Stage doesn't have (DEC-06), and a live region of the library's would
+  be a new child of the Stage, a Tile. APG makes the slides' container `aria-live="polite"`, but on
+  the Stage that would announce every change inside any Tile (a dashboard's counter), every repack
+  on resize, and a whole Space's content at once, while screen readers announce content revealed by
+  `visibility` or `inert` unreliably.
+- **Consequences:** "the Current space announced" (ROADMAP) is the user's live region, fed by
+  `change` (`current`, and the `pack` event's `spaces`); a user who wants APG's behaviour sets
+  `aria-live="polite"` on the Stage.
+
+## DEC-15 · MIT, lockstep versions, published from CI on a tag — Accepted (owner, 2026-11-24)
+Both packages are MIT, share one version (1.0.0 first) and publish from a GitHub Actions workflow
+when the owner pushes a `v*` tag, with npm provenance.
+- **Why:** MIT is the common license for a small UI library and the lab has no business model;
+  one version keeps `vanilla`'s `core` range trivial; provenance ties each tarball to its commit, and
+  only the owner decides a release.
+- **Consequences:** the workflow needs `id-token: write`, and each package's `repository` matches
+  the GitHub repository; an npm token in the repository's secrets for the first publish (P3), which
+  trusted publishing can replace afterwards; a changelog entry per release.
