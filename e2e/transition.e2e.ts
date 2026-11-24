@@ -39,11 +39,22 @@ test("runs the default Transition on next and leaves nothing written", async ({ 
 test("cross-fades in place when the user prefers reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  // Recorded as they start: a 150 ms fade may be over before the page is read.
+  await page.evaluate(() => {
+    const animate = Element.prototype.animate;
+    const seen: ComputedKeyframe[] = [];
+    Object.assign(window, { seen });
+    Element.prototype.animate = function (...args) {
+      const animation = animate.apply(this, args);
+      seen.push(...(animation.effect as KeyframeEffect).getKeyframes());
+      return animation;
+    };
+  });
 
   await page.getByRole("button", { name: "Next" }).click();
 
-  const frames = await page.evaluate(() =>
-    document.getAnimations().flatMap((a) => (a.effect as KeyframeEffect).getKeyframes()),
+  const frames = await page.evaluate(
+    () => (window as unknown as { seen: ComputedKeyframe[] }).seen,
   );
   expect(frames.length).toBeGreaterThan(0);
   expect(frames.every((k) => k.translate === undefined && k.opacity !== undefined)).toBe(true);

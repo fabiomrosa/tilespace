@@ -190,18 +190,23 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     let animations: Animation[] = [];
     try {
       if (transition) {
-        animations = transition({ leaving, entering, direction, grid: { ...grid }, width, height });
+        const out = transition({ leaving, entering, direction, grid: { ...grid }, width, height });
+        if (!Array.isArray(out) || !out.every((a) => typeof a?.cancel === "function")) {
+          throw new Error(`tilespace: transition must return an array of Animations, got ${out}`);
+        }
+        animations = out;
       }
     } finally {
-      // With no Animation (none asked for, or a Transition that threw) the swap is instant.
+      // With no Animation (none asked for, a Transition that threw or returned something else)
+      // the swap is instant.
       const run = { animations, space };
       running = run;
       if (animations.length === 0) settle();
       else {
         Promise.all(animations.map((a) => a.finished)).then(
           () => running === run && settle(),
-          // Cancelled: whoever cancelled it has settled.
-          () => {},
+          // Cancelled: by the engine, which has settled, or by someone else.
+          () => running === run && settle(),
         );
       }
       events.emit("change", { current });

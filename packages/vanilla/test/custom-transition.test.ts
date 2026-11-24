@@ -31,12 +31,13 @@ describe("custom, none and reduced-motion Transitions", () => {
     const cols: number[][] = [];
     const fade = (context: TransitionContext) => {
       seen.push(structuredClone({ ...context, leaving: [], entering: [] }));
-      cols.push(context.entering.map((e) => e.placement.col));
+      cols.push(context.entering.map((e) => e.placement.col + e.placement.span.cols));
       const animations = context.entering.map(({ tile }) =>
         tile.animate([{ opacity: 0 }, { opacity: 1 }], 200),
       );
       // Changing what it got changes nothing the library keeps.
       (context.entering[0]?.placement as { col: number }).col = 9;
+      (context.entering[1]?.placement.span as { cols: number }).cols = 9;
       (context.grid as { columns: number }).columns = 9;
       return animations;
     };
@@ -64,9 +65,9 @@ describe("custom, none and reduced-motion Transitions", () => {
     tilespace.next();
     expect(seen[1]?.grid).toEqual({ columns: 2, rows: 1 });
     expect(cols).toEqual([
-      [0, 1],
-      [0, 1],
-      [0, 1],
+      [1, 2],
+      [1, 2],
+      [1, 2],
     ]);
   });
 
@@ -121,6 +122,46 @@ describe("custom, none and reduced-motion Transitions", () => {
     expect(visible(tiles)).toEqual([2, 3]);
   });
 
+  it.each([
+    [
+      "one Animation",
+      (tile: HTMLElement) => {
+        const animation = tile.animate([{ opacity: 0 }], 200);
+        // Its maker cancels it below; nobody else waits on it.
+        animation.finished.catch(() => {});
+        return animation;
+      },
+    ],
+    ["undefined", () => undefined],
+    ["an array of numbers", () => [1]],
+  ])("swaps at once and throws when a custom Transition returns %s", (_, make) => {
+    const { stage, before, tilespace, tiles } = mount({
+      transition: ({ entering }) =>
+        make(entering[0]?.tile as HTMLElement) as unknown as Animation[],
+    });
+
+    expect(() => tilespace.next()).toThrow(
+      /^tilespace: transition must return an array of Animations, got /,
+    );
+    expect(visible(tiles)).toEqual([2, 3]);
+    // The engine never saw the stray Animation; its maker cancels it.
+    for (const tile of tiles) for (const animation of tile.getAnimations()) animation.cancel();
+    tilespace.destroy();
+    expect(stage.outerHTML).toBe(before);
+  });
+
+  it("ends the Transition when its own Animation is cancelled by someone else", async () => {
+    const { tilespace, tiles } = mount({
+      transition: ({ entering }) => entering.map(({ tile }) => tile.animate([{ opacity: 0 }], 200)),
+    });
+
+    tilespace.next();
+    tiles[2]?.getAnimations()[0]?.cancel();
+    await finish(tiles);
+
+    expect(visible(tiles)).toEqual([2, 3]);
+  });
+
   it("cross-fades in place when the user prefers reduced motion", () => {
     const query: string[] = [];
     vi.stubGlobal("matchMedia", (q: string) => {
@@ -140,5 +181,7 @@ describe("custom, none and reduced-motion Transitions", () => {
     }
     const entering = tiles[2]?.getAnimations()[0]?.effect as KeyframeEffect | undefined;
     expect(entering?.getKeyframes().map((k) => k.opacity)).toEqual(["0", "1"]);
+    const leaving = tiles[0]?.getAnimations()[0]?.effect as KeyframeEffect | undefined;
+    expect(leaving?.getKeyframes().map((k) => k.opacity)).toEqual(["1", "0"]);
   });
 });

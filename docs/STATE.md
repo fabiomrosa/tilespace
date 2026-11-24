@@ -34,9 +34,10 @@ and `goTo(space)` change the Current space (`loop` wraps at the ends), `current`
 `on('change', fn)` hears each move. Each move runs the default Transition: the Tiles slide along
 the row with Web Animations (`translate`, `opacity`), the entering ones staggered by Cell; at its
 end only the new Space shows and nothing stays written. A new move, a repack or `destroy()`
-during a Transition ends it at once. With `prefers-reduced-motion` it is a short cross-fade. The
-`transition` option replaces it with a function of a `TransitionContext` (exported) that returns
-Animations; `false` swaps at once, and so does a function that returns none or throws. With `minCellWidth` (and `cellAspect`, 1 by default) the
+during a Transition ends it at once. With `prefers-reduced-motion` it is a short cross-fade.
+The `transition` option replaces it with a function of a `TransitionContext` (exported) that
+returns Animations; `false` swaps at once, and so does a function that returns none, returns
+something else (then throws a `tilespace:` error) or throws. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
 removing a child repacks the same way, and a removed child gets back what the library wrote. A missing
