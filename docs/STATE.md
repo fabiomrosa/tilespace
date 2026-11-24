@@ -39,9 +39,7 @@ The `transition` option replaces it with a function of a `TransitionContext` (ex
 returns Animations; `false` swaps at once, and so does a function that returns none, returns
 something else (then throws a `tilespace:` error) or throws. With focus inside the Stage, the
 arrow keys of the `axis` (`horizontal` by default, or `vertical`) and Page Up and Down move one
-Space; one wheel gesture (momentum included, ended by 200 ms of quiet) moves one Space, and lets
-the page scroll when it moved nothing, and leaves a gesture to a scroller or handler in a Tile.
-`axis` also turns the default slide vertical. With `minCellWidth` (and `cellAspect`, 1 by default) the
+Space. `axis` also turns the default slide vertical. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
 removing a child repacks the same way, and a removed child gets back what the library wrote. A missing
@@ -60,7 +58,7 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   (`create-tilespace.ts`), `ShapeOption` and `Tile` (`read-shape.ts`, with `readShape`, internal),
   the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal), `deriveGrid` (`derive-grid.ts`, internal), the emitter (`emitter.ts`, internal),
   `defaultTransition` (`default-transition.ts`, internal), `TransitionContext` and `Axis` (exported
-  there), `listenKeys` (`keyboard.ts`, internal), `listenWheel` (`wheel.ts`, internal),
+  there), `listenKeys` (`keyboard.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
 - `demo/` (not a package): `index.html` and `main.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`,
@@ -80,7 +78,7 @@ None.
   function of an exported `TransitionContext` or `false`; reduced motion cross-fades (checked in
   Chromium with Playwright's media emulation). A Transition that throws swaps at once, then throws.
 - **2026-11-24, T2.8:** merged (#29).
-- **2026-11-24, T2.9 (keyboard and wheel):** `keyboard.ts` and `wheel.ts`, and the `axis` option,
-  which also turns the default slide vertical. Checked in Chromium: a key moves once, and a burst of
-  six wheel events moves one Space. The demo's Timer Tile has a button, to give the keys a focus.
-- **Next:** T2.10 (the Drag scrubs the Transition), then T2.11 (the demo, the owner's end check).
+- **2026-11-24, T2.9 (the keyboard):** `keyboard.ts` and the `axis` option, which also turns the
+  default slide vertical. Checked in Chromium: each key moves once, and a field in a shadow root
+  keeps its arrows. The slice was split: the wheel is T2.9b.
+- **Next:** T2.9b (the wheel), then T2.10 (the Drag scrubs the Transition).

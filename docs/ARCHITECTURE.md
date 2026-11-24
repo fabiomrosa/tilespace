@@ -91,13 +91,8 @@ Each package is created by the first slice that needs it.
   modifier, a key typed in a field (in a shadow root too) or one already handled is left alone.
   The engine makes nothing focusable: a focused element in a Tile loses the focus when its Tile
   hides, so a page that wants the keys to keep moving makes the Stage focusable (the demo does).
-- `wheel.ts` moves one Space per wheel gesture, along the larger delta: a gesture ends after 200 ms
-  with no wheel event, so trackpad momentum is one gesture. A gesture that moved stops the page
-  scrolling; one that moved nothing (at an end) lets the page scroll, so with `loop` the wheel
-  over the Stage never scrolls the page. A gesture that starts on something in a Tile that can
-  still scroll along it, or that handles it (`preventDefault`), and a pinch zoom (`ctrlKey`), are
-  left alone. `axis` also turns the default slide and its stagger vertical. `destroy()` removes
-  both listeners and the gesture's timer.
+- `axis` also turns the default slide and its stagger vertical. `destroy()` removes the key
+  listener.
 - A move reads the Stage's size before its own writes; a move made from a `pack` or `change`
   listener, after the engine's writes in the same task, forces a layout. Events go through
   `emitter.ts` (`on` returns the unsubscribe function). After `destroy()` a move does nothing. As

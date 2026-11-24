@@ -55,8 +55,6 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - happy-dom runs Web Animations but never ends one by itself, even with fake timers: tests call
   `finish()` on each of `getAnimations()`. `cancel()` rejects `finished`, an unhandled rejection
   unless the engine catches it.
-- happy-dom's `WheelEvent` extends `UIEvent`, so it has no `ctrlKey` (a pinch zoom in a browser):
-  a test defines it on the event.
 - A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
   in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.
 - Under Vitest, an error thrown in a happy-dom `MutationObserver` callback escapes as an uncaught

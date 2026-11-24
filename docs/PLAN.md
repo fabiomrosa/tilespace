@@ -407,21 +407,39 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `test/custom-transition.test.ts`, PLAN, STATE.
 - **References:** DEC-10.
 
-### T2.9 · Keyboard and wheel
+### T2.9 · The keyboard
 - **Status:** done (2026-11-24)
-- **Goal:** a user moves between Spaces with the arrow keys, Page Up and Down, or one wheel gesture.
+- **Goal:** a user moves between Spaces with the arrow keys or Page Up and Down.
 - **Depends on:** T2.7, DEC-11.
 - **In scope:**
   - The keys, when focus is inside the Stage.
-  - One Space per wheel gesture: trackpad momentum counts as one gesture, ended by a quiet gap.
-  - `axis` picks the arrow keys. A value other than `horizontal` or `vertical` throws a
-    `tilespace:` error (moved here from T2.2, which had no such option yet).
+  - `axis` picks the arrow keys and the default slide's direction. A value other than
+    `horizontal` or `vertical` throws a `tilespace:` error (moved here from T2.2, which had no such
+    option yet).
 - **Contract:** the `axis` option.
 - **Acceptance criteria:**
   1. Each key moves once, only with focus inside the Stage.
-  2. A burst of wheel events moves one Space.
-  3. `destroy()` removes the listeners.
-- **Files:** ~5: `src/{create-tilespace.ts,keyboard.ts,wheel.ts}`, `test/input.test.ts`, PLAN, STATE.
+  2. `destroy()` removes the listener.
+- **Files:** ~10: `src/{create-tilespace.ts,keyboard.ts,default-transition.ts}`, `test/input.test.ts`,
+  `e2e/input.e2e.ts`, the demo, PLAN, STATE, ARCHITECTURE.
+- **References:** DEC-11.
+- **Split:** the first version (keyboard and wheel) came to 458 lines; the wheel is T2.9b.
+
+### T2.9b · The wheel
+- **Status:** waiting (T2.9)
+- **Goal:** one wheel gesture moves one Space.
+- **Depends on:** T2.9, DEC-11.
+- **In scope:**
+  - One Space per wheel gesture, along the larger delta: trackpad momentum counts as one gesture,
+    ended by a quiet gap. A gesture that moved nothing lets the page scroll.
+  - A gesture that starts on something in a Tile that scrolls along it or handles it, and a pinch
+    zoom, are left alone (T2.9 review).
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. A burst of wheel events moves one Space.
+  2. `destroy()` removes the listener and the gesture's timer.
+- **Files:** ~8: `src/{create-tilespace.ts,wheel.ts}`, `test/wheel.test.ts`, `e2e/input.e2e.ts`,
+  ARCHITECTURE, GOTCHAS, PLAN, STATE.
 - **References:** DEC-11.
 
 ### T2.10 · The Drag scrubs the Transition
