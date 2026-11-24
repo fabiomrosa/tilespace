@@ -109,4 +109,6 @@ None.
   450 ms, 80 ms apart.
 - **2026-11-24, T2.12b (Holes at the end of the flow):** a Score term after the Span ranks and
   before the Displacement, with its bound, and the `holes` option (`"end"` or `"order"`).
+- **2026-11-24, T2.13c:** going back, the cards settle in reverse; the demo has Holes and Gap
+  controls.
 - **Next:** the owner's look at the demo, then closing M2.

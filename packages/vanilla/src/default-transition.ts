@@ -38,7 +38,8 @@ const FADE = 150;
 /**
  * Two phases (DEC-10): the Space slides along the axis as one block, the leaving Tiles out and the
  * entering ones in, faint; then each entering Tile settles with a fade and a short slide, in its
- * order within the Space (the fill's flow), at most 80 ms apart and about 600 ms in all. Web
+ * order within the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about
+ * 600 ms in all. Web
  * Animations on `translate` and `opacity`: nothing is written to the Tiles' styles. With
  * `prefers-reduced-motion`, a short cross-fade in place instead.
  */
@@ -68,7 +69,9 @@ export function defaultTransition(context: TransitionContext): Animation[] {
     ),
     ...entering.map(({ tile }, i) => {
       // One Animation per Tile: the slide, a wait for its turn, then its settle.
-      const start = SLIDE + i * step;
+      // Backwards, the Space's order reversed: its last Tile settles first.
+      const turn = direction === 1 ? i : entering.length - 1 - i;
+      const start = SLIDE + turn * step;
       const total = start + SETTLE;
       const landed = { translate: at(direction * SHORT), opacity: GHOST };
       return tile.animate(

@@ -550,7 +550,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   ARCHITECTURE, PLAN, STATE.
 
 ### T2.13c · The cards settle in reverse going back, and the demo's Holes and Gap
-- **Status:** waiting (T2.12b)
+- **Status:** done (2026-11-24)
 - **Goal:** going back, the Space's last card settles first (the owner); the demo lets the owner
   try `holes` and `gap`.
 - **Depends on:** T2.12b (the `holes` option).
