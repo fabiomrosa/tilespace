@@ -6,7 +6,7 @@ import {
   type Shape,
   validatePacking,
 } from "@tilespace/core";
-import { defaultTransition } from "./default-transition.ts";
+import { defaultTransition, type TransitionContext } from "./default-transition.ts";
 import { deriveGrid, type GridFit } from "./derive-grid.ts";
 import { createEmitter } from "./emitter.ts";
 import { readShape, type ShapeOption, type Tile } from "./read-shape.ts";
@@ -32,6 +32,11 @@ export type TilespaceOptions = PackOptions & {
   shape?: ShapeOption;
   /** `next` from the last Space goes to the first, and `prev` from the first to the last. */
   loop?: boolean;
+  /**
+   * Replaces the default Transition (DEC-10): it returns Animations that are not finished, and the
+   * engine cancels them at their end. `false` swaps at once.
+   */
+  transition?: false | ((context: TransitionContext) => Animation[]);
   /** Replaces the default Packer; its Packing is checked with `validatePacking`. */
   packer?: (shapes: readonly Shape[], grid: Grid) => Packing;
 };
@@ -74,12 +79,13 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     shape,
     packer,
     loop = false,
+    transition = defaultTransition,
     ...packOptions
   } = options;
   const fit: GridFit | undefined =
     minCellWidth === undefined ? undefined : { minCellWidth, cellAspect, gap };
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
-  validateOptions(stage, gap, fit);
+  validateOptions(stage, gap, fit, transition);
   const log = createWriteLog();
   let tiles = Array.from(stage.children) as Tile[];
   const shapesOf = (children: Tile[]) =>
@@ -159,15 +165,17 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     for (const animation of animations) animation.cancel();
     show(space);
   };
+  // Copies: a Transition that changes its Placements cannot change the Packing.
   const tilesIn = (space: number) =>
     (packing.spaces[space] ?? []).flatMap((placement) => {
       const tile = tiles[placement.tile] as Tile;
-      return tile.parentNode === stage ? [{ tile, placement }] : [];
+      const copy = { ...placement, span: { ...placement.span } };
+      return tile.parentNode === stage ? [{ tile, placement: copy }] : [];
     });
   const move = (space: number, direction: 1 | -1) => {
     if (destroyed || space === current || space < 0) return;
     // Read before any write, so the move forces no layout.
-    const width = stage.clientWidth;
+    const [width, height] = [stage.clientWidth, stage.clientHeight];
     settle();
     const from = current;
     current = space;
@@ -179,21 +187,25 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       log.resetStyle(tile, "visibility");
       log.attribute(tile, "data-ts-current", "");
     }
-    const animations = defaultTransition({
-      leaving,
-      entering,
-      direction,
-      grid,
-      width,
-    });
-    const run = { animations, space };
-    running = run;
-    Promise.all(animations.map((a) => a.finished)).then(
-      () => running === run && settle(),
-      // Cancelled: whoever cancelled it has settled.
-      () => {},
-    );
-    events.emit("change", { current });
+    let animations: Animation[] = [];
+    try {
+      if (transition) {
+        animations = transition({ leaving, entering, direction, grid: { ...grid }, width, height });
+      }
+    } finally {
+      // With no Animation (none asked for, or a Transition that threw) the swap is instant.
+      const run = { animations, space };
+      running = run;
+      if (animations.length === 0) settle();
+      else {
+        Promise.all(animations.map((a) => a.finished)).then(
+          () => running === run && settle(),
+          // Cancelled: whoever cancelled it has settled.
+          () => {},
+        );
+      }
+      events.emit("change", { current });
+    }
   };
   /**
    * Packs again for a Grid and the Stage's children; the Current space becomes the one holding the

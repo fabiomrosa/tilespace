@@ -386,7 +386,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Request flow" 4, the 2017 stagger (ARCHITECTURE "Lessons").
 
 ### T2.8 · Custom, none and reduced-motion Transitions
-- **Status:** waiting (T2.7)
+- **Status:** done (2026-11-24)
 - **Goal:** a developer replaces the Transition or turns it off, and reduced motion is respected.
 - **Depends on:** T2.7.
 - **In scope:**

@@ -35,3 +35,16 @@ test("runs the default Transition on next and leaves nothing written", async ({ 
   const back = await tiles.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().x));
   expect(back).toEqual(rest);
 });
+
+test("cross-fades in place when the user prefers reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Next" }).click();
+
+  const frames = await page.evaluate(() =>
+    document.getAnimations().flatMap((a) => (a.effect as KeyframeEffect).getKeyframes()),
+  );
+  expect(frames.length).toBeGreaterThan(0);
+  expect(frames.every((k) => k.translate === undefined && k.opacity !== undefined)).toBe(true);
+});

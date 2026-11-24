@@ -75,7 +75,12 @@ Each package is created by the first slice that needs it.
   from the Stage's width away, staggered 40 ms per Cell from the edge they enter from (forward:
   the right). Both Spaces show while it runs; at its end the Animations are cancelled and the old
   Space gets `visibility: hidden`, so nothing stays written. A move, a repack or `destroy()` during
-  a Transition first ends it at once. A move reads the Stage's width before its own writes; a move
+  a Transition first ends it at once. With `prefers-reduced-motion` the default is a 150 ms
+  cross-fade in place. The `transition` option replaces it: a function of a `TransitionContext`
+  (the leaving and entering Tiles with copies of their Placements, the direction, a copy of the
+  Grid, the Stage's client `width` and `height`) that returns Animations, cancelled by the engine at
+  their end; reduced motion is then the function's to handle. `false`, no Animation, or a function
+  that throws swaps at once (the error is thrown after the swap and `change`). A move reads the Stage's width before its own writes; a move
   made from a `pack` or `change` listener, after the engine's writes in the same task, forces a
   layout. Events go through `emitter.ts` (`on` returns the unsubscribe function).
   After `destroy()` a move does nothing. As with DOM events, a listener removed during an emit
