@@ -161,7 +161,9 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const last = () => packing.spaces.length - 1;
   let current = 0;
   let destroyed = false;
-  let running: { animations: Animation[]; space: number } | undefined;
+  /** A Transition between two Spaces; `space` is the one shown when it is settled. */
+  type Run = { animations: Animation[]; space: number; to: number; error?: unknown };
+  let running: Run | undefined;
   /** Ends the running Transition at once: its Animations are cancelled and its Space shown. */
   const settle = () => {
     if (!running) return;
@@ -177,53 +179,55 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       const copy = { ...placement, span: { ...placement.span } };
       return tile.parentNode === stage ? [{ tile, placement: copy }] : [];
     });
-  const move = (space: number, direction: 1 | -1) => {
-    if (destroyed || space === current || space < 0) return;
+  /**
+   * Builds the Transition to a Space, with both Spaces showing; `end` commits it. A Transition that
+   * throws or returns something else is kept as `error`.
+   */
+  const begin = (to: number, direction: 1 | -1): Run => {
     // Read before any write, so the move forces no layout.
     const [width, height] = [stage.clientWidth, stage.clientHeight];
     settle();
-    const from = current;
-    current = space;
-    const entering = tilesIn(space);
-    const leaving = tilesIn(from);
-    // Both Spaces show while the Transition runs; the leaving one is hidden at its end.
-    for (const { tile } of leaving) log.resetAttribute(tile, "data-ts-current");
-    for (const { tile } of entering) {
-      log.resetStyle(tile, "visibility");
-      log.attribute(tile, "data-ts-current", "");
-    }
-    let animations: Animation[] = [];
+    const leaving = tilesIn(current);
+    const entering = tilesIn(to);
+    for (const { tile } of entering) log.resetStyle(tile, "visibility");
+    const run: Run = { animations: [], space: current, to };
+    running = run;
     try {
       if (transition) {
-        const out = transition({
-          leaving,
-          entering,
-          direction,
-          axis,
-          grid: { ...grid },
-          width,
-          height,
-        });
+        const context = { leaving, entering, direction, axis, grid: { ...grid }, width, height };
+        const out = transition(context);
         if (!Array.isArray(out) || !out.every((a) => typeof a?.cancel === "function")) {
           throw new Error(`tilespace: transition must return an array of Animations, got ${out}`);
         }
-        animations = out;
+        run.animations = out;
       }
-    } finally {
-      // With no Animation (none asked for, a Transition that threw or returned something else)
-      // the swap is instant.
-      const run = { animations, space };
-      running = run;
-      if (animations.length === 0) settle();
-      else {
-        Promise.all(animations.map((a) => a.finished)).then(
-          () => running === run && settle(),
-          // Cancelled: by the engine, which has settled, or by someone else.
-          () => running === run && settle(),
-        );
-      }
-      events.emit("change", { current });
+    } catch (error) {
+      run.error = error;
     }
+    return run;
+  };
+  /**
+   * Commits a Run: the Current space becomes its target, and `change` fires. With no Animation it
+   * ends at once. Throws the Transition's error last.
+   */
+  const end = (run: Run) => {
+    for (const { tile } of tilesIn(current)) log.resetAttribute(tile, "data-ts-current");
+    for (const { tile } of tilesIn(run.to)) log.attribute(tile, "data-ts-current", "");
+    current = run.space = run.to;
+    if (run.animations.length === 0) settle();
+    else {
+      Promise.all(run.animations.map((a) => a.finished)).then(
+        () => running === run && settle(),
+        // Cancelled: by the engine, which has settled, or by someone else.
+        () => running === run && settle(),
+      );
+    }
+    events.emit("change", { current });
+    if ("error" in run) throw run.error;
+  };
+  const move = (space: number, direction: 1 | -1) => {
+    if (destroyed || space === current || space < 0) return;
+    end(begin(space, direction));
   };
   /**
    * Packs again for a Grid and the Stage's children; the Current space becomes the one holding the
@@ -258,22 +262,15 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     repack(grid, children);
   });
   mutations.observe(stage, { childList: true });
-  /** One Space towards the direction (wrapping with `loop`); whether the Current space changed. */
+  /** The Space one step towards the direction, wrapping with `loop`; the Current space at an end. */
+  const neighbour = (direction: 1 | -1) => {
+    if (direction === 1) return current < last() ? current + 1 : loop ? 0 : current;
+    return current > 0 ? current - 1 : loop ? last() : current;
+  };
+  /** One Space towards the direction; whether the Current space changed. */
   const step = (direction: 1 | -1) => {
     const before = current;
-    const space =
-      direction === 1
-        ? current < last()
-          ? current + 1
-          : loop
-            ? 0
-            : current
-        : current > 0
-          ? current - 1
-          : loop
-            ? last()
-            : current;
-    move(space, direction);
+    move(neighbour(direction), direction);
     return current !== before;
   };
   const removeKeys = listenKeys(stage, axis, step);

@@ -442,6 +442,18 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   ARCHITECTURE, GOTCHAS, PLAN, STATE.
 - **References:** DEC-11.
 
+### T2.10a · A move is begin, then end
+- **Status:** done (2026-11-24)
+- **Goal:** the engine can build a Transition before deciding it, as the Drag needs.
+- **Depends on:** T2.9b.
+- **In scope:** a refactor of `create-tilespace.ts`: a move is `begin` (both Spaces showing, the
+  Transition built) then `end` (the Current space, `data-ts-current` and `change`); `neighbour`
+  out of `step`. No behaviour changes; the existing tests cover it.
+- **Contract:** none.
+- **Acceptance criteria:** 1. Every test passes unchanged.
+- **Files:** ~3: `src/create-tilespace.ts`, ARCHITECTURE, PLAN.
+- **Split:** from T2.10, whose first version came to 473 lines.
+
 ### T2.10 · The Drag scrubs the Transition
 - **Status:** waiting (T2.8)
 - **Goal:** a user drags a Space under the finger and lets go to commit or cancel.

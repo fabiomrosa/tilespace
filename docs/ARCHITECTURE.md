@@ -99,6 +99,9 @@ Each package is created by the first slice that needs it.
   handles it (`preventDefault`), and a pinch zoom (`ctrlKey`), are left alone. Chrome lets only a
   scroll sequence's first event be cancelled, so a gesture that starts mid-sequence may also
   scroll the page.
+- In the engine, a move is `begin` (both Spaces showing, the Transition built) then `end` (the
+  Current space, `data-ts-current` and `change`). A Transition runs inside `begin`, so it still
+  sees the old `current` and `data-ts-current`.
 - `axis` also turns the default slide and its stagger vertical. `destroy()` removes the key and
   wheel listeners and the gesture's timer.
 - A move reads the Stage's size before its own writes; a move made from a `pack` or `change`
