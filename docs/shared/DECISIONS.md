@@ -78,7 +78,9 @@ Tile is `1x1`. A Span wider or taller than the Grid is clamped to it.
 
 ## DEC-08 · The Packer: depth-first branch and bound, Space by Space — Accepted (owner, 2026-11-23)
 The Packer fills one Space at a time, in order, with the Tiles left. For each Space it searches
-depth-first: take the first empty Cell (row by row), try each candidate Tile with each Span of its
+depth-first: take the first empty Cell along the flow (column by column on a horizontal axis, as
+on the Xbox dashboard, so the Tiles gather at the left and Holes fall at the end; row by row on a
+vertical axis; DEC-11, amended by the owner 2026-11-24), try each candidate Tile with each Span of its
 Shape that fits there, then a Hole; recurse; keep the best complete filling by the Score, compared
 in order: Holes, then the sum of Span preference ranks, then the Displacement. A branch is cut when
 its Holes so far plus the Cells the remaining Tiles cannot cover already reach the best; a Space
@@ -108,9 +110,11 @@ better, preferring, among equal Holes and Span ranks, the filling that moves Til
 
 ## DEC-10 · Transitions are Web Animations on the Tiles, scrubbed by the Drag — Accepted (owner, 2026-11-23)
 Changing Space runs a Transition: a function `(context) → Animation[]` given the leaving and
-entering Tiles with their Placements, the direction and the Stage's size. The default slides the
-leaving Space out and the entering one in along the axis, the entering Tiles staggered by Cell
-distance from the edge they come from (CSS `translate` and `opacity`). `transition: false` swaps
+entering Tiles with their Placements, the direction and the Stage's size. The default moves in two
+phases (amended by the owner 2026-11-24): the Space slides along the axis as one block, the leaving
+Tiles out and the entering ones in; then each entering Tile settles with a fade and a short slide,
+in its order within the Space along the fill's flow, at most 40 ms apart and about 300 ms in all
+(CSS `translate` and `opacity`). `transition: false` swaps
 instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
 and their `currentTime` follows the pointer; on release they play forward (commit) or in reverse
 (cancel). No animation library.

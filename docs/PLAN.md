@@ -489,6 +489,42 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~6: `demo/{index.html,main.ts,examples.ts}`, `e2e/demo.e2e.ts`, README, PLAN, STATE.
 - **References:** PRODUCT "Headless, children keep their behaviour", ROADMAP M2.
 
+### T2.12 · The fill direction follows the axis
+- **Status:** waiting (owner's ok on this plan)
+- **Goal:** the Tiles gather at the edge the flow starts from, masonry included: column by column
+  on a horizontal axis, as on the Xbox dashboard; row by row on a vertical one (the owner's M2 end
+  check).
+- **Depends on:** T2.11, DEC-08 (amended).
+- **In scope:** the engine packs a horizontal axis transposed (columns and rows, and every Span,
+  swapped) and transposes the Placements back; a vertical axis packs as `core` does today. `core`
+  is unchanged. A custom `packer` gets the real Shapes and Grid.
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. On a horizontal axis, 1x1 Tiles on a 2x2 Grid fill (0,0), (0,1), (1,0), (1,1) by column; on
+     a vertical axis, by row.
+  2. A `2x1` Tile keeps its Span on either axis.
+  3. In the demo, the last Space's Holes are checked: at the end of the flow, or a follow-up slice
+     adds a Score tie-break that puts them there.
+- **Files:** ~6: `src/create-tilespace.ts`, `test/fill.test.ts`, ARCHITECTURE, PLAN, STATE, e2e.
+
+### T2.13 · The Space moves, then the cards settle
+- **Status:** waiting (T2.12)
+- **Goal:** the default Transition reads as a page turn: the Space moves as one block, then its
+  cards arrive (the owner's M2 end check).
+- **Depends on:** T2.12, DEC-10 (amended).
+- **In scope:** the default Transition in two phases: both Spaces slide by the Stage's size as one
+  block (~300 ms, no stagger), then each entering Tile fades in with an 8 px slide (~200 ms), in
+  its order within the Space along the fill's flow, at most 40 ms apart and ~300 ms for the whole
+  cascade. The Drag scrubs the whole timeline as before.
+  Reduced motion keeps the cross-fade.
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. The leaving and entering Tiles slide the same distance in the same time, with no stagger.
+  2. The entering Tiles settle after the slide, in their order within the Space.
+  3. In the browser, the Transition runs and ends with nothing written.
+- **Files:** ~6: `src/default-transition.ts`, `test/transition.test.ts`, `test/input.test.ts`,
+  ARCHITECTURE, PLAN, STATE.
+
 ## Later
 - The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`;
   leave a press to a Tile's handler or slider, and a touch to a Tile's scroller (as the wheel does).
