@@ -29,13 +29,14 @@
       <button id="next" type="button">Next</button>
       <button id="toggle" type="button">Destroy</button>
     </nav>
-    <div id="stage" style="row-gap: 12px;">
+    <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus when the Tile holding it hides, so the keys keep moving -->
+    <div id="stage" tabindex="0" style="row-gap: 12px;">
       <div data-ts-shape="3x2 2x2">Weather</div>
       <div data-ts-shape="1x1" style="grid-column-start: 1;">Clock</div>
       <div data-ts-shape="2x1">Battery</div>
       <div data-ts-shape="2x3 2x2">Calendar</div>
       <div data-ts-shape="1x2">Volume</div>
-      <div data-ts-shape="1x1">Timer</div>
+      <div data-ts-shape="1x1">Timer <button id="timer" type="button">Start</button></div>
       <div data-ts-shape="4x2 3x2 2x2">Photos</div>
       <div data-ts-shape="2x2">Notes</div>
       <div data-ts-shape="1x1">Wi-Fi</div>

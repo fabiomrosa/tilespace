@@ -50,6 +50,7 @@ describe("custom, none and reduced-motion Transitions", () => {
         leaving: [],
         entering: [],
         direction: 1,
+        axis: "horizontal",
         grid: { columns: 2, rows: 1 },
         width: 400,
         height: 300,

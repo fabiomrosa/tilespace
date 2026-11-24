@@ -1,6 +1,7 @@
 /**
  * The demo (T2.6): Tiles of mixed Shapes on a Stage whose Grid follows its size, with Prev and
- * Next, and Destroy to see the Stage put back as the page wrote it. Built with DOM APIs only.
+ * Next (or the arrow keys from the Timer's button or the Stage), and Destroy to see the Stage put
+ * back as the page wrote it. Built with DOM APIs only.
  */
 import { createTilespace, type Tilespace } from "../packages/vanilla/src/index.ts";
 
@@ -26,6 +27,11 @@ const mount = () => {
   show();
 };
 
+// A Tile keeps its own behaviour, and focus inside the Stage lets the arrow keys move.
+const timer = byId("timer");
+timer.addEventListener("click", () => {
+  timer.textContent = timer.textContent === "Start" ? "Stop" : "Start";
+});
 byId("prev").addEventListener("click", () => tilespace?.prev());
 byId("next").addEventListener("click", () => tilespace?.next());
 toggle.addEventListener("click", () => {

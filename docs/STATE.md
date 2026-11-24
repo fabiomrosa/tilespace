@@ -23,7 +23,7 @@ derived Grid, with Prev, Next and Destroy. `npm run e2e` (in the gate) drives it
 Playwright: the rendered boxes match the Packing through `next` and a resize, and `destroy()`
 leaves the Stage as the page wrote it.
 `createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
-score, packer, loop, transition })`
+score, packer, loop, transition, axis })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
 Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
@@ -37,7 +37,9 @@ end only the new Space shows and nothing stays written. A new move, a repack or 
 during a Transition ends it at once. With `prefers-reduced-motion` it is a short cross-fade.
 The `transition` option replaces it with a function of a `TransitionContext` (exported) that
 returns Animations; `false` swaps at once, and so does a function that returns none, returns
-something else (then throws a `tilespace:` error) or throws. With `minCellWidth` (and `cellAspect`, 1 by default) the
+something else (then throws a `tilespace:` error) or throws. With focus inside the Stage, the
+arrow keys of the `axis` (`horizontal` by default, or `vertical`) and Page Up and Down move one
+Space. `axis` also turns the default slide vertical. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
 removing a child repacks the same way, and a removed child gets back what the library wrote. A missing
@@ -55,11 +57,12 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
 - `packages/vanilla` (`@tilespace/vanilla`): `createTilespace`, `Tilespace`, `TilespaceOptions`
   (`create-tilespace.ts`), `ShapeOption` and `Tile` (`read-shape.ts`, with `readShape`, internal),
   the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal), `deriveGrid` (`derive-grid.ts`, internal), the emitter (`emitter.ts`, internal),
-  `defaultTransition` (`default-transition.ts`, internal) and `TransitionContext` (exported there),
+  `defaultTransition` (`default-transition.ts`, internal), `TransitionContext` and `Axis` (exported
+  there), `listenKeys` (`keyboard.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
 - `demo/` (not a package): `index.html` and `main.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`,
-  `e2e/transition.e2e.ts` and `playwright.config.ts` drive it.
+  `e2e/transition.e2e.ts`, `e2e/input.e2e.ts` and `playwright.config.ts` drive it.
 
 ## Contract
 None yet.
@@ -74,4 +77,8 @@ None.
 - **2026-11-24, T2.8 (custom, none and reduced-motion Transitions):** the `transition` option, a
   function of an exported `TransitionContext` or `false`; reduced motion cross-fades (checked in
   Chromium with Playwright's media emulation). A Transition that throws swaps at once, then throws.
-- **Next:** T2.9 (keyboard and wheel), then T2.10 (the Drag).
+- **2026-11-24, T2.8:** merged (#29).
+- **2026-11-24, T2.9 (the keyboard):** `keyboard.ts` and the `axis` option, which also turns the
+  default slide vertical. Checked in Chromium: each key moves once, and a field in a shadow root
+  keeps its arrows. The slice was split: the wheel is T2.9b.
+- **Next:** T2.9b (the wheel), then T2.10 (the Drag scrubs the Transition).
