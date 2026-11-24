@@ -10,7 +10,8 @@ criterion**, never a whole feature.
 **Size limit:** a slice's pull request changes **at most 15 files and 400 lines** (added + removed).
 Lockfiles, generated files and the `size_excluded` globs of `.agents/protected.json` don't count. CI
 enforces it (`scripts/check-pr-size.py`). A slice that won't fit is split in `docs/PLAN.md` with the
-owner before coding. The owner may waive the limit for one pull request with the `oversized-ok`
+owner before coding. Review fixes add 50 to 100 lines, so a pull request near 350 lines before its
+review is split first. The owner may waive the limit for one pull request with the `oversized-ok`
 label; an agent never adds it.
 
 **Status** (as written on `main`): `waiting (<ids>)` → `next` → `done (YYYY-MM-DD)`.
@@ -32,8 +33,9 @@ owner to confirm.
 - **Contract:** operations (method path → status, body, specific error codes) and schemas; client
   slices list the operations they consume. "None" when there is no contract.
 - **Acceptance criteria:** numbered, observable; each becomes at least one test.
-- **Files:** the files it expects to add or change, docs included (PLAN, STATE and any it updates);
-  an estimate; over 15 → split it.
+- **Files:** the files it expects to add or change, docs included (PLAN, STATE and any it updates),
+  and the lines, from the last similar slice (tests and docs often add 1.5× the source's); over 15
+  files or 350 lines → split it.
 - **References:** design screens, decisions, docs sections.
 ```
 
