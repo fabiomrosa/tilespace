@@ -764,7 +764,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 ### T3.7a · The site's pipeline to GitHub Pages
 - **Status:** done (2026-11-24)
 - **Goal:** an empty `site/` page builds in the gate and deploys to GitHub Pages from `main`.
-- **Depends on:** T3.2, DEC-16; P4 for the deploy (T3.7b's AC3).
+- **Depends on:** T3.2, DEC-16; P4 for the deploy (T3.7c's AC3).
 - **In scope:** `site/` as the private workspace package `tilespace-site` (root `workspaces`
   `["packages/*", "site"]`, so it builds after the packages; root `tsconfig.json` includes it),
   Vite with `base: '/tilespace/'`, importing `@tilespace/vanilla` by name (its `dist`: the site's
@@ -784,30 +784,45 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `e2e/site.e2e.ts` (new), ARCHITECTURE, PLAN, STATE.
 - **References:** `docs/site/HANDOFF.md` "Stack", DEC-16.
 
-### T3.7b · The site's tokens, theme, header and footer
+### T3.7b · The site's tokens, theme and header
 - **Status:** done (2026-11-24)
-- **Goal:** the page has the handoff's look in light and dark, with its header and footer.
+- **Goal:** the page has the handoff's look in light and dark, with its header.
 - **Depends on:** T3.7a.
 - **In scope:** `tokens.css`, `base.css` (reset, type, the focus ring), `layout.css` (container,
   12 columns, sections, the three breakpoints); the fonts from Google Fonts with `display=swap`;
-  the theme (system default, a toggle saved in `localStorage` in try/catch); the header (links,
-  the phone menu sheet) and the footer, with the real GitHub URL.
-- **Out of scope:** the sections between them (T3.8 on).
+  the theme (system default, a toggle saved in `localStorage` in try/catch); the header's links,
+  with the real GitHub URL. Split from the footer and the phone menu (T3.7c) at 533 lines.
+- **Out of scope:** the phone menu and the footer (T3.7c); the sections (T3.8 on).
 - **Contract:** none.
 - **Acceptance criteria:**
   1. In Chromium the toggle switches the theme and the choice survives a reload; with no choice,
      `prefers-color-scheme: dark` gives the dark tokens.
-  2. At 390 px the menu button opens the sheet (`aria-expanded`) with the same links.
-  3. T3.7a's page is live at the Pages URL (the PR links it).
+  2. The header's GitHub link is the real repository.
 - **Files:** ~9, ~350 lines: `index.html`, `src/{main.ts,theme.ts}`, three style files,
   `e2e/site.e2e.ts`, PLAN, STATE.
-- **References:** `docs/site/HANDOFF.md` "Design tokens", rows 0 and 6.
+- **References:** `docs/site/HANDOFF.md` "Design tokens", row 0.
+
+### T3.7c · The site's phone menu and footer
+- **Status:** next
+- **Goal:** the header works on a phone, and the page ends with the handoff's footer.
+- **Depends on:** T3.7b.
+- **In scope:** the phone's menu button opening the header's links as a sheet (`aria-expanded`,
+  Escape closes it), and the footer (about, packages, links: GitHub, npm, the license).
+- **Out of scope:** the sections (T3.8 on).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. At 390 px the menu button opens the sheet with the same links, and Escape closes it.
+  2. The footer links the real repository and its license.
+  3. After the owner's P4, the page is live at the Pages URL (the PR links it).
+- **Files:** ~7, ~250 lines: `index.html`, `src/{main.ts,menu.ts}`, `layout.css`,
+  `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` rows 0 and 6.
 
 ### T3.8 · The site's hero wall
-- **Status:** waiting (T3.7b)
+- **Status:** waiting (T3.7c)
 - **Goal:** the hero shows a live wall that bleeds past the screen's right edge and moves by
   buttons, keys, wheel and drag.
-- **Depends on:** T3.7b.
+- **Depends on:** T3.7c.
 - **In scope:** the hero's text, the install pill with Copy, the GitHub and npm buttons; the wall on
   `@tilespace/vanilla` with `peek` and the handoff's bleed, its Grid per breakpoint (10x4 at
   436 px, 8x4 on a tablet, 4x4 at 312 px on a phone; mounted again when a `matchMedia` breakpoint

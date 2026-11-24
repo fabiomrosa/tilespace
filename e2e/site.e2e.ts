@@ -43,31 +43,10 @@ test("follows the system's theme until the toggle picks one, which survives a re
   expect(await background(page)).toBe(DARK);
 });
 
-test("opens the same links in a menu sheet on a phone", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test("links the real repository from the header", async ({ page }) => {
   await page.goto("./");
-  const menu = page.getByRole("button", { name: "Menu" });
-  const links = page.getByRole("navigation", { name: "Main" }).getByRole("link");
-  await expect(links.first()).toBeHidden();
-
-  await menu.click();
-  await expect(menu).toHaveAttribute("aria-expanded", "true");
-  await expect(links).toHaveText(["Playground", "Quick start", "The lab", "GitHub"]);
-  await expect(links.first()).toBeVisible();
-
-  await page.keyboard.press("Escape");
-  await expect(menu).toHaveAttribute("aria-expanded", "false");
-  await expect(links.first()).toBeHidden();
-});
-
-test("links the real repository from the header and the footer", async ({ page }) => {
-  await page.goto("./");
-  const repo = "https://github.com/fabiomrosa/tilespace";
 
   await expect(
     page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "GitHub" }),
-  ).toHaveAttribute("href", repo);
-  await expect(
-    page.getByRole("contentinfo").getByRole("link", { name: "MIT License" }),
-  ).toHaveAttribute("href", `${repo}/blob/main/LICENSE`);
+  ).toHaveAttribute("href", "https://github.com/fabiomrosa/tilespace");
 });
