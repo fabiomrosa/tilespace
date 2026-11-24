@@ -39,9 +39,8 @@ const FADE = 150;
  * Two phases (DEC-10): the Space slides along the axis as one block, the leaving Tiles out and the
  * entering ones in, faint; then each entering Tile settles with a fade and a short slide, in its
  * order within the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about
- * 600 ms in all. Web
- * Animations on `translate` and `opacity`: nothing is written to the Tiles' styles. With
- * `prefers-reduced-motion`, a short cross-fade in place instead.
+ * 600 ms in all. Web Animations on `translate` and `opacity`: nothing is written to the Tiles'
+ * styles. With `prefers-reduced-motion`, a short cross-fade in place instead.
  */
 export function defaultTransition(context: TransitionContext): Animation[] {
   const { leaving, entering, direction, width, height, axis } = context;

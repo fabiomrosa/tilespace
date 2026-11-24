@@ -83,8 +83,8 @@ Each package is created by the first slice that needs it.
   on `translate` and `opacity`, in two phases: the Space slides 500 ms along the axis as one block
   (the leaving Tiles out, the entering ones in from the Stage's size away, faint, landing 40 px
   short); then each entering Tile settles in 450 ms (the 40 px and the fade), in its order within
-  the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about 600 ms in all. One Animation per
-  Tile. With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
+  the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about 600 ms in all.
+  One Animation per Tile. With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
 - Both Spaces show while a Transition runs. At its end (its Animations finish, or one is cancelled)
   the Animations are cancelled and the old Space gets `visibility: hidden`, so nothing stays
   written. A move, a repack or `destroy()` during a Transition first ends it at once.

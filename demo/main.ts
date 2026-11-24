@@ -46,7 +46,7 @@ const mount = () => {
     // About 7 columns at most, so a large screen still has several Spaces to move between.
     minCellWidth: Math.max(160, stage.clientWidth / 7),
     cellAspect: 4 / 3,
-    gap: Math.max(0, Number(gap.value) || 0),
+    gap: Math.min(48, Math.max(0, Number(gap.value) || 0)),
     holes: holes.value as "end" | "order",
     axis: axis.value as "horizontal" | "vertical",
     loop: loop.checked,
