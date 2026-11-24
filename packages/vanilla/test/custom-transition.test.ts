@@ -54,6 +54,8 @@ describe("custom, none and reduced-motion Transitions", () => {
         grid: { columns: 2, rows: 1 },
         width: 400,
         height: 300,
+        gap: 0,
+        peek: false,
       },
     ]);
     expect(tiles[2]?.getAnimations()).toHaveLength(1);

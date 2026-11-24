@@ -10,6 +10,7 @@ export function validateOptions(
   fit: GridFit | undefined,
   transition: unknown,
   axis: unknown,
+  peek: unknown,
 ): void {
   // `nodeType`, not `instanceof Element`, so a Stage from another window (an iframe) passes.
   if ((stage as Node | null)?.nodeType !== 1) {
@@ -23,6 +24,9 @@ export function validateOptions(
   }
   if (axis !== "horizontal" && axis !== "vertical") {
     throw new Error(`tilespace: axis must be "horizontal" or "vertical", got ${axis}`);
+  }
+  if (typeof peek !== "boolean") {
+    throw new Error(`tilespace: peek must be true or false, got ${peek}`);
   }
   if (!fit) return;
   if (!Number.isFinite(fit.minCellWidth) || fit.minCellWidth <= 0) {
