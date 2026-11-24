@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "site"
   ],
   "engines": {
     "node": ">=26"
@@ -20,7 +21,8 @@
     "build": "npm run build --workspaces",
     "bench": "node bench/pack.bench.ts",
     "e2e": "playwright test",
-    "demo": "vite demo"
+    "demo": "vite demo",
+    "site": "vite site"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",

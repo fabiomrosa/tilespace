@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>tilespace</title>
+    <style>
+      /* T3.7a: the pipeline only; the handoff's look comes in T3.7b (docs/site/HANDOFF.md). */
+      #wall { height: 320px; }
+    </style>
+  </head>
+  <body>
+    <h1>tilespace</h1>
+    <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus, so the arrow keys keep moving -->
+    <div id="wall" tabindex="0">
+      <div data-ts-shape="2x2">1</div>
+      <div>2</div>
+      <div>3</div>
+      <div data-ts-shape="2x1">4</div>
+      <div>5</div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

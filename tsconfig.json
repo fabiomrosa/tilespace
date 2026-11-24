@@ -17,6 +17,8 @@
     "bench",
     "playground",
     "demo",
+    "site/src",
+    "site/vite.config.ts",
     "e2e",
     "playwright.config.ts"
   ]

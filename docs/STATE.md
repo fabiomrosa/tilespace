@@ -96,4 +96,7 @@ None.
   Not checked in VoiceOver: the agent can't drive it.
 - **2026-11-24, the owner:** no v1 without the site, so the site comes before the packages' slices
   and the publish (T3.7a next).
-- **Next:** T3.7a.
+- **2026-11-24, T3.7a (the site's pipeline):** `site/` (`tilespace-site`) builds after the packages
+  and mounts a Tilespace from the vanilla build; `pages.yml` deploys it on each push to `main`
+  once the owner turns Pages on (P4). Playwright runs a `site` project against `vite preview`.
+- **Next:** T3.7b.
