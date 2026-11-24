@@ -24,7 +24,10 @@
     <header class="container site-header">
       <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><span></span><span></span><span></span></span>tilespace</a>
       <div class="header-actions">
-        <nav class="main-nav" aria-label="Main">
+        <button id="menu-button" class="icon-button menu-button" type="button" aria-label="Menu" aria-expanded="false" aria-controls="main-nav">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+        <nav id="main-nav" class="main-nav" aria-label="Main">
           <ul>
             <li><a href="#playground">Playground</a></li>
             <li><a href="#quick-start">Quick start</a></li>
@@ -50,6 +53,28 @@
       </div>
     </main>
 
+    <footer class="site-footer">
+      <div class="container grid-12">
+        <div class="footer-col">
+          <span class="footer-name">tilespace</span>
+          <span class="muted">Headless tile packing for the web. MIT licensed, no dependencies.</span>
+        </div>
+        <div class="footer-col">
+          <span class="footer-title">Packages</span>
+          <code>@tilespace/core <span class="muted">— packing, no DOM</span></code>
+          <code>@tilespace/vanilla <span class="muted">— DOM engine</span></code>
+          <span class="muted">React and Angular coming</span>
+        </div>
+        <div class="footer-col footer-links">
+          <span class="footer-title">Links</span>
+          <ul>
+            <li><a href="https://github.com/fabiomrosa/tilespace">GitHub</a></li>
+            <li><a href="https://www.npmjs.com/package/@tilespace/vanilla">npm</a></li>
+            <li><a href="https://github.com/fabiomrosa/tilespace/blob/main/LICENSE">MIT License</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
