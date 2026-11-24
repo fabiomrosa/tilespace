@@ -64,8 +64,7 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - An `<img>` in a Tile starts the browser's native drag on a mouse press, which cancels the Drag
   (`pointercancel`): the demo's gallery sets `draggable = false` on its images.
 - A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
-  in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height. A slice that adds
-  an observer writing into what it observes plans a guard for this loop.
+  in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.
 - Under Vitest, an error thrown in a happy-dom `MutationObserver` callback escapes as an uncaught
   exception and fails the run (no `error` event on `window`). To test a throwing callback, stub the
   observer and call its callback yourself.

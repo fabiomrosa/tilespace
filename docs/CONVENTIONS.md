@@ -49,11 +49,12 @@ packages/<name>/
 A behaviour that depends on layout, focus, the shadow DOM or how an Animation ends gets one
 Playwright check too: happy-dom doesn't model them (GOTCHAS "DOM").
 
-**Fixtures** that catch the bugs M2's reviews found:
+**Test cases:**
 - a validation table has a row on each boundary of each rule (each anchor, each bound);
 - a helper that combines conditions also has each condition asserted on its own;
 - an observer or listener callback has a test where it throws, asserting the state left behind;
-- a check that something shows asserts how much shows (`<= edge - 4`), never only `< edge`.
+- a check that something shows asserts a minimum visible size (e.g. `<= edge - 4`), not only
+  `< edge`.
 
 **Property tests** assert that they reached their interesting outcomes (a minimum count of each),
 so a weak generator fails instead of passing blind. A property that guards a fixed bug names it in
