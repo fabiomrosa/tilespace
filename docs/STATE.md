@@ -18,8 +18,9 @@ with no Hole; a filling that places no Tile never counts, so every Tile is still
 `validatePacking(packing, shapes, grid)` throws `pack`'s error for an invalid Grid or Shape, then a
 `tilespace:` error naming the first broken invariant (for the engine to check a custom Packer, M2). `npm run dev` serves the playground
 (`playground/`, Vite): type a Grid and Shapes and see every Space drawn with its Holes and Score.
-`npm run demo` serves the demo (`demo/`, Vite): the engine over 14 Tiles of mixed Shapes on a
-derived Grid, with Prev, Next and Destroy. `npm run e2e` (in the gate) drives it in Chromium with
+`npm run demo` serves the demo (`demo/`, Vite): a showcase of mixed Shapes, a gallery and a
+dashboard whose widgets keep their state, with Prev, Next, Destroy, and the Transition (slide, a
+custom fade, none), the axis and `loop` to choose. `npm run e2e` (in the gate) drives it in Chromium with
 Playwright: the rendered boxes match the Packing through `next` and a resize, and `destroy()`
 leaves the Stage as the page wrote it.
 `createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
@@ -65,8 +66,9 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   `listenDrag` and `Grip` (`drag.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
-- `demo/` (not a package): `index.html` and `main.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`,
-  `e2e/transition.e2e.ts`, `e2e/input.e2e.ts`, `e2e/drag.e2e.ts` and `playwright.config.ts` drive
+- `demo/` (not a package): `index.html`, `main.ts` and `examples.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`,
+  `e2e/transition.e2e.ts`, `e2e/input.e2e.ts`, `e2e/drag.e2e.ts`, `e2e/demo.e2e.ts` and `playwright.config.ts`
+  drive
   it.
 
 ## Contract
@@ -92,4 +94,7 @@ None.
 - **2026-11-24, T2.10a:** merged (#32), a refactor split from T2.10.
 - **2026-11-24, T2.10 (the Drag):** `drag.ts` on `begin`/`end`. Checked in Chromium with the
   mouse: the Animations stay paused under the pointer, a full Drag finishes, no text is selected.
-- **Next:** T2.11 (the demo: showcase, gallery and dashboard; the owner's end check of M2).
+- **2026-11-24, T2.11 (the demo):** a gallery and a dashboard beside the showcase, and the
+  Transition, axis and `loop` controls. Checked in Chromium: a dashboard note and counter survive a
+  move away and back, and the examples and Transitions switch from the page.
+- **Next:** the owner's end check of M2 (`npm run demo`), then closing M2.

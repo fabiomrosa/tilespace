@@ -475,7 +475,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-10, DEC-11, ARCHITECTURE "Request flow" 3.
 
 ### T2.11 · The demo: showcase, gallery and dashboard
-- **Status:** waiting (T2.10)
+- **Status:** done (2026-11-24)
 - **Goal:** the owner checks the whole engine on the demo page (the M2 end check).
 - **Depends on:** T2.10.
 - **In scope:**
