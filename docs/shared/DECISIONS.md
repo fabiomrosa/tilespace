@@ -162,3 +162,21 @@ taken, `tilespace` (core and vanilla), `tilespace-react`, `tilespace-angular`.
 ---
 
 ## Proposed (waiting for the owner)
+
+## DEC-14 · The Stage is an APG carousel region, labelled and polite — Proposed
+The Stage gets `role="region"`, `aria-roledescription="carousel"`, an `aria-label` from a `label`
+option (`"Tiles"` by default) and `aria-live="polite"`, set to `off` during a Drag; the library
+writes each one only where the user set none. It writes no ARIA on the Tiles.
+- **Why:** the WAI-ARIA APG carousel pattern without auto-rotation makes the slides' container a
+  polite live region, so a move reads the new Space. A live region of its own would be a new child
+  of the Stage, a Tile (DEC-06); the Tiles' roles are the user's.
+- **Consequences:** a screen reader reads the entering Tiles' content after each move; a user who
+  wants less sets `aria-live="off"` and announces from the `change` event (the demo's recipe).
+
+## DEC-15 · MIT, lockstep versions, published from CI on a tag — Proposed
+Both packages are MIT, share one version (1.0.0 first) and publish from a GitHub Actions workflow
+when the owner pushes a `v*` tag, with npm provenance.
+- **Why:** MIT is the common license for a small UI library and the lab has no business model;
+  one version keeps `vanilla`'s `core` range trivial; provenance ties each tarball to its commit, and
+  only the owner decides a release.
+- **Consequences:** an npm token in the repository's secrets (P3); a changelog entry per release.

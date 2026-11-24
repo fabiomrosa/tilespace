@@ -83,4 +83,5 @@ None.
 - **2026-11-24, close M2:** the owner checked the demo (T2.11 and the follow-ups T2.12–T2.14d) and
   every M2 slice is done; `ROADMAP.md` marks M2 done. The unapplied retro proposals are listed in
   the close pull request.
-- **Next:** the owner's ok on the close, then "plan M3".
+- **2026-11-24, plan M3:** six slices (T3.1–T3.6) and DEC-14, DEC-15 proposed.
+- **Next:** the owner's ok on the plan and the decisions, then T3.1.
