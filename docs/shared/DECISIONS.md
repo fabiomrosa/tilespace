@@ -163,7 +163,7 @@ taken, `tilespace` (core and vanilla), `tilespace-react`, `tilespace-angular`.
 
 ## Proposed (waiting for the owner)
 
-## DEC-14 · The Stage is a labelled carousel region; the user announces the Current space — Proposed
+## DEC-14 · The Stage is a labelled carousel region; the user announces the Current space — Accepted (owner, 2026-11-24)
 The Stage gets `role="region"`, `aria-roledescription="carousel"` and an `aria-label` from a
 `label` option (`"Tiles"` by default), each only where the user set none. The library writes no
 ARIA on the Tiles and no live region: the user announces the Current space from the `change` event
@@ -178,7 +178,7 @@ in a live region of their page, the recipe the demo and the README show.
   `change` (`current`, and the `pack` event's `spaces`); a user who wants APG's behaviour sets
   `aria-live="polite"` on the Stage.
 
-## DEC-15 · MIT, lockstep versions, published from CI on a tag — Proposed
+## DEC-15 · MIT, lockstep versions, published from CI on a tag — Accepted (owner, 2026-11-24)
 Both packages are MIT, share one version (1.0.0 first) and publish from a GitHub Actions workflow
 when the owner pushes a `v*` tag, with npm provenance.
 - **Why:** MIT is the common license for a small UI library and the lab has no business model;

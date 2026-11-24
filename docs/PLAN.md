@@ -654,7 +654,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** PRODUCT "Engineering-critical invariants", DEC-06.
 
 ### T3.2 · The Stage is a labelled carousel region
-- **Status:** waiting (T3.1, DEC-14)
+- **Status:** waiting (T3.1)
 - **Goal:** a screen reader names the Stage, and the demo shows how to announce the Current space.
 - **Depends on:** T3.1, DEC-14.
 - **In scope:** what DEC-14 decides: the Stage's `role`, `aria-roledescription` and an `aria-label`
@@ -673,9 +673,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-06, DEC-14, the WAI-ARIA APG carousel pattern.
 
 ### T3.3 · The packages are publishable
-- **Status:** waiting (DEC-15)
+- **Status:** waiting (T3.2)
 - **Goal:** `npm pack` gives two tarballs a fresh project installs and imports, with types.
-- **Depends on:** DEC-13, DEC-15.
+- **Depends on:** T3.2 (the order of M3), DEC-13, DEC-15.
 - **In scope:** a `LICENSE` in each package folder (npm packs only the package's own) and at the
   root; in both `package.json`: version `1.0.0`, no `private`, `license`, `repository` (with
   `directory`, matching the GitHub repository for provenance), `description`, `keywords`,
@@ -742,7 +742,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** decision 0001, CONVENTIONS §5 "Benchmarks", ROADMAP "The end goal".
 
 ### T3.6 · The first publish
-- **Status:** waiting (T3.5, DEC-15, P2, P3)
+- **Status:** waiting (T3.5, P2, P3)
 - **Goal:** `npm install @tilespace/vanilla` works for anyone.
 - **Depends on:** T3.5, DEC-15, P2, P3.
 - **In scope:** `.github/workflows/release.yml`: on a `v*` tag, check that the tag matches both
@@ -751,7 +751,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   (`permissions: id-token: write`); `CHANGELOG.md` with 1.0.0. The owner pushes the tag `v1.0.0`;
   the agent then installs both from npm in a scratch project.
 - **Out of scope:** automated versioning; trusted publishing (after the first publish, if the owner
-  wants to drop the token); hosting the demo.
+  wants to drop the token); hosting the demo, which goes on GitHub Pages in the owner's site (the
+  owner, 2026-11-24).
 - **Contract:** none.
 - **Acceptance criteria:**
   1. Before publishing, a tag on a commit outside `main` or with a different version fails (seen

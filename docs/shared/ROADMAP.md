@@ -69,5 +69,5 @@ M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 �
 ## Open decisions (see DECISIONS.md)
 | Id | Question | Status | Needed by |
 |---|---|---|---|
-| DEC-14 | ARIA on the Stage, and who announces the Current space | Proposed | T3.2 |
-| DEC-15 | License, versions and how a release publishes | Proposed | T3.3, T3.6 |
+| DEC-14 | ARIA on the Stage, and who announces the Current space | Accepted | T3.2 |
+| DEC-15 | License, versions and how a release publishes | Accepted | T3.3, T3.6 |
