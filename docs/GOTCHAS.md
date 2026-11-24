@@ -55,6 +55,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - happy-dom runs Web Animations but never ends one by itself, even with fake timers: tests call
   `finish()` on each of `getAnimations()`. `cancel()` rejects `finished`, an unhandled rejection
   unless the engine catches it.
+- happy-dom doesn't retarget an event at a shadow boundary: a test of shadow-root behaviour runs
+  in Playwright.
 - A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
   in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.
 - Under Vitest, an error thrown in a happy-dom `MutationObserver` callback escapes as an uncaught
