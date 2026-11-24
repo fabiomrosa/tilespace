@@ -105,4 +105,9 @@ None.
 - **2026-11-24, T3.7c (the site's phone menu and footer):** the menu button opens the header's
   links as a sheet on a phone (Escape and a link close it); the footer has the about text, the
   packages and the links. Pages is still off (P4).
-- **Next:** T3.8.
+- **2026-11-24, T3.8 (the site's hero wall):** the hero's text, install line with Copy, GitHub and
+  npm buttons, and a live wall of 56 tiles on `@tilespace/vanilla` with `peek`: the Stage keeps the
+  container's width, the next Space bleeds past the screen's right edge, and the Grid follows the
+  breakpoint (10x4, 8x4, 4x4; mounted again on a change). Its "Space n of N" is a live region fed
+  by `change` and `pack`. With JavaScript off the tiles fill a plain clipped grid.
+- **Next:** T3.9a.

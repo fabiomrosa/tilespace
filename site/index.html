@@ -7,7 +7,7 @@
     <meta name="description" content="Pack your own elements into pages of a grid, and move between them like desktop workspaces." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@700&display=swap" />
     <script>
       // The saved theme before the first paint (theme.ts wires the toggle after).
       try { const t = localStorage.getItem("tilespace-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch {}
@@ -15,10 +15,7 @@
     <link rel="stylesheet" href="./src/styles/tokens.css" />
     <link rel="stylesheet" href="./src/styles/base.css" />
     <link rel="stylesheet" href="./src/styles/layout.css" />
-    <style>
-      /* T3.7a's placeholder wall, until the hero's (T3.8). */
-      #wall { height: 320px; }
-    </style>
+    <link rel="stylesheet" href="./src/styles/components.css" />
   </head>
   <body>
     <header class="container site-header">
@@ -41,16 +38,95 @@
       </div>
     </header>
 
-    <main id="top" class="container">
-      <h1>tilespace</h1>
-      <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus, so the arrow keys keep moving -->
-      <div id="wall" tabindex="0">
-        <div data-ts-shape="2x2">1</div>
-        <div>2</div>
-        <div>3</div>
-        <div data-ts-shape="2x1">4</div>
-        <div>5</div>
-      </div>
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="container grid-12 hero-head">
+          <div class="hero-text">
+            <p class="eyebrow">Open source · TypeScript · MIT · 0 dependencies</p>
+            <h1 id="hero-title">tilespace</h1>
+            <p class="lead">Pack your own elements into pages of a grid, and move between them like desktop workspaces.</p>
+          </div>
+          <div class="hero-actions">
+            <div class="install">
+              <code><span class="muted">$</span> npm install @tilespace/vanilla</code>
+              <button id="copy" class="button-small" type="button">Copy</button>
+            </div>
+            <div class="hero-links">
+              <a class="button solid" href="https://github.com/fabiomrosa/tilespace">GitHub</a>
+              <a class="button outline" href="https://www.npmjs.com/package/@tilespace/vanilla">npm</a>
+            </div>
+          </div>
+        </div>
+        <div class="container wall-frame">
+          <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus, so the arrow keys keep moving -->
+          <div id="wall" class="wall" tabindex="0">
+          <div data-ts-shape="3x2 2x2"></div>
+          <div data-ts-shape="2x2 2x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1 1x1"></div>
+          <div data-ts-shape="2x2 1x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1"></div>
+          <div data-ts-shape="1x2 1x1"></div>
+          <div data-ts-shape="3x2 2x2"></div>
+          <div data-ts-shape="2x2 2x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1 1x1"></div>
+          <div data-ts-shape="2x2 1x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1"></div>
+          <div data-ts-shape="1x2 1x1"></div>
+          <div data-ts-shape="3x2 2x2"></div>
+          <div data-ts-shape="2x2 2x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1 1x1"></div>
+          <div data-ts-shape="2x2 1x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1"></div>
+          <div data-ts-shape="1x2 1x1"></div>
+          <div data-ts-shape="3x2 2x2"></div>
+          <div data-ts-shape="2x2 2x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1 1x1"></div>
+          <div data-ts-shape="2x2 1x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1"></div>
+          <div data-ts-shape="1x2 1x1"></div>
+          <div data-ts-shape="3x2 2x2"></div>
+          <div data-ts-shape="2x2 2x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1 1x1"></div>
+          <div data-ts-shape="2x2 1x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1"></div>
+          <div data-ts-shape="1x2 1x1"></div>
+          <div data-ts-shape="3x2 2x2"></div>
+          <div data-ts-shape="2x2 2x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1 1x1"></div>
+          <div data-ts-shape="2x2 1x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1"></div>
+          <div data-ts-shape="1x2 1x1"></div>
+          <div data-ts-shape="3x2 2x2"></div>
+          <div data-ts-shape="2x2 2x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1 1x1"></div>
+          <div data-ts-shape="2x2 1x1"></div>
+          <div data-ts-shape="1x1"></div>
+          <div data-ts-shape="2x1"></div>
+          <div data-ts-shape="1x2 1x1"></div>
+          </div>
+        </div>
+        <div class="container wall-bar">
+          <p class="muted">Drag, scroll or press ← → to move between Spaces. The next one peeks past the edge.</p>
+          <div class="pager">
+            <button id="wall-prev" class="round" type="button" aria-label="Previous Space">←</button>
+            <p id="wall-count" class="count" aria-live="polite"></p>
+            <button id="wall-next" class="round" type="button" aria-label="Next Space">→</button>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">

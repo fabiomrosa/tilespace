@@ -1,4 +1,4 @@
-import { createTilespace } from "@tilespace/vanilla";
+import { mountHero } from "./demos/hero.ts";
 import { setUpMenu } from "./menu.ts";
 import { setUpTheme } from "./theme.ts";
 
@@ -7,10 +7,18 @@ const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) 
 setUpTheme(byId<HTMLButtonElement>("theme-toggle"));
 setUpMenu(byId<HTMLButtonElement>("menu-button"), byId("main-nav"));
 
-/** The site's demos run the workspace's own build of the engine (DEC-16). */
-createTilespace(byId("wall"), {
-  columns: 3,
-  rows: 2,
-  gap: 8,
-  label: "tilespace, arrow keys move between Spaces",
+// The install line, copied as the page shows it; the button says so for a moment.
+const copy = byId<HTMLButtonElement>("copy");
+copy.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText("npm install @tilespace/vanilla");
+    copy.textContent = "Copied";
+    setTimeout(() => {
+      copy.textContent = "Copy";
+    }, 2000);
+  } catch {
+    // No clipboard (an insecure page, a denied permission): the line stays there to select.
+  }
 });
+
+mountHero(byId("wall"), byId("wall-prev"), byId("wall-next"), byId("wall-count"));

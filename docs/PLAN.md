@@ -819,7 +819,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` rows 0 and 6.
 
 ### T3.8 · The site's hero wall
-- **Status:** next
+- **Status:** done (2026-11-24)
 - **Goal:** the hero shows a live wall that bleeds past the screen's right edge and moves by
   buttons, keys, wheel and drag.
 - **Depends on:** T3.7c.
