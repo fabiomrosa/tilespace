@@ -34,13 +34,13 @@ checks the Packings in the browser at the end (T1.10).
 |---|---|
 | `tilespace` | T1.1 pack one Space with fixed Spans, T1.2 reject invalid input, T1.3 flexible Shapes, T1.4 several Spaces and the last one, T1.5 order modes and Displacement, T1.6 the Node budget option, T1.7 the PRODUCT invariants as property tests, T1.8 custom Score and Packing validation, T1.9 benchmark against first-fit and the default Node budget, T1.10 the playground draws Packings |
 
-## M2 · Vanilla engine and demo
+## M2 · Vanilla engine and demo · done (2026-11-24)
 `packages/vanilla` over the Stage's children, its inputs and Transitions, and a demo page. The owner
 checks the demo in the browser midway (T2.6) and at the end (T2.11).
 
 | Repository | Slices |
 |---|---|
-| `tilespace` | T2.1 mount a Stage and place its Tiles, T2.2 reject invalid options, T2.3 move between Spaces by API, T2.4 a responsive Grid, T2.5 repack when Tiles are added or removed, T2.6 the demo page in a real browser, T2.7 the default Transition, T2.8 custom, none and reduced-motion Transitions, T2.9 keyboard and wheel, T2.10 the Drag scrubs the Transition, T2.11 the demo: showcase, gallery and dashboard |
+| `tilespace` | T2.1 mount a Stage and place its Tiles, T2.2 reject invalid options, T2.3 move between Spaces by API, T2.4 a responsive Grid, T2.5 repack when Tiles are added or removed, T2.6 the demo page in a real browser, T2.7 the default Transition, T2.8 custom, none and reduced-motion Transitions, T2.9 keyboard and wheel, T2.10 the Drag scrubs the Transition, T2.11 the demo: showcase, gallery and dashboard; split for size: T2.9b the wheel, T2.10a a move is begin then end; from the owner's end check: T2.12 the fill follows the axis, T2.12b Holes at the end of the flow, T2.13 the Space moves then the cards settle, T2.13b the owner's pace, T2.13c the cards settle in reverse going back, T2.14 peek, T2.14b `spaceGap`, T2.14c and T2.14d the demo's peek |
 
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
@@ -54,8 +54,7 @@ checks the demo in the browser midway (T2.6) and at the end (T2.11).
 - **M4 · React adapter.** **M5 · Angular adapter.**
 
 ## Recommended order (one session at a time)
-M0 and M1 (done), then T2.1 → T2.2 → T2.3 → T2.4 → T2.5 → T2.6 (the owner's midway check) → T2.7 →
-T2.8 → T2.9 → T2.10 → T2.11, then "close M2" and "plan M3" with the owner.
+M0, M1 and M2 (done), then "plan M3" with the owner.
 
 ## Open decisions (see DECISIONS.md)
 | Id | Question | Status | Needed by |
