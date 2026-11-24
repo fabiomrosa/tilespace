@@ -94,9 +94,9 @@ describe("the default Transition", () => {
     expect(second.end).toBeGreaterThan(first.end);
 
     tilespace.prev();
-    // Backwards, in from the left, in the Space's order reversed: its last Tile first.
+    // Backwards, in from the left, still in the Space's own order.
     expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", landed: "-40px 0px" });
-    expect(motion(tiles[0]).end).toBeGreaterThan(motion(tiles[1]).end);
+    expect(motion(tiles[1]).end).toBeGreaterThan(motion(tiles[0]).end);
   });
 
   it("settles a Space's Tiles column by column on a horizontal 2-D Grid", () => {

@@ -549,6 +549,18 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~6: `src/default-transition.ts`, `test/transition.test.ts`, `test/input.test.ts`,
   ARCHITECTURE, PLAN, STATE.
 
+### T2.13c · The cards settle in reverse going back, and the demo's Holes and Gap
+- **Status:** waiting (T2.12b)
+- **Goal:** going back, the Space's last card settles first (the owner); the demo lets the owner
+  try `holes` and `gap`.
+- **Depends on:** T2.12b (the `holes` option).
+- **In scope:** the default Transition's settle order reversed when the direction is -1; Holes
+  (`end`, `order`) and Gap controls in the demo. Split from T2.12b (17 files).
+- **Contract:** none new.
+- **Acceptance criteria:** 1. Going back, the Space's last Tile settles first. 2. The demo's Holes
+  and Gap controls remount the Tilespace with those options.
+- **Files:** ~6: `src/default-transition.ts`, `test/transition.test.ts`, the demo, PLAN, STATE.
+
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.

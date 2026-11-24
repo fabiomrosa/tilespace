@@ -2,8 +2,7 @@
  * The demo (T2.6, T2.11): three examples (a showcase of mixed Shapes, a gallery, a dashboard of
  * widgets that keep their state) on Stages whose Grid follows their size. Every input moves:
  * Prev and Next, the arrow keys with focus inside the Stage, the wheel and the Drag. The
- * Transition, the axis, where the Holes go, the gap and `loop` can be changed (the Tilespace is
- * mounted again), and Destroy
+ * Transition, the axis and `loop` can be changed (the Tilespace is mounted again), and Destroy
  * puts the Stage back as the page wrote it. Built with DOM APIs only.
  */
 import {
@@ -19,8 +18,6 @@ const toggle = byId("toggle");
 const transition = byId<HTMLSelectElement>("transition");
 const axis = byId<HTMLSelectElement>("axis");
 const loop = byId<HTMLInputElement>("loop");
-const holes = byId<HTMLSelectElement>("holes");
-const gap = byId<HTMLInputElement>("gap");
 buildGallery(byId("gallery"));
 buildDashboard(byId("dashboard"));
 let stage = byId("stage");
@@ -46,8 +43,7 @@ const mount = () => {
     // About 7 columns at most, so a large screen still has several Spaces to move between.
     minCellWidth: Math.max(160, stage.clientWidth / 7),
     cellAspect: 4 / 3,
-    gap: Math.max(0, Number(gap.value) || 0),
-    holes: holes.value as "end" | "order",
+    gap: 12,
     axis: axis.value as "horizontal" | "vertical",
     loop: loop.checked,
     ...(transition.value === "fade" && { transition: fade }),
@@ -87,7 +83,7 @@ for (const button of document.querySelectorAll<HTMLButtonElement>("[data-example
     mount();
   });
 }
-for (const control of [transition, axis, loop, holes, gap]) {
+for (const control of [transition, axis, loop]) {
   control.addEventListener("change", () => {
     unmount();
     mount();
