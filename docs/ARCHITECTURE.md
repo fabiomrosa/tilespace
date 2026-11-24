@@ -86,11 +86,12 @@ Each package is created by the first slice that needs it.
   the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about 600 ms in all.
   One Animation per Tile. With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
 - `peek` (T2.14): the Stage overflows (`overflow: visible`), and the Spaces just before and after
-  the Current one (wrapping with `loop`) rest one Stage size plus the gap away along the axis, in
+  the Current one (wrapping with `loop`) rest one Stage size plus the `spaceGap` (`gap` by
+  default) away along the axis, in
   an inline `translate`, `inert`, visible; a container of the user's clips how much shows. The
   distance is read before the writes of each task that shows a Space (mount, a move's `begin`, a
   resize), and a `ResizeObserver` follows the Stage on a fixed Grid too. The default
-  slide always travels a Stage size plus the gap, so the next Space comes from where it rests; with
+  slide always travels a Stage size plus the `spaceGap`, so the next Space comes from where it rests; with
   `peek` it keeps full opacity, since those Tiles were in view. While a Transition runs, the
   entering Space sits in the Stage (the Transition moves it from there) and any other neighbour
   hides. First version: the neighbours are visual only; the Space beyond the entering one appears
@@ -101,7 +102,7 @@ Each package is created by the first slice that needs it.
   written. A move, a repack or `destroy()` during a Transition first ends it at once.
 - The `transition` option replaces the default: a function of a `TransitionContext` (the leaving
   and entering Tiles with copies of their Placements, the direction, the `axis`, a copy of the
-  Grid, the `gap`, whether it `peek`s, the
+  Grid, the `spaceGap`, whether it `peek`s, the
   Stage's client `width` and `height`) returning an array of Animations; reduced motion is then
   the function's to handle. `false`, an empty array, a throw, or anything but an array of
   Animations swaps at once; the error (a `tilespace:` one for a wrong return) is thrown after the
@@ -174,11 +175,11 @@ Spaces); the user persists.
 
 ## Configuration
 Options passed to `createTilespace` or the adapter: the Grid (`columns`, `rows`, or `minCellWidth`
-and `cellAspect`), `gap`, `shape`, `order`, `nodeBudget`, `packer`, `score`, `transition`, `axis`,
-`loop`. No environment. An invalid option (a missing Stage, a Span of 0, a negative gap) throws an
+and `cellAspect`), `gap`, `spaceGap`, `shape`, `order`, `nodeBudget`, `holes`, `packer`, `score`,
+`transition`, `axis`, `loop`, `peek`. No environment. An invalid option (a missing Stage, a Span of 0, a negative gap) throws an
 `Error` with a plain message at mount, never fails silently. Every check runs before the first
-write, so an invalid mount leaves the Stage untouched: the engine checks the Stage, the `gap` and
-each `data-ts-shape` (`validate-options.ts`, `read-shape.ts`), and `core` checks the Grid and the
+write, so an invalid mount leaves the Stage untouched: the engine checks the Stage, the gaps, the
+`transition`, the `axis`, `peek` and each `data-ts-shape` (`validate-options.ts`, `read-shape.ts`), and `core` checks the Grid and the
 Packer's options.
 
 ## Security

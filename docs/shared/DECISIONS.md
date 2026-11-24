@@ -116,7 +116,8 @@ better, preferring, among equal Holes and Span ranks, the filling that moves Til
 Changing Space runs a Transition: a function `(context) → Animation[]` given the leaving and
 entering Tiles with their Placements, the direction and the Stage's size. The default moves in two
 phases (amended by the owner 2026-11-24): the Space slides along the axis as one block, the leaving
-Tiles out and the entering ones in, one Stage size plus the gap apart; then each entering Tile
+Tiles out and the entering ones in, one Stage size plus the `spaceGap` apart (`gap` by default;
+the owner, 2026-11-24); then each entering Tile
 settles with a fade and a short slide,
 in its order within the Space along the fill's flow (CSS `translate` and `opacity`). The owner's
 pace (2026-11-24): a 500 ms slide, then each Tile settles in 450 ms from 40 px short, at most 80 ms

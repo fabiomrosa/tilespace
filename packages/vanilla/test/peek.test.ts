@@ -142,6 +142,39 @@ describe("peek", () => {
     expect(look(tiles)[2]).toBe("peek 510px 0px");
   });
 
+  it("puts the Spaces a spaceGap apart, beside and in the slide", () => {
+    const { tilespace, tiles } = mount({ spaceGap: 50 }, false);
+    expect(look(tiles)[1]).toBe("peek 450px 0px");
+
+    tilespace.next();
+
+    const effect = tiles[1]?.getAnimations()[0]?.effect as KeyframeEffect | undefined;
+    expect(effect?.getKeyframes()[0]?.translate).toBe("450px 0px");
+  });
+
+  it("keeps the spaceGap when it measures the Stage again, on a move and on a resize", () => {
+    let resized = () => {};
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          resized = callback;
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
+    const { tilespace, tiles, resize } = mount({ spaceGap: 50 });
+
+    resize(500);
+    tilespace.next();
+    expect(look(tiles)[2]).toBe("peek 550px 0px");
+    resize(600);
+    resized();
+
+    expect(look(tiles)[2]).toBe("peek 650px 0px");
+  });
+
   it("throws for a peek that is not true or false", () => {
     expect(() => mount({ peek: "yes" as unknown as boolean })).toThrow(
       new Error("tilespace: peek must be true or false, got yes"),

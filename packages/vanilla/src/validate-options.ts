@@ -1,8 +1,8 @@
 import type { GridFit } from "./derive-grid.ts";
 
 /**
- * Throws a `tilespace:` error naming the Stage, the `gap`, the `transition`, the `axis`, `minCellWidth` or
- * `cellAspect` when it is invalid (CONVENTIONS §4).
+ * Throws a `tilespace:` error naming the Stage, the `gap`, the `transition`, the `axis`, the
+ * `spaceGap`, `peek`, `minCellWidth` or `cellAspect` when it is invalid (CONVENTIONS §4).
  */
 export function validateOptions(
   stage: unknown,
@@ -11,6 +11,7 @@ export function validateOptions(
   transition: unknown,
   axis: unknown,
   peek: unknown,
+  spaceGap: number,
 ): void {
   // `nodeType`, not `instanceof Element`, so a Stage from another window (an iframe) passes.
   if ((stage as Node | null)?.nodeType !== 1) {
@@ -24,6 +25,9 @@ export function validateOptions(
   }
   if (axis !== "horizontal" && axis !== "vertical") {
     throw new Error(`tilespace: axis must be "horizontal" or "vertical", got ${axis}`);
+  }
+  if (!Number.isFinite(spaceGap) || spaceGap < 0) {
+    throw new Error(`tilespace: spaceGap must be a finite number of pixels ≥ 0, got ${spaceGap}`);
   }
   if (typeof peek !== "boolean") {
     throw new Error(`tilespace: peek must be true or false, got ${peek}`);

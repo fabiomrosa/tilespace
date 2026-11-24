@@ -26,7 +26,7 @@ custom fade, none), the axis and `loop` to choose. `npm run e2e` (in the gate) d
 Playwright: the rendered boxes match the Packing through `next` and a resize, and `destroy()`
 leaves the Stage as the page wrote it.
 `createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
-score, packer, loop, transition, axis })`
+score, packer, loop, transition, axis, peek, spaceGap })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
 Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
@@ -115,4 +115,5 @@ None.
 - **2026-11-24, T2.14 (peek):** the neighbouring Spaces rest beside the Stage, `inert`, in the
   user's clipping container; the default slide travels a Stage size plus the gap. The demo has a
   Peek checkbox. Checked in Chromium.
+- **2026-11-24, T2.14b:** `spaceGap`, the distance between Spaces (`gap` by default).
 - **Next:** the owner's look at the demo, then closing M2.

@@ -18,8 +18,8 @@ export type TransitionContext = {
   /** The Stage's client size, in CSS pixels. */
   width: number;
   height: number;
-  /** The gap between Cells, in CSS pixels: a neighbouring Space rests a Stage size plus it away. */
-  gap: number;
+  /** The distance between two Spaces, in CSS pixels: a neighbour rests a Stage size plus it away. */
+  spaceGap: number;
   /** Whether the neighbouring Spaces show beside the Stage (the `peek` option). */
   peek: boolean;
 };
@@ -47,7 +47,7 @@ const FADE = 150;
  * styles. With `prefers-reduced-motion`, a short cross-fade in place instead.
  */
 export function defaultTransition(context: TransitionContext): Animation[] {
-  const { leaving, entering, direction, width, height, axis, gap, peek } = context;
+  const { leaving, entering, direction, width, height, axis, spaceGap, peek } = context;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const fade = (tile: Tile, from: number, fill: FillMode) =>
       tile.animate([{ opacity: from }, { opacity: 1 - from }], { duration: FADE, fill });
@@ -58,8 +58,8 @@ export function defaultTransition(context: TransitionContext): Animation[] {
   }
   const horizontal = axis === "horizontal";
   const at = (distance: number) => (horizontal ? `${distance}px 0px` : `0px ${distance}px`);
-  // A Space slides one Stage size plus the gap, to where a neighbour rests with `peek`.
-  const size = (horizontal ? width : height) + gap;
+  // A Space slides one Stage size plus the space gap, to where a neighbour rests with `peek`.
+  const size = (horizontal ? width : height) + spaceGap;
   // Peeking Tiles are already in full view: they stay so, and nothing flashes.
   const faint = peek ? 1 : GHOST;
   const step = Math.min(STAGGER, CASCADE / Math.max(1, entering.length - 1));

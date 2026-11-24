@@ -49,6 +49,18 @@ describe("createTilespace options", () => {
     ],
     ["a negative gap", [null], { gap: -1 }, "gap must be a finite number of pixels ≥ 0, got -1"],
     [
+      "a negative spaceGap",
+      [null],
+      { spaceGap: -1 },
+      "spaceGap must be a finite number of pixels ≥ 0, got -1",
+    ],
+    [
+      "a spaceGap of NaN",
+      [null],
+      { spaceGap: Number.NaN },
+      "spaceGap must be a finite number of pixels ≥ 0, got NaN",
+    ],
+    [
       "a gap of NaN",
       [null],
       { gap: Number.NaN },
