@@ -93,7 +93,7 @@ test("gives every header and footer control a 44 px target on a phone", async ({
     const box = await control.boundingBox();
     expect(
       Math.min(box?.width ?? 0, box?.height ?? 0),
-      await control.innerText(),
+      (await control.textContent()) ?? "",
     ).toBeGreaterThanOrEqual(44);
   }
 });
