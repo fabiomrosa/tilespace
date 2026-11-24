@@ -28,6 +28,20 @@ const read = (page: Page) =>
     };
   });
 
+/** `pack` along the demo's horizontal axis: column by column (DEC-08), the Grid turned a quarter. */
+const packColumns = (shapes: Shape[], grid: Grid) => {
+  const turn = ({ cols, rows }: { cols: number; rows: number }) => ({ cols: rows, rows: cols });
+  const turned = pack(
+    shapes.map((shape) => shape.map(turn)),
+    { columns: grid.rows, rows: grid.columns },
+  );
+  return {
+    spaces: turned.spaces.map((space) =>
+      space.map((p) => ({ tile: p.tile, col: p.row, row: p.col, span: turn(p.span) })),
+    ),
+  };
+};
+
 const shapeOf = (value: string): Shape =>
   value.split(" ").map((span) => {
     const [cols, rows] = span.split("x").map(Number);
@@ -43,7 +57,7 @@ const expectSpace = async (page: Page, space: number) => {
   await page.waitForFunction(() => document.getAnimations().length === 0);
   const seen = await read(page);
   const grid: Grid = seen.grid;
-  const packing = pack(seen.shapes.map(shapeOf), grid);
+  const packing = packColumns(seen.shapes.map(shapeOf), grid);
   const placements = packing.spaces[space] ?? [];
   const cell = {
     width: (seen.stage.width - GAP * (grid.columns - 1)) / grid.columns,
@@ -76,7 +90,7 @@ test("places the Tiles where the Packing says, through next and a resize", async
   await page.setViewportSize({ width: 600, height: 800 });
   await expect.poll(async () => (await read(page)).grid.columns).toBeLessThan(wide.grid.columns);
   const seen = await read(page);
-  const narrow = pack(seen.shapes.map(shapeOf), seen.grid);
+  const narrow = packColumns(seen.shapes.map(shapeOf), seen.grid);
   // The first Tile on screen before the resize is still on screen.
   const space = narrow.spaces.findIndex((s) => s.some((p) => p.tile === first));
   await expectSpace(page, space);

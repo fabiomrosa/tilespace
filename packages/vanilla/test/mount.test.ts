@@ -33,7 +33,8 @@ describe("createTilespace", () => {
     ];
     const packing = pack(shapes, grid);
 
-    createTilespace(stage, { ...grid, gap: 8 });
+    // A vertical axis packs as `core` does, row by row (fill.test.ts has the horizontal one).
+    createTilespace(stage, { ...grid, gap: 8, axis: "vertical" });
 
     expect(stage.style.display).toBe("grid");
     expect(stage.style.gridTemplateColumns).toBe("repeat(3, 1fr)");
@@ -87,7 +88,7 @@ describe("createTilespace", () => {
     const strict = pack(shapes, { columns: 3, rows: 2 }, options);
     expect(strict).not.toEqual(pack(shapes, { columns: 3, rows: 2 }));
 
-    createTilespace(stage, { columns: 3, rows: 2, ...options });
+    createTilespace(stage, { columns: 3, rows: 2, axis: "vertical", ...options });
 
     const tiles = tilesOf(stage);
     strict.spaces.forEach((space, k) => {

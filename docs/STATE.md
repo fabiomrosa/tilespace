@@ -15,6 +15,7 @@ cost; `'strict'` keeps the Stage's order. A Grid or Span that is not a positive 
 Shape, an unknown order or a `nodeBudget` that is not a positive integer throws a `tilespace:` error
 naming the value. A custom `score` replaces the default Score, with no cut and no stop at a filling
 with no Hole; a filling that places no Tile never counts, so every Tile is still placed.
+`validateGrid` and `validateShapes` throw `pack`'s errors for a Grid or Shapes.
 `validatePacking(packing, shapes, grid)` throws `pack`'s error for an invalid Grid or Shape, then a
 `tilespace:` error naming the first broken invariant (for the engine to check a custom Packer, M2). `npm run dev` serves the playground
 (`playground/`, Vite): type a Grid and Shapes and see every Space drawn with its Holes and Score.
@@ -42,7 +43,8 @@ something else (then throws a `tilespace:` error) or throws. With focus inside t
 arrow keys of the `axis` (`horizontal` by default, or `vertical`) and Page Up and Down move one
 Space. One wheel gesture (momentum included, ended by 200 ms of quiet) moves one Space; it lets
 the page scroll when it moved nothing, and leaves a gesture to a scroller or handler in a Tile.
-A pointer Drag along the axis scrubs the Transition and commits past half or on a flick, else
+The Tiles fill column by column on a horizontal axis (as on the Xbox dashboard) and row by row on
+a vertical one. A pointer Drag along the axis scrubs the Transition and commits past half or on a flick, else
 plays it back. `axis` also turns the default slide vertical. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
@@ -97,4 +99,7 @@ None.
   move away and back, and the examples and Transitions switch from the page.
 - **2026-11-24, the owner's end check of M2:** two changes asked for, planned as T2.12 (the fill
   follows the axis: columns on a horizontal one, as on the Xbox dashboard) and T2.13 (the Space moves, then the cards settle).
-- **Next:** T2.12, then T2.13, then closing M2.
+- **2026-11-24, T2.12 (the fill follows the axis):** column by column on a horizontal axis, by a
+  quarter turn in the engine; `core` exports `validateGrid` and `validateShapes`. On the demo,
+  some Holes of the second Spaces sit mid-flow: T2.12b.
+- **Next:** T2.13 (the Space moves, then the cards settle), then T2.12b, then closing M2.

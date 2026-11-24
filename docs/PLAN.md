@@ -490,7 +490,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** PRODUCT "Headless, children keep their behaviour", ROADMAP M2.
 
 ### T2.12 · The fill direction follows the axis
-- **Status:** waiting (owner's ok on this plan)
+- **Status:** done (2026-11-24)
 - **Goal:** the Tiles gather at the edge the flow starts from, masonry included: column by column
   on a horizontal axis, as on the Xbox dashboard; row by row on a vertical one (the owner's M2 end
   check).
@@ -506,6 +506,19 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   3. In the demo, the last Space's Holes are checked: at the end of the flow, or a follow-up slice
      adds a Score tie-break that puts them there.
 - **Files:** ~6: `src/create-tilespace.ts`, `test/fill.test.ts`, ARCHITECTURE, PLAN, STATE, e2e.
+
+### T2.12b · Holes at the end of the flow
+- **Status:** waiting (T2.13)
+- **Goal:** the last Space's Holes gather at the end of the fill's flow (the right on a horizontal
+  axis), so a partly filled Space still looks balanced.
+- **Depends on:** T2.12.
+- **In scope:** found in T2.12's AC3: on the demo's second Spaces some Holes sit mid-flow (under
+  Music in the showcase, under Delta and Reef in the gallery). A Score term that puts the Holes as
+  late in the flow as it can; where it ranks against the Displacement is the slice's question.
+- **Contract:** none new, or a fourth Score term.
+- **Acceptance criteria:** 1. On the demo's second Spaces, no Hole comes before a Tile in the flow
+  where a filling with the same Holes and Spans puts them all at the end.
+- **Files:** ~5: `core/src/{pack-space.ts,score}`, its tests, PLAN, STATE.
 
 ### T2.13 · The Space moves, then the cards settle
 - **Status:** waiting (T2.12)
