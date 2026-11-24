@@ -85,4 +85,6 @@ None.
   the close pull request.
 - **2026-11-24, plan M3:** seven slices (T3.1–T3.6) and DEC-14 and DEC-15 accepted by the owner;
   the demo will be hosted on GitHub Pages in the owner's site.
-- **Next:** T3.1.
+- **2026-11-24, plan the site:** the owner's Claude Design handoff is in `docs/site/`; eight slices
+  (T3.7a–T3.12) after the publish, and DEC-16 proposed.
+- **Next:** the owner's ok on the site's plan, then T3.1.
