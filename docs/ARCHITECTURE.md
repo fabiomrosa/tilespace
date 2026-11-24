@@ -112,6 +112,10 @@ Each package is created by the first slice that needs it.
   Animations swaps at once; the error (a `tilespace:` one for a wrong return) is thrown after the
   swap and `change`, unless a `change` listener throws first. Animations a Transition made before
   throwing are its own to cancel, and a Transition must not move the Tilespace itself.
+- ARIA (DEC-14): the Stage gets `role="region"`, `aria-roledescription="carousel"` and an
+  `aria-label` from `label` (`"Tiles"`), each only where the user set none (an `aria-labelledby`
+  counts as a name). No live region and no ARIA on the Tiles: the page announces the Current space
+  from `change` in its own live region.
 - Input (DEC-11): `keyboard.ts` listens for `keydown` on the Stage, so a key moves only with focus
   inside it. The arrows of the `axis` (`horizontal` by default: Left and Right; `vertical`: Up and
   Down) and Page Up and Down move one Space and stop the page scrolling. A held key (`repeat`), a

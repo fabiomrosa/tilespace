@@ -654,7 +654,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** PRODUCT "Engineering-critical invariants", DEC-06.
 
 ### T3.2 · The Stage is a labelled carousel region
-- **Status:** waiting (T3.1)
+- **Status:** done (2026-11-24)
 - **Goal:** a screen reader names the Stage, and the demo shows how to announce the Current space.
 - **Depends on:** T3.1, DEC-14.
 - **In scope:** what DEC-14 decides: the Stage's `role`, `aria-roledescription` and an `aria-label`

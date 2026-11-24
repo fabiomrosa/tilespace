@@ -49,6 +49,11 @@ export type TilespaceOptions = PackOptions & {
    * away, `inert`: the Stage overflows, and a container of the user's clips how much shows.
    */
   peek?: boolean;
+  /**
+   * The Stage's accessible name, `aria-label` (`"Tiles"` by default); the Stage is also a region
+   * with `aria-roledescription="carousel"` (DEC-14). An attribute the user set is kept.
+   */
+  label?: string;
   /** `next` from the last Space goes to the first, and `prev` from the first to the last. */
   loop?: boolean;
   /**
@@ -102,12 +107,13 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     transition = defaultTransition,
     axis = "horizontal",
     peek = false,
+    label = "Tiles",
     ...packOptions
   } = options;
   const fit: GridFit | undefined =
     minCellWidth === undefined ? undefined : { minCellWidth, cellAspect, gap };
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
-  validateOptions(stage, gap, fit, transition, axis, peek, spaceGap);
+  validateOptions(stage, gap, fit, transition, axis, peek, spaceGap, label);
   const log = createWriteLog();
   let tiles = Array.from(stage.children) as Tile[];
   const shapesOf = (children: Tile[]) =>
@@ -177,6 +183,14 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     });
   };
 
+  // A carousel region (DEC-14), named by the user's own label if they gave one: an empty one would
+  // leave the region with no name.
+  const named = !!stage.getAttribute("aria-label")?.trim() || stage.hasAttribute("aria-labelledby");
+  if (!stage.hasAttribute("role")) log.attribute(stage, "role", "region");
+  if (!stage.hasAttribute("aria-roledescription")) {
+    log.attribute(stage, "aria-roledescription", "carousel");
+  }
+  if (!named) log.attribute(stage, "aria-label", label);
   log.style(stage, "display", "grid");
   // Longhands only: a shorthand's undo would wipe the longhands the user set (Chrome expands it).
   log.style(stage, "row-gap", `${gap}px`);
