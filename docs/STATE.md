@@ -6,7 +6,7 @@ Every slice's pull request updates it (SESSION §3).
 ## Capabilities
 An npm workspace that builds, formats, lints, type-checks and tests, with one gate (`npm run verify`)
 that CI runs in the `gate` job, beside the size, frozen-files, title and secret checks.
-`pack(shapes, grid, { order, nodeBudget, score })` places every Tile, Space after Space with the
+`pack(shapes, grid, { order, nodeBudget, score, holes })` places every Tile, Space after Space with the
 Tiles left (the last Space holds what remains). In each Space every Tile gets a Span of its Shape
 (clamped to the Grid), with the best Score `[holes, spanRank, early, displacement]` (`early`: the
 Holes gather at the end of the flow; `holes: "order"` puts the Displacement first) that the depth-first

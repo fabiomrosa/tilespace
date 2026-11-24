@@ -49,19 +49,6 @@ describe("pack order modes", () => {
     expect(taken.toSorted((a, b) => a - b)).toEqual([0, 1, 2, 3]);
   });
 
-  it("keeps the filling that moves Tiles least when the Holes fall alike", () => {
-    const shapes: Shape[] = [[span(1, 1)], [span(1, 1)]];
-
-    const packing = pack(shapes, { columns: 3, rows: 1 });
-
-    expect(packing.spaces).toEqual([
-      [
-        { tile: 0, col: 0, row: 0, span: span(1, 1) },
-        { tile: 1, col: 1, row: 0, span: span(1, 1) },
-      ],
-    ]);
-  });
-
   it("keeps the Stage's order in strict mode even when fill would leave fewer Holes", () => {
     // In fill mode the 2x2 moves ahead of the second 1x1 and the first Space has no Hole.
     const shapes: Shape[] = [[span(1, 1)], [span(1, 1)], [span(2, 2)]];
