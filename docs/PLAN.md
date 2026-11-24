@@ -516,7 +516,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   and about 600 ms in all.
 - **Contract:** none.
 - **Acceptance criteria:** 1. The Transition's timings and distances are those numbers.
-- **Files:** ~6: `src/default-transition.ts`, two tests, DECISIONS, ARCHITECTURE, PLAN.
+- **Files:** ~7: `src/default-transition.ts`, two tests, DECISIONS, ARCHITECTURE, PLAN, STATE.
 
 ### T2.12b · Holes at the end of the flow
 - **Status:** waiting (T2.13)

@@ -113,9 +113,9 @@ Changing Space runs a Transition: a function `(context) → Animation[]` given t
 entering Tiles with their Placements, the direction and the Stage's size. The default moves in two
 phases (amended by the owner 2026-11-24): the Space slides along the axis as one block, the leaving
 Tiles out and the entering ones in; then each entering Tile settles with a fade and a short slide,
-in its order within the Space along the fill's flow, a 500 ms slide, then a 450 ms settle from 40 px, at most 80 ms apart and about 600 ms in all (the owner's pace, 2026-11-24)
-(CSS `translate` and `opacity`). `transition: false` swaps
-instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
+in its order within the Space along the fill's flow (CSS `translate` and `opacity`). The owner's
+pace (2026-11-24): a 500 ms slide, then each Tile settles in 450 ms from 40 px short, at most 80 ms
+apart and about 600 ms in all. `transition: false` swaps instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
 and their `currentTime` follows the pointer; on release they play forward (commit) or in reverse
 (cancel). No animation library.
 - **Why:** the 2017 wall needed TweenMax. Web Animations can be paused, scrubbed, reversed and
