@@ -10,6 +10,10 @@
       nav h1 { font-size: 18px; margin: 0 auto 0 0; }
       #stage { height: calc(100vh - 84px); }
       #stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; background: hsl(var(--hue) 55% 78%); }
+      /* The Tile's place in the HTML, to read the fill order (left to right, row by row) on screen. */
+      #stage { counter-reset: tile; }
+      #stage > div { counter-increment: tile; }
+      #stage > div::before { content: counter(tile); font-size: 12px; font-weight: 600; }
       #stage > div::after { content: attr(data-ts-span); font-size: 12px; opacity: 0.6; }
       #stage > div:nth-child(4n + 1) { --hue: 210; }
       #stage > div:nth-child(4n + 2) { --hue: 150; }
