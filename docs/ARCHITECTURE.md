@@ -99,17 +99,12 @@ Each package is created by the first slice that needs it.
   handles it (`preventDefault`), and a pinch zoom (`ctrlKey`), are left alone. Chrome lets only a
   scroll sequence's first event be cancelled, so a gesture that starts mid-sequence may also
   scroll the page.
-- `drag.ts`: a primary pointer pressed on the Stage becomes a Drag once it goes 10 px along the
-  axis (a press that goes across it first is the page's). The Drag captures the pointer, grabs the
-  Transition towards the neighbouring Space paused, and scrubs it: the distance over the Stage's
-  size sets every Animation's `currentTime` as a fraction of the longest one's end. On release it
-  commits past half the distance or on a flick (0.5 px/ms over the last 100 ms), otherwise it
-  cancels and plays the Transition back. `current`, `data-ts-current` and `change` switch only on
-  commit. The click after a Drag is stopped at the Stage in the capture phase; one below the
-  threshold reaches the Tile. The Drag clears any text selection it would make. A move, a repack
-  or `destroy()` during a Drag ends its Transition and drops the rest of it. The Stage gets
-  `touch-action: pan-y pinch-zoom` (`pan-x` on a vertical axis), so a touch Drag doesn't scroll the
-  page.
+- `drag.ts`: a press on the Stage becomes a Drag 10 px along the axis (across it first, it is the
+  page's). The Drag captures the pointer and scrubs the paused Transition to the neighbouring Space
+  by the distance over the Stage's size. Released past half or on a flick (0.5 px/ms over 100 ms)
+  it commits; otherwise it plays back. Its click is stopped in the capture phase; a click below the
+  threshold reaches the Tile. It clears the text selection it would make. A move, a repack or
+  `destroy()` drops a Drag. The Stage gets `touch-action: pan-y pinch-zoom` (`pan-x` if vertical).
 - In the engine, a move is `begin` (both Spaces showing, the Transition built) then `end`, which
   commits (the Current space, `data-ts-current` and `change`) or cancels, playing it back. A Transition runs inside `begin`, so it still
   sees the old `current` and `data-ts-current`.

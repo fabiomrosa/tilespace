@@ -144,6 +144,9 @@ describe("the Drag", () => {
     pointer(stage, "pointermove", 100, 100);
 
     tilespace.goTo(2);
+    // Scrubbing the cancelled Animations would bring them back.
+    pointer(stage, "pointermove", 50, 150);
+    expect(tiles[1]?.getAnimations()).toEqual([]);
     pointer(stage, "pointerup", 100, 200);
     await finish(tiles);
     expect(tilespace.current).toBe(2);
