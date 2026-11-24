@@ -489,6 +489,37 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~6: `demo/{index.html,main.ts,examples.ts}`, `e2e/demo.e2e.ts`, README, PLAN, STATE.
 - **References:** PRODUCT "Headless, children keep their behaviour", ROADMAP M2.
 
+### T2.12 · The fill direction follows the axis
+- **Status:** waiting (owner's ok on this plan)
+- **Goal:** on a vertical axis the Tiles fill column by column, as on a horizontal one they fill
+  row by row (the owner's M2 end check).
+- **Depends on:** T2.11, DEC-08 (amended).
+- **In scope:** the engine packs a vertical axis transposed (columns and rows, and every Span,
+  swapped) and transposes the Placements back; `core` is unchanged. A custom `packer` gets the real
+  Shapes and Grid.
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. On a vertical axis, 1x1 Tiles on a 2x2 Grid fill (0,0), (0,1), (1,0), (1,1) by column.
+  2. A `2x1` Tile keeps its Span on a vertical axis.
+- **Files:** ~6: `src/create-tilespace.ts`, `test/fill.test.ts`, ARCHITECTURE, PLAN, STATE, the demo.
+
+### T2.13 · The Space moves, then the cards settle
+- **Status:** waiting (T2.12)
+- **Goal:** the default Transition reads as a page turn: the Space moves as one block, then its
+  cards arrive (the owner's M2 end check).
+- **Depends on:** T2.12, DEC-10 (amended).
+- **In scope:** the default Transition in two phases: both Spaces slide by the Stage's size as one
+  block (~300 ms, no stagger), then each entering Tile fades in with an 8 px slide (~200 ms),
+  staggered by its Cells from the entering edge. The Drag scrubs the whole timeline as before.
+  Reduced motion keeps the cross-fade.
+- **Contract:** none new.
+- **Acceptance criteria:**
+  1. The leaving and entering Tiles slide the same distance in the same time, with no stagger.
+  2. The entering Tiles settle after the slide, the one nearest the entering edge first.
+  3. In the browser, the Transition runs and ends with nothing written.
+- **Files:** ~6: `src/default-transition.ts`, `test/transition.test.ts`, `test/input.test.ts`,
+  ARCHITECTURE, PLAN, STATE.
+
 ## Later
 - The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`;
   leave a press to a Tile's handler or slider, and a touch to a Tile's scroller (as the wheel does).
