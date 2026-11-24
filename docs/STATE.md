@@ -99,4 +99,7 @@ None.
 - **2026-11-24, T3.7a (the site's pipeline):** `site/` (`tilespace-site`) builds after the packages
   and mounts a Tilespace from the vanilla build; `pages.yml` deploys it on each push to `main`
   once the owner turns Pages on (P4). Playwright runs a `site` project against `vite preview`.
-- **Next:** T3.7b.
+- **2026-11-24, T3.7b (the site's look):** the handoff's tokens, the fonts from Google Fonts, the
+  theme (the system's until the toggle saves one), the header with the phone's menu sheet, and the
+  footer with the real repository links. Not live yet: Pages is off until the owner does P4.
+- **Next:** T3.8.

@@ -785,7 +785,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` "Stack", DEC-16.
 
 ### T3.7b · The site's tokens, theme, header and footer
-- **Status:** waiting (T3.7a)
+- **Status:** done (2026-11-24)
 - **Goal:** the page has the handoff's look in light and dark, with its header and footer.
 - **Depends on:** T3.7a.
 - **In scope:** `tokens.css`, `base.css` (reset, type, the focus ring), `layout.css` (container,

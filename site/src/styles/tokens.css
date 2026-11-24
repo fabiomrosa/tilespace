@@ -1,0 +1,70 @@
+/* The handoff's design tokens (docs/site/HANDOFF.md "Design tokens"). Dark mode swaps the UI tokens
+   only; the tiles keep their colours and their ink text in both. */
+:root,
+[data-theme="light"] {
+  --bg: #f6f6f3;
+  --surface: #ffffff;
+  --ink: #14161b;
+  --muted: #585d69;
+  --line: #e1e1da;
+  --accent: #2f54eb;
+  --code-bg: #14161b;
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  --bg: #0f1115;
+  --surface: #171a20;
+  --ink: #eceef2;
+  --muted: #9aa1ae;
+  --line: #2a2e37;
+  --accent: #7c9bff;
+  --code-bg: #0a0b0e;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0f1115;
+    --surface: #171a20;
+    --ink: #eceef2;
+    --muted: #9aa1ae;
+    --line: #2a2e37;
+    --accent: #7c9bff;
+    --code-bg: #0a0b0e;
+    color-scheme: dark;
+  }
+}
+:root {
+  --tile-coral: #ff8a65;
+  --tile-blue: #6b8cff;
+  --tile-amber: #ffc24b;
+  --tile-teal: #3fcfbf;
+  --tile-violet: #a98bff;
+  --tile-lime: #a8e05f;
+  --tile-pink: #ff8cc6;
+  --tile-ink: #14161b;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-12: 48px;
+  --s-14: 56px;
+  --section: 136px;
+  --r-control: 8px;
+  --r-tile: 14px;
+  --r-frame: 20px;
+  --r-round: 999px;
+  --container: 1200px;
+  --gutter: 24px;
+  --page-pad: 24px;
+}
+@media (max-width: 639px) {
+  :root {
+    --section: 88px;
+    --page-pad: 16px;
+  }
+}
