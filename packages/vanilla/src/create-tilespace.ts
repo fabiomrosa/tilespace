@@ -300,6 +300,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     const run = begin(to, direction);
     if ("error" in run) end(run, false);
     for (const animation of run.animations) animation.pause();
+    // The Drag scrubs the whole timeline (DEC-10): with the default, the slide, then the settle.
     const length = Math.max(
       0,
       ...run.animations.map((a) => Number(a.effect?.getComputedTiming().endTime ?? 0)),

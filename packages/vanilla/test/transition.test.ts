@@ -30,8 +30,14 @@ const motion = (tile: HTMLElement | undefined) => {
   return {
     from: frames[0]?.translate,
     to: frames.at(-1)?.translate,
-    delay: effect?.getTiming().delay,
     fill: effect?.getTiming().fill,
+    end: Number(effect?.getComputedTiming().endTime),
+    /** Where the Tile is when the Space's slide is over. */
+    landed: frames[1]?.translate,
+    /** The opacity it starts (or, leaving, ends) at: faint while the Space slides. */
+    faint: frames[0]?.opacity === "1" ? frames.at(-1)?.opacity : frames[0]?.opacity,
+    /** The slide's easing, the same for both Spaces so they move as one block. */
+    easing: frames[0]?.easing === "linear" ? effect?.getTiming().easing : frames[0]?.easing,
   };
 };
 
@@ -60,18 +66,49 @@ describe("the default Transition", () => {
     }
   });
 
-  it("staggers the entering Tiles by their Cells from the edge they enter from", () => {
+  it("slides the Space as one block, then settles its Tiles in their order within it", () => {
     const { tilespace, tiles } = mount();
 
     tilespace.next();
-    // Entering from the right: the right Tile first.
-    expect(motion(tiles[3]).delay).toBe(0);
-    expect(motion(tiles[2]).delay).toBeGreaterThan(0);
+    const [leaving, first, second] = [motion(tiles[0]), motion(tiles[2]), motion(tiles[3])];
+    // The block: every Tile lands when the leaving ones end, with no stagger.
+    expect(motion(tiles[1]).end).toBe(leaving.end);
+    const landsAt = (tile: HTMLElement | undefined) => {
+      const effect = tile?.getAnimations()[0]?.effect as KeyframeEffect;
+      return (
+        (effect.getKeyframes()[1]?.computedOffset ?? 0) * Number(effect.getComputedTiming().endTime)
+      );
+    };
+    expect(landsAt(tiles[2])).toBeCloseTo(leaving.end);
+    expect(landsAt(tiles[3])).toBeCloseTo(leaving.end);
+    expect(leaving).toMatchObject({ faint: "0.4", easing: first.easing });
+    expect(first.faint).toBe("0.4");
+    expect(first.easing).not.toBe("linear");
+    // Then each settles, a short slide from where it landed, in the Space's order.
+    expect(first.landed).toBe("8px 0px");
+    expect(first.end).toBeGreaterThan(leaving.end);
+    expect(second.end).toBeGreaterThan(first.end);
 
     tilespace.prev();
-    // Entering from the left: the left Tile first, sliding in from the left.
-    expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", delay: 0 });
-    expect(motion(tiles[1]).delay).toBeGreaterThan(0);
+    // Backwards, in from the left, still in the Space's own order.
+    expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", landed: "-8px 0px" });
+    expect(motion(tiles[1]).end).toBeGreaterThan(motion(tiles[0]).end);
+  });
+
+  it("settles a Space's Tiles column by column on a horizontal 2-D Grid", () => {
+    const stage = document.createElement("div");
+    for (let i = 0; i < 8; i++) stage.append(document.createElement("div"));
+    Object.defineProperty(stage, "clientWidth", { value: 400 });
+    const tilespace = createTilespace(stage, { columns: 2, rows: 2 });
+    const tiles = Array.from(stage.children) as HTMLElement[];
+
+    tilespace.next();
+
+    // Space 1 fills (0,0), (0,1), (1,0), (1,1): Tiles 4 and 5 down the first column, then 6 and 7.
+    expect(tiles[5]?.style.gridColumnStart).toBe("1");
+    const ends = [4, 5, 6, 7].map((i) => motion(tiles[i]).end);
+    expect(ends).toEqual(ends.toSorted((a, b) => a - b));
+    expect(new Set(ends).size).toBe(4);
   });
 
   it("slides goTo towards a lower Space in from the left", () => {
