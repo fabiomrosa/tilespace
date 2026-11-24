@@ -628,7 +628,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 ## M3 · v1 release
 
 ### T3.1 · Hidden Spaces are inert
-- **Status:** next
+- **Status:** done (2026-11-24)
 - **Goal:** at rest, a keyboard or screen-reader user reaches only the Current space's Tiles, even
   through a descendant that sets `visibility: visible` inside a hidden Tile (PRODUCT invariant
   "hidden and inert").

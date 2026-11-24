@@ -97,6 +97,10 @@ Each package is created by the first slice that needs it.
   hides. First version: the neighbours are visual only; the Space beyond the entering one appears
   at the Transition's end; with `loop` and two Spaces, the other Space always rests after, so a
   `prev` brings it in from the other side.
+- The Tiles outside the Current space are `inert` as well as hidden: a child that sets its own
+  `visibility: visible` would otherwise show and take the focus. A move makes the leaving Tiles
+  `inert` when it begins, so only the entering ones can be reached; a cancelled one shows them
+  again.
 - Both Spaces show while a Transition runs. At its end (its Animations finish, or one is cancelled)
   the Animations are cancelled and the old Space gets `visibility: hidden`, so nothing stays
   written. A move, a repack or `destroy()` during a Transition first ends it at once.

@@ -30,7 +30,7 @@ score, packer, loop, transition, axis, peek, spaceGap })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
 Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
-`visibility: hidden`. `destroy()` puts back every style and attribute it wrote. A custom
+`visibility: hidden` and `inert`. `destroy()` puts back every style and attribute it wrote. A custom
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
 `validatePacking`. `next()`, `prev()`
 and `goTo(space)` change the Current space (`loop` wraps at the ends), `current` reads it, and
@@ -85,4 +85,7 @@ None.
   the close pull request.
 - **2026-11-24, plan M3:** seven slices (T3.1–T3.6) and DEC-14 and DEC-15 accepted by the owner;
   the demo will be hosted on GitHub Pages in the owner's site.
-- **Next:** T3.1.
+- **2026-11-24, T3.1 (hidden Spaces are inert):** every Tile outside the Current space is `inert`,
+  and the leaving Tiles from the start of a move. Checked in Chromium: Tab never reaches a child
+  that sets `visibility: visible` inside a hidden Tile.
+- **Next:** T3.2.
