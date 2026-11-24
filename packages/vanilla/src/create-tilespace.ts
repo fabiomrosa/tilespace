@@ -223,7 +223,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       );
     }
     events.emit("change", { current });
-    if (run.error) throw run.error;
+    if ("error" in run) throw run.error;
   };
   const move = (space: number, direction: 1 | -1) => {
     if (destroyed || space === current || space < 0) return;

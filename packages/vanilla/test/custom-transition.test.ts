@@ -107,6 +107,17 @@ describe("custom, none and reduced-motion Transitions", () => {
     expect(visible(tiles)).toEqual([2, 3]);
   });
 
+  it("throws even a falsy value a custom Transition throws", () => {
+    const { tilespace } = mount({
+      transition: () => {
+        throw 0;
+      },
+    });
+
+    expect(() => tilespace.next()).toThrow();
+    expect(tilespace.current).toBe(1);
+  });
+
   it("swaps at once and throws when a custom Transition throws", () => {
     const changes: number[] = [];
     const { tilespace, tiles } = mount({
