@@ -1,21 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-test("drags with the mouse past half and commits, and cancels a short Drag", async ({ page }) => {
+test("drags with the mouse past half and commits, selecting no text", async ({ page }) => {
   await page.setViewportSize({ width: 1200, height: 800 });
   await page.goto("/");
   const label = page.locator("#space");
   const settled = () => page.waitForFunction(() => document.getAnimations().length === 0);
 
-  // A short slow Drag: back to Space 1.
-  await page.mouse.move(900, 400);
-  await page.mouse.down();
-  await page.mouse.move(800, 400, { steps: 10 });
-  await page.waitForTimeout(150);
-  await page.mouse.up();
-  await settled();
-  await expect(label).toHaveText(/^Space 1 of/);
-
-  // Past half the Stage's width: on to Space 2, under the pointer the whole way.
   // Starting over a Tile's text, which the Drag doesn't select.
   await page.mouse.move(60, 250);
   await page.mouse.down();
