@@ -55,7 +55,12 @@ describe("the Drag", () => {
     pointer(tiles[0] as HTMLElement, "pointerdown", 300, 0);
     pointer(tiles[0] as HTMLElement, "pointermove", 200, 100);
     const [leaving] = tiles[0]?.getAnimations() ?? [];
-    const end = leaving?.effect?.getComputedTiming().endTime as number;
+    // The whole timeline: the longest Animation's end.
+    const end = Math.max(
+      ...tiles
+        .flatMap((t) => t.getAnimations())
+        .map((a) => Number(a.effect?.getComputedTiming().endTime)),
+    );
     expect(leaving?.playState).toBe("paused");
     expect(leaving?.currentTime).toBeCloseTo(end / 4);
     expect(tilespace.current).toBe(0);
@@ -65,7 +70,8 @@ describe("the Drag", () => {
 
     expect(tilespace.current).toBe(1);
     expect(changes).toEqual([1]);
-    expect(leaving?.playState).toBe("running");
+    // The leaving slide was over at 60% of the Drag; the entering Tile's settle plays on.
+    expect(tiles[1]?.getAnimations()[0]?.playState).toBe("running");
     await finish(tiles);
     expect(visible(tiles)).toEqual([1]);
   });

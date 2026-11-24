@@ -109,8 +109,8 @@ Each package is created by the first slice that needs it.
   scroll the page.
 - `drag.ts`: a press on the Stage becomes a Drag 10 px along the axis (across it first, it is the
   page's). The Drag captures the pointer and scrubs the paused Transition to the neighbouring Space
-  by the distance over the Stage's size, up to the shortest Animation's end (the default's slide;
-  its settle plays on release). Released past half or on a flick (0.5 px/ms over 100 ms)
+  by the distance over the Stage's size, over the whole timeline (with the default, the first part
+  of a Drag slides the Space and the rest settles the Tiles). Released past half or on a flick (0.5 px/ms over 100 ms)
   it commits; otherwise it plays back. Its click is stopped in the capture phase; a click below the
   threshold reaches the Tile. It clears the text selection it would make. A move, a repack or
   `destroy()` drops a Drag. The Stage gets `touch-action: pan-y pinch-zoom` (`pan-x` if vertical).

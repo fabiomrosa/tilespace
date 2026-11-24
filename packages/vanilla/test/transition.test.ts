@@ -33,7 +33,11 @@ const motion = (tile: HTMLElement | undefined) => {
     fill: effect?.getTiming().fill,
     end: Number(effect?.getComputedTiming().endTime),
     /** Where the Tile is when the Space's slide is over. */
-    landed: frames.find((f) => f.offset === frames[1]?.offset)?.translate,
+    landed: frames[1]?.translate,
+    /** The opacity it starts (or, leaving, ends) at: faint while the Space slides. */
+    faint: frames[0]?.opacity === "1" ? frames.at(-1)?.opacity : frames[0]?.opacity,
+    /** The slide's easing, the same for both Spaces so they move as one block. */
+    easing: frames[0]?.easing === "linear" ? effect?.getTiming().easing : frames[0]?.easing,
   };
 };
 
@@ -77,6 +81,9 @@ describe("the default Transition", () => {
     };
     expect(landsAt(tiles[2])).toBeCloseTo(leaving.end);
     expect(landsAt(tiles[3])).toBeCloseTo(leaving.end);
+    expect(leaving).toMatchObject({ faint: "0.4", easing: first.easing });
+    expect(first.faint).toBe("0.4");
+    expect(first.easing).not.toBe("linear");
     // Then each settles, a short slide from where it landed, in the Space's order.
     expect(first.landed).toBe("8px 0px");
     expect(first.end).toBeGreaterThan(leaving.end);
@@ -86,6 +93,22 @@ describe("the default Transition", () => {
     // Backwards, in from the left, still in the Space's own order.
     expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", landed: "-8px 0px" });
     expect(motion(tiles[1]).end).toBeGreaterThan(motion(tiles[0]).end);
+  });
+
+  it("settles a Space's Tiles column by column on a horizontal 2-D Grid", () => {
+    const stage = document.createElement("div");
+    for (let i = 0; i < 8; i++) stage.append(document.createElement("div"));
+    Object.defineProperty(stage, "clientWidth", { value: 400 });
+    const tilespace = createTilespace(stage, { columns: 2, rows: 2 });
+    const tiles = Array.from(stage.children) as HTMLElement[];
+
+    tilespace.next();
+
+    // Space 1 fills (0,0), (0,1), (1,0), (1,1): Tiles 4 and 5 down the first column, then 6 and 7.
+    expect(tiles[5]?.style.gridColumnStart).toBe("1");
+    const ends = [4, 5, 6, 7].map((i) => motion(tiles[i]).end);
+    expect(ends).toEqual(ends.toSorted((a, b) => a - b));
+    expect(new Set(ends).size).toBe(4);
   });
 
   it("slides goTo towards a lower Space in from the left", () => {

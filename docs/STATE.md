@@ -103,5 +103,5 @@ None.
   quarter turn in the engine; `core` exports `validateGrid` and `validateShapes`. On the demo,
   some Holes of the second Spaces sit mid-flow: T2.12b.
 - **2026-11-24, T2.13 (the Space moves, then the cards settle):** the default Transition in two
-  phases; the Drag scrubs the slide and the settle plays on release. Checked in Chromium.
+  phases; the Drag scrubs the whole timeline. Checked in Chromium.
 - **Next:** T2.12b (Holes at the end of the flow), then closing M2.
