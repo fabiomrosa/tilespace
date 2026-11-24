@@ -762,7 +762,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-15.
 
 ### T3.7a · The site's pipeline to GitHub Pages
-- **Status:** next
+- **Status:** done (2026-11-24)
 - **Goal:** an empty `site/` page builds in the gate and deploys to GitHub Pages from `main`.
 - **Depends on:** T3.2, DEC-16; P4 for the deploy (T3.7b's AC3).
 - **In scope:** `site/` as the private workspace package `tilespace-site` (root `workspaces`

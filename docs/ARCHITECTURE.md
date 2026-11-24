@@ -24,6 +24,11 @@ Exact versions are pinned in the root `package.json` (the same toolchain as `../
   root typecheck.
 - **Playground and demo:** Vite (dev server only), no config file: `vite playground` (`npm run dev`)
   and `vite demo` (`npm run demo`).
+- **Site** (DEC-16): the workspace package `tilespace-site` in `site/`, built by `npm run build`
+  after the packages (Vite, `base: '/tilespace/'`), deployed to GitHub Pages by
+  `.github/workflows/pages.yml` on each push to `main`. It imports `@tilespace/vanilla` by name,
+  that is, its build: `npm run site` (the dev server) needs `npm run build` first. Playwright runs
+  its `e2e/site.e2e.ts` against `vite preview` of the build.
 
 ## Modules
 
@@ -32,6 +37,7 @@ Exact versions are pinned in the root `package.json` (the same toolchain as `../
 | `packages/core` | The Grid, Shapes and Spans, the Packer and its Score, the Packing. No DOM. | nothing |
 | `packages/vanilla` (M2) | `createTilespace(stage, options)`: adopts the Stage's children, reads their Shapes, derives the Grid from the Stage's size, packs, writes Placements, runs Transitions, handles input | `core` |
 | `playground/` (T1.x) | A local page that draws Packings and exercises the Packer by hand; not a package, never published | `core` (source) |
+| `site/` (M3) | The project's site on GitHub Pages, from the owner's design handoff (`docs/site/`); private, never published | `vanilla` (build) |
 | `demo/` (M2) | The demo page: a showcase, a gallery and a dashboard (`examples.ts`) with every input, Transition and axis, and the page the e2e flows drive; not a package | `vanilla` (source) |
 | `packages/react` (M4) | `<Tilespace>` and a hook over the engine | `core`, `vanilla` |
 | `packages/angular` (M5) | A component with `<ng-content>` over the engine | `core`, `vanilla` |

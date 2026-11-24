@@ -36,6 +36,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - `--dump-dom` with `--virtual-time-budget` renders no frame: `requestAnimationFrame` and
   `ResizeObserver` never fire there. For anything that needs a frame, run Chrome in real time with
   `--remote-debugging-port`, wait, and read the page with `Runtime.evaluate`.
+- `vite preview` serves the page at any path and the assets at the host's root, so a wrong `base`
+  still loads there; on GitHub Pages it is a blank page. `e2e/site.e2e.ts` checks the asset paths.
 - Playwright's `reuseExistingServer` tests whatever already answers on the port: another project's
   Vite on 5174 once made a red run red for the wrong reason. The config never reuses a server, and
   `--strictPort` fails loudly if the port is taken.
