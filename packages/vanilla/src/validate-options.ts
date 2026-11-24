@@ -34,7 +34,8 @@ export function validateOptions(
     throw new Error(`tilespace: peek must be true or false, got ${peek}`);
   }
   if (typeof label !== "string" || label.trim() === "") {
-    throw new Error(`tilespace: label must be a non-empty string, got ${JSON.stringify(label)}`);
+    const got = typeof label === "string" ? `"${label}"` : String(label);
+    throw new Error(`tilespace: label must be a non-empty string, got ${got}`);
   }
   if (!fit) return;
   if (!Number.isFinite(fit.minCellWidth) || fit.minCellWidth <= 0) {

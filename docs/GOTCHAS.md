@@ -57,6 +57,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   unless the engine catches it.
 - happy-dom doesn't rewind a finished Animation on `play()` or `reverse()`; Chrome does, so a
   scrubbed Transition played to its end can replay from the start. Check end states in Playwright.
+- `destroy()` puts back each attribute and style as it was before mount, even one the user changed
+  since (an `aria-label` set after mount is removed): set them before mounting.
 - In Chromium, making an ancestor of the focused element `inert` blurs it to `<body>` at once;
   happy-dom keeps the focus, so a unit test blurs it by hand.
 - happy-dom doesn't retarget an event at a shadow boundary: a test of shadow-root behaviour runs

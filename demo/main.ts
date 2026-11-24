@@ -60,7 +60,7 @@ const mount = () => {
     loop: loop.checked,
     peek: peek.value !== "off",
     // The Stage's name, read with its role "carousel"; the arrow keys work inside it.
-    label: `${document.querySelector('[aria-pressed="true"]')?.textContent}, arrow keys move between Spaces`,
+    label: `${document.querySelector('[data-example][aria-pressed="true"]')?.textContent}, arrow keys move between Spaces`,
     ...(transition.value === "fade" && { transition: fade }),
     ...(transition.value === "none" && { transition: false }),
   });

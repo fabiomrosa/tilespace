@@ -30,6 +30,13 @@ describe("createTilespace options", () => {
       "label must be a non-empty string, got 3",
     ],
     ["an empty label", [null], { label: "" }, 'label must be a non-empty string, got ""'],
+    ["a blank label", [null], { label: " " }, 'label must be a non-empty string, got " "'],
+    [
+      "a BigInt label",
+      [null],
+      { label: 1n as unknown as string },
+      "label must be a non-empty string, got 1",
+    ],
     [
       "a gap of Infinity",
       [null],

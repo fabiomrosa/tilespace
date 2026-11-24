@@ -19,10 +19,25 @@ const aria = (stage: HTMLElement) =>
   ["role", "aria-roledescription", "aria-label"].map((name) => stage.getAttribute(name));
 
 describe("the Stage's ARIA", () => {
-  it("makes the Stage a carousel region labelled Tiles by default (DEC-14)", () => {
+  it("makes the Stage a carousel region labelled Tiles by default (DEC-14), and nothing else", () => {
     const { stage } = mount();
 
     expect(aria(stage)).toEqual(["region", "carousel", "Tiles"]);
+    // No live region, nothing else: the page announces the Current space (DEC-14).
+    expect(stage.getAttributeNames().sort()).toEqual([
+      "aria-label",
+      "aria-roledescription",
+      "role",
+      "style",
+    ]);
+  });
+
+  it("names a Stage whose own aria-label is empty, so the region has a name", () => {
+    const { stage, before, tilespace } = mount({ "aria-label": " " });
+    expect(stage.getAttribute("aria-label")).toBe("Tiles");
+
+    tilespace.destroy();
+    expect(stage.outerHTML).toBe(before);
   });
 
   it("labels it with the label option", () => {

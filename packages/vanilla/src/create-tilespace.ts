@@ -183,15 +183,14 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     });
   };
 
-  // A carousel region (DEC-14), named by the user's own label if they gave one.
-  const named = stage.hasAttribute("aria-label") || stage.hasAttribute("aria-labelledby");
-  for (const [name, value] of [
-    ["role", "region"],
-    ["aria-roledescription", "carousel"],
-    ["aria-label", named ? null : label],
-  ] as const) {
-    if (value !== null && !stage.hasAttribute(name)) log.attribute(stage, name, value);
+  // A carousel region (DEC-14), named by the user's own label if they gave one: an empty one would
+  // leave the region with no name.
+  const named = !!stage.getAttribute("aria-label")?.trim() || stage.hasAttribute("aria-labelledby");
+  if (!stage.hasAttribute("role")) log.attribute(stage, "role", "region");
+  if (!stage.hasAttribute("aria-roledescription")) {
+    log.attribute(stage, "aria-roledescription", "carousel");
   }
+  if (!named) log.attribute(stage, "aria-label", label);
   log.style(stage, "display", "grid");
   // Longhands only: a shorthand's undo would wipe the longhands the user set (Chrome expands it).
   log.style(stage, "row-gap", `${gap}px`);
