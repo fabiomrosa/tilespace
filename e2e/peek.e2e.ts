@@ -35,12 +35,41 @@ test("peeks at the next Space beside the Stage, clipped by the page's frame", as
   expect(seen).toMatchObject({ inert: true, visible: "visible" });
 });
 
-test("bleeds into the screen's margins: the Stage keeps the site's width", async ({ page }) => {
-  // A 1040 px site on a 1440 px screen: 200 px of margin on each side for the neighbours.
+test("bleeds past its container: the Stage keeps the container's width", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
 
   await page.getByLabel("Peek").selectOption("bleed");
+
+  const seen = await page.evaluate(() => {
+    const stage = document.getElementById("stage") as HTMLElement;
+    const next = Array.from(stage.children).find(
+      (t) =>
+        t.getAttribute("data-ts-space") === "1" && (t as HTMLElement).style.gridColumnStart === "1",
+    ) as HTMLElement;
+    const box = stage.getBoundingClientRect();
+    return {
+      width: box.width,
+      right: box.right,
+      nextLeft: next.getBoundingClientRect().left,
+      // The page clips the neighbours: it never scrolls sideways.
+      scrollX: (window.scrollTo(500, 0), window.scrollX),
+    };
+  });
+
+  // The body's 16 px padding on each side: the container is the rest of the screen.
+  expect(seen.width).toBeCloseTo(1440 - 32, 0);
+  expect(seen.nextLeft).toBeCloseTo(seen.right + 12, 0);
+  expect(seen.nextLeft).toBeLessThan(1440);
+  expect(seen.scrollX).toBe(0);
+});
+
+test("bleeds into the screen's margins around a centred site", async ({ page }) => {
+  // A 1040 px site on a 1440 px screen: 200 px of margin on each side for the neighbours.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  await page.getByLabel("Peek").selectOption("centred");
 
   const seen = await page.evaluate(() => {
     const stage = document.getElementById("stage") as HTMLElement;
