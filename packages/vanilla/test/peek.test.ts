@@ -25,12 +25,12 @@ const mount = (options: Partial<TilespaceOptions> = {}, swap = true) => {
   return { stage, before, tilespace, tiles, resize };
 };
 
-/** Each Tile as the page shows it: hidden, current, or peeking at a `translate`. */
+/** Each Tile as the page shows it: hidden, in the Stage, or peeking (`inert`) at a `translate`. */
 const look = (tiles: HTMLElement[]) =>
   tiles.map((t) =>
     t.style.visibility === "hidden"
       ? "hidden"
-      : t.hasAttribute("inert")
+      : t.hasAttribute("inert") && t.style.translate
         ? `peek ${t.style.translate}`
         : t.style.translate || "current",
   );

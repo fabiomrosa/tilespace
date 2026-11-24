@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 test("moves one Space per key and per wheel gesture", async ({ page }) => {
   // Narrow, so there are Spaces to spare: a burst that moved more than once would show.
@@ -67,4 +67,98 @@ test("leaves a wheel gesture to a scroller inside a shadow root in a Tile", asyn
       ),
     )
     .toBeGreaterThan(0);
+});
+
+test("never tabs into a hidden Space, even to a child that sets itself visible", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    const stage = document.getElementById("stage") as HTMLElement;
+    const hidden = stage.querySelector('[data-ts-space="1"]') as HTMLElement;
+    const button = document.createElement("button");
+    button.id = "stray";
+    button.textContent = "Stray";
+    // A hidden parent's `visibility` doesn't stop a child that sets its own: only `inert` does.
+    button.style.visibility = "visible";
+    hidden.append(button);
+  });
+
+  await page.locator("#stage").focus();
+  const reached: string[] = [];
+  let left = false;
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press("Tab");
+    reached.push(await page.evaluate(() => document.activeElement?.id ?? ""));
+    left ||= await page.evaluate(
+      () => !document.getElementById("stage")?.contains(document.activeElement),
+    );
+  }
+
+  expect(reached).not.toContain("stray");
+  // The Tab went past every Tile of the Stage and out of it.
+  expect(left).toBe(true);
+});
+
+test.describe("on a touch screen", () => {
+  test.use({ hasTouch: true });
+
+  /** A short, slow touch Drag on the Stage: past the threshold, released before half. */
+  const cancelledDrag = async (page: Page, meanwhile = async () => {}) => {
+    const box = await page.locator("#stage").boundingBox();
+    const [x, y] = [(box?.x ?? 0) + 300, (box?.y ?? 0) + 100];
+    const touch = await page.context().newCDPSession(page);
+    const at = (dx: number) => [{ x: x + dx, y }];
+    await touch.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: at(0) });
+    for (const dx of [-20, -40, -60]) {
+      await touch.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: at(dx) });
+      await page.waitForTimeout(100);
+    }
+    // The move has begun: the focused Tile is inert, and the browser blurred its element.
+    expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await meanwhile();
+    await page.waitForFunction(() => document.getAnimations().length === 0);
+    await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
+  };
+  const focused = (page: Page) =>
+    page.evaluate(() => {
+      let active = document.activeElement;
+      while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+      return `${active?.tagName}#${active?.id}`;
+    });
+
+  test("gives the focus back to a Tile's button when a Drag is cancelled", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Start" }).focus();
+
+    await cancelledDrag(page);
+
+    expect(await focused(page)).toBe("BUTTON#timer");
+  });
+
+  test("gives it back to a field inside a shadow root too", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      const host = document.createElement("span");
+      const input = document.createElement("input");
+      input.id = "shadowed";
+      host.attachShadow({ mode: "open" }).append(input);
+      document.getElementById("timer")?.after(host);
+      input.focus();
+    });
+
+    await cancelledDrag(page);
+
+    expect(await focused(page)).toBe("INPUT#shadowed");
+  });
+
+  test("leaves the focus where the user put it while the Drag played back", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Start" }).focus();
+
+    await cancelledDrag(page, () => page.locator("#next").focus());
+
+    expect(await focused(page)).toBe("BUTTON#next");
+  });
 });

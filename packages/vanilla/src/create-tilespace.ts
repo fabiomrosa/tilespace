@@ -153,7 +153,10 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   let reach = peek ? size() + spaceGap : 0;
   const at = (distance: number) =>
     axis === "horizontal" ? `${distance}px 0px` : `0px ${distance}px`;
-  /** Shows one Space's Tiles and hides the others'; with `peek`, its neighbours rest beside it. */
+  /**
+   * Shows one Space's Tiles and hides the others', `inert`; with `peek`, its neighbours rest beside
+   * it, `inert` too.
+   */
   const show = (space: number) => {
     const before = space > 0 ? space - 1 : loop ? last() : -1;
     const after = space < last() ? space + 1 : loop ? 0 : -1;
@@ -166,13 +169,10 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
         else log.style(el, "visibility", "hidden");
         if (k === space) log.attribute(el, "data-ts-current", "");
         else log.resetAttribute(el, "data-ts-current");
-        if (side !== 0) {
-          log.style(el, "translate", at(side * reach));
-          log.attribute(el, "inert", "");
-        } else {
-          log.resetStyle(el, "translate");
-          log.resetAttribute(el, "inert");
-        }
+        if (side !== 0) log.style(el, "translate", at(side * reach));
+        else log.resetStyle(el, "translate");
+        if (k === space) log.resetAttribute(el, "inert");
+        else log.attribute(el, "inert", "");
       }
     });
   };
@@ -193,15 +193,28 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   let current = 0;
   let destroyed = false;
   /** A Transition between two Spaces; `space` is the one shown when it is settled. */
-  type Run = { animations: Animation[]; space: number; to: number; error?: unknown };
+  /** `focus`: the element focused in a leaving Tile, focused again if the move is cancelled. */
+  type Run = {
+    animations: Animation[];
+    space: number;
+    to: number;
+    focus?: HTMLOrSVGElement;
+    error?: unknown;
+  };
   let running: Run | undefined;
   /** Ends the running Transition at once: its Animations are cancelled and its Space shown. */
   const settle = () => {
     if (!running) return;
-    const { animations, space } = running;
+    const { animations, space, to, focus } = running;
     running = undefined;
     for (const animation of animations) animation.cancel();
     show(space);
+    // Cancelled: `inert` blurred the focus out of the Space that stays. Unless the user has put it
+    // somewhere since, it goes back.
+    const now = stage.ownerDocument.activeElement;
+    if (focus && space !== to && (now === null || now === stage.ownerDocument.body)) {
+      focus.focus({ preventScroll: true });
+    }
   };
   // Copies: a Transition that changes its Placements cannot change the Packing.
   const tilesIn = (space: number) =>
@@ -221,6 +234,12 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     settle();
     const leaving = tilesIn(current);
     const entering = tilesIn(to);
+    // Only the entering Tiles can be reached while it runs; `show` puts back the cancelled ones.
+    const active = stage.ownerDocument.activeElement;
+    // The element itself, inside any shadow roots: their host can't take the focus back.
+    let focus = leaving.some(({ tile }) => tile.contains(active)) ? active : null;
+    while (focus?.shadowRoot?.activeElement) focus = focus.shadowRoot.activeElement;
+    for (const { tile } of leaving) log.attribute(tile, "inert", "");
     for (const { tile } of entering) {
       log.resetStyle(tile, "visibility");
       // A peeking Space comes into the Stage; the Transition moves it from there.
@@ -236,11 +255,11 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
           if (el.parentNode !== stage) continue;
           log.style(el, "visibility", "hidden");
           log.resetStyle(el, "translate");
-          log.resetAttribute(el, "inert");
         }
       });
     }
     const run: Run = { animations: [], space: current, to };
+    if (focus && "focus" in focus) run.focus = focus as Element & HTMLOrSVGElement;
     running = run;
     try {
       if (transition) {

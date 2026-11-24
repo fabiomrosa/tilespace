@@ -628,7 +628,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 ## M3 · v1 release
 
 ### T3.1 · Hidden Spaces are inert
-- **Status:** next
+- **Status:** done (2026-11-24)
 - **Goal:** at rest, a keyboard or screen-reader user reaches only the Current space's Tiles, even
   through a descendant that sets `visibility: visible` inside a hidden Tile (PRODUCT invariant
   "hidden and inert").
@@ -642,10 +642,10 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Out of scope:** ARIA attributes (T3.2).
 - **Contract:** none (DEC-06 already lists `inert`).
 - **Acceptance criteria:**
-  1. At rest every Tile outside the Current space is `inert`, and none inside it is, after mount and
-     after each move, with and without `peek`.
+  1. At rest every Tile outside the Current space is `inert`, and none inside it the library made
+     `inert` (a user's own stays), after mount and after each move, with and without `peek`.
   2. During a move only the entering Tiles are not `inert`; a cancelled Drag leaves the same Tiles
-     `inert` as before it.
+     `inert` as before it, and gives the focus back to where it was.
   3. In Chromium, a focusable child with `visibility: visible` inside a Tile of another Space is
      never reached by Tab (red today: it shows and takes focus).
   4. `destroy()` restores each Tile's own `inert`, set or not.
