@@ -64,6 +64,11 @@ Each package is created by the first slice that needs it.
 - `createTilespace(stage, options)` (`create-tilespace.ts`) reads each child's Shape
   (`read-shape.ts`: `data-ts-shape`, else the `shape` option, else `1x1`), packs, and writes the
   Stage's grid and each Tile's Placement.
+- The fill follows the axis (DEC-08): a vertical axis packs as `core` does, row by row; a
+  horizontal one packs the Grid and Spans turned a quarter and turns the Placements back, so the
+  Tiles fill column by column, as on the Xbox dashboard (`packAlong`). The Grid and Shapes are
+  checked first as given (`validateGrid`, `validateShapes`), so an error names their own sides. A
+  custom `packer` gets the real Shapes and Grid.
 - Every style and attribute goes through one write log (`write-log.ts`). It saves each property's
   and attribute's value from before the first write. `resetStyle` and `resetAttribute` put one back
   (showing a Space puts back the user's own `visibility`), and `destroy()` puts back all of them,

@@ -4,7 +4,10 @@ import {
   type PackOptions,
   pack,
   type Shape,
+  type Span,
+  validateGrid,
   validatePacking,
+  validateShapes,
 } from "@tilespace/core";
 import { type Axis, defaultTransition, type TransitionContext } from "./default-transition.ts";
 import { deriveGrid, type GridFit } from "./derive-grid.ts";
@@ -99,7 +102,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const gridNow = (): Grid =>
     fit ? deriveGrid(contentSize(stage), fit) : ({ columns, rows } as Grid);
   const packFor = (grid: Grid, shapes: Shape[]): Packing => {
-    if (!packer) return pack(shapes, grid, packOptions);
+    if (!packer) return packAlong(axis, shapes, grid, packOptions);
     // Copies: a packer that changes what it gets cannot change the Shapes or Grid checked below.
     const packing = packer(
       shapes.map((s) => s.map((span) => ({ ...span }))),
@@ -353,5 +356,29 @@ function contentSize(stage: HTMLElement): { width: number; height: number } {
   return {
     width: stage.clientWidth - px(style.paddingLeft) - px(style.paddingRight),
     height: stage.clientHeight - px(style.paddingTop) - px(style.paddingBottom),
+  };
+}
+
+const turn = (span: Span): Span => ({ cols: span.rows, rows: span.cols });
+
+/**
+ * `pack` along the fill's flow (DEC-08): row by row on a vertical axis, as `core` packs; column by
+ * column on a horizontal one, as on the Xbox dashboard, by packing the Grid and Spans turned a
+ * quarter and turning the Placements back.
+ */
+function packAlong(axis: Axis, shapes: Shape[], grid: Grid, options: PackOptions): Packing {
+  if (axis === "vertical") return pack(shapes, grid, options);
+  // Checked as given, so an error names the Grid's own sides.
+  validateGrid(grid);
+  validateShapes(shapes);
+  const turned = pack(
+    shapes.map((shape) => shape.map(turn)),
+    { columns: grid.rows, rows: grid.columns },
+    options,
+  );
+  return {
+    spaces: turned.spaces.map((space) =>
+      space.map(({ tile, col, row, span }) => ({ tile, col: row, row: col, span: turn(span) })),
+    ),
   };
 }
