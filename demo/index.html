@@ -24,6 +24,7 @@
       #gallery > div { padding: 0; position: relative; }
       #gallery img { width: 100%; height: 100%; object-fit: cover; }
       #gallery span { position: absolute; left: 10px; bottom: 8px; color: #fff; }
+      #gap { width: 4em; }
       #dashboard textarea, #dashboard input:not([type]) { width: 100%; box-sizing: border-box; }
     </style>
   </head>
@@ -45,6 +46,10 @@
       <label>Axis
         <select id="axis"><option>horizontal</option><option>vertical</option></select>
       </label>
+      <label>Holes
+        <select id="holes"><option>end</option><option>order</option></select>
+      </label>
+      <label>Gap <input id="gap" type="number" min="0" max="48" step="4" value="12" /></label>
       <label><input id="loop" type="checkbox" /> Loop</label>
       <button id="prev" type="button">Prev</button>
       <span id="space" aria-live="polite"></span>
