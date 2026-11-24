@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>tilespace demo</title>
+    <style>
+      body { font: 14px/1.4 system-ui, sans-serif; margin: 16px; color: #222; background: #f4f4f6; }
+      nav { display: flex; gap: 12px; align-items: center; height: 40px; margin-bottom: 12px; }
+      nav h1 { font-size: 18px; margin: 0 auto 0 0; }
+      #stage { height: calc(100vh - 84px); }
+      #stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; background: hsl(var(--hue) 55% 78%); }
+      #stage > div::after { content: attr(data-ts-span); font-size: 12px; opacity: 0.6; }
+      #stage > div:nth-child(4n + 1) { --hue: 210; }
+      #stage > div:nth-child(4n + 2) { --hue: 150; }
+      #stage > div:nth-child(4n + 3) { --hue: 35; }
+      #stage > div:nth-child(4n + 4) { --hue: 330; }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <h1>tilespace</h1>
+      <button id="prev" type="button">Prev</button>
+      <span id="space" aria-live="polite"></span>
+      <button id="next" type="button">Next</button>
+      <button id="toggle" type="button">Destroy</button>
+    </nav>
+    <div id="stage" style="row-gap: 12px; column-gap: 12px;">
+      <div data-ts-shape="3x2 2x2">Weather</div>
+      <div data-ts-shape="1x1">Clock</div>
+      <div data-ts-shape="2x1">Battery</div>
+      <div data-ts-shape="2x3 2x2">Calendar</div>
+      <div data-ts-shape="1x2">Volume</div>
+      <div data-ts-shape="1x1">Timer</div>
+      <div data-ts-shape="4x2 3x2 2x2">Photos</div>
+      <div data-ts-shape="2x2">Notes</div>
+      <div data-ts-shape="1x1">Wi-Fi</div>
+      <div data-ts-shape="3x1 2x1">Music</div>
+      <div data-ts-shape="2x2 1x1">Stocks</div>
+      <div data-ts-shape="1x1">Focus</div>
+      <div data-ts-shape="2x1">Reminders</div>
+      <div data-ts-shape="1x3 1x2">News</div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

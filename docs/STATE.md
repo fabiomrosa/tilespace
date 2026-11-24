@@ -18,6 +18,10 @@ with no Hole; a filling that places no Tile never counts, so every Tile is still
 `validatePacking(packing, shapes, grid)` throws `pack`'s error for an invalid Grid or Shape, then a
 `tilespace:` error naming the first broken invariant (for the engine to check a custom Packer, M2). `npm run dev` serves the playground
 (`playground/`, Vite): type a Grid and Shapes and see every Space drawn with its Holes and Score.
+`npm run demo` serves the demo (`demo/`, Vite): the engine over 14 Tiles of mixed Shapes on a
+derived Grid, with Prev, Next and Destroy. `npm run e2e` (in the gate) drives it in Chromium with
+Playwright: the rendered boxes match the Packing through `next` and a resize, and `destroy()`
+leaves the Stage as the page wrote it.
 `createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
 score, packer, loop })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
@@ -47,6 +51,8 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal), `deriveGrid` (`derive-grid.ts`, internal), the emitter (`emitter.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
+- `demo/` (not a package): `index.html` and `main.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`
+  and `playwright.config.ts` drive it.
 
 ## Contract
 None yet.
@@ -55,8 +61,8 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T2.5 (repack when Tiles are added or removed):** a `MutationObserver` on the
-  Stage's child list. Checked in a real-time headless Chrome: an added `2x1` was placed, the Current
-  space followed its Tile, and a removed Tile came back as it was before mounting. T2.1 to T2.5
-  give the engine for the owner's midway check, with the demo page in T2.6.
-- **Next:** T2.6 (the demo page in a real browser, the owner's midway check).
+- **2026-11-23, T2.6 (the demo page in a real browser):** `demo/` with 14 Tiles of mixed Shapes,
+  Prev, Next and Destroy, and Playwright (Chromium) in the gate and CI. The e2e flow packs the
+  page's Shapes in Node and checks every shown Tile's box against its Placement, after `next` and a
+  resize; a second flow checks `destroy()` against the page's source (the T2.1 "Later" item).
+- **Next:** the owner's midway check of the demo (`npm run demo`), then T2.7.

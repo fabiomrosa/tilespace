@@ -15,12 +15,15 @@ Exact versions are pinned in the root `package.json` (the same toolchain as `../
   A package imports another by its name, through the other's `dist/`, so the gate builds first.
 - **Tests:** Vitest 5 with V8 coverage. Added when first needed: `fast-check` 4 for property tests
   of the PRODUCT invariants (M1), `happy-dom` for engine unit tests (M2), Playwright for
-  real-browser tests (M2; Web Animations and CSS grid need a real browser).
+  real-browser tests (M2; Web Animations and CSS grid need a real browser): `@playwright/test`
+  1.65.0 with Chromium, `npm run e2e`, part of `npm run verify`. `playwright.config.ts` serves the
+  demo with Vite on port 5181 (never a server already there) and runs `e2e/*.e2e.ts`.
 - **Format and lint:** Biome 2.
 - **Build:** `tsc` per package, to ESM plus type declarations in `dist/`. `core` builds with
   `"lib": ["es2024"]`, so a DOM name in its `src` fails the build (`npm run verify`), not the
   root typecheck.
-- **Playground:** Vite (dev server only, `npm run dev`), no config file: `vite playground`.
+- **Playground and demo:** Vite (dev server only), no config file: `vite playground` (`npm run dev`)
+  and `vite demo` (`npm run demo`).
 
 ## Modules
 
@@ -29,6 +32,7 @@ Exact versions are pinned in the root `package.json` (the same toolchain as `../
 | `packages/core` | The Grid, Shapes and Spans, the Packer and its Score, the Packing. No DOM. | nothing |
 | `packages/vanilla` (M2) | `createTilespace(stage, options)`: adopts the Stage's children, reads their Shapes, derives the Grid from the Stage's size, packs, writes Placements, runs Transitions, handles input | `core` |
 | `playground/` (T1.x) | A local page that draws Packings and exercises the Packer by hand; not a package, never published | `core` (source) |
+| `demo/` (M2) | The demo page: the engine over Tiles of mixed Shapes, and the page the e2e flows drive; not a package | `vanilla` (source) |
 | `packages/react` (M4) | `<Tilespace>` and a hook over the engine | `core`, `vanilla` |
 | `packages/angular` (M5) | A component with `<ng-content>` over the engine | `core`, `vanilla` |
 

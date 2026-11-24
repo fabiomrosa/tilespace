@@ -11,5 +11,13 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["packages/*/src", "packages/*/test", "bench", "playground"]
+  "include": [
+    "packages/*/src",
+    "packages/*/test",
+    "bench",
+    "playground",
+    "demo",
+    "e2e",
+    "playwright.config.ts"
+  ]
 }
