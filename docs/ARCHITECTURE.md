@@ -68,7 +68,8 @@ Each package is created by the first slice that needs it.
   horizontal one packs the Grid and Spans turned a quarter and turns the Placements back, so the
   Tiles fill column by column, as on the Xbox dashboard (`packAlong`). The Grid and Shapes are
   checked first as given (`validateGrid`, `validateShapes`), so an error names their own sides. A
-  custom `packer` gets the real Shapes and Grid.
+  custom `score` sees the Placements and Shapes turned back, and a custom `packer` gets the real
+  Shapes and Grid.
 - Every style and attribute goes through one write log (`write-log.ts`). It saves each property's
   and attribute's value from before the first write. `resetStyle` and `resetAttribute` put one back
   (showing a Space puts back the user's own `visibility`), and `destroy()` puts back all of them,

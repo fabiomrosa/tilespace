@@ -2,6 +2,7 @@ import {
   type Grid,
   type Packing,
   type PackOptions,
+  type Placement,
   pack,
   type Shape,
   type Span,
@@ -371,14 +372,27 @@ function packAlong(axis: Axis, shapes: Shape[], grid: Grid, options: PackOptions
   // Checked as given, so an error names the Grid's own sides.
   validateGrid(grid);
   validateShapes(shapes);
+  const back = ({ tile, col, row, span }: Placement): Placement => ({
+    tile,
+    col: row,
+    row: col,
+    span: turn(span),
+  });
+  const { score } = options;
   const turned = pack(
     shapes.map((shape) => shape.map(turn)),
     { columns: grid.rows, rows: grid.columns },
-    options,
+    // A custom Score sees the Placements and Shapes as they are, never turned.
+    score
+      ? {
+          ...options,
+          score: (p, s) =>
+            score(
+              p.map(back),
+              s.map((x) => x.map(turn)),
+            ),
+        }
+      : options,
   );
-  return {
-    spaces: turned.spaces.map((space) =>
-      space.map(({ tile, col, row, span }) => ({ tile, col: row, row: col, span: turn(span) })),
-    ),
-  };
+  return { spaces: turned.spaces.map((space) => space.map(back)) };
 }
