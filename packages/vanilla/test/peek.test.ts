@@ -152,10 +152,27 @@ describe("peek", () => {
     expect(effect?.getKeyframes()[0]?.translate).toBe("450px 0px");
   });
 
-  it.each([-1, Number.NaN])("throws for a spaceGap of %s", (spaceGap) => {
-    expect(() => mount({ spaceGap })).toThrow(
-      new Error(`tilespace: spaceGap must be a finite number of pixels ≥ 0, got ${spaceGap}`),
+  it("keeps the spaceGap when it measures the Stage again, on a move and on a resize", () => {
+    let resized = () => {};
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          resized = callback;
+        }
+        observe() {}
+        disconnect() {}
+      },
     );
+    const { tilespace, tiles, resize } = mount({ spaceGap: 50 });
+
+    resize(500);
+    tilespace.next();
+    expect(look(tiles)[2]).toBe("peek 550px 0px");
+    resize(600);
+    resized();
+
+    expect(look(tiles)[2]).toBe("peek 650px 0px");
   });
 
   it("throws for a peek that is not true or false", () => {

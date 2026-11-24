@@ -1,8 +1,8 @@
 import type { GridFit } from "./derive-grid.ts";
 
 /**
- * Throws a `tilespace:` error naming the Stage, the `gap`, the `transition`, the `axis`, `minCellWidth` or
- * `cellAspect` when it is invalid (CONVENTIONS §4).
+ * Throws a `tilespace:` error naming the Stage, the `gap`, the `transition`, the `axis`, the
+ * `spaceGap`, `peek`, `minCellWidth` or `cellAspect` when it is invalid (CONVENTIONS §4).
  */
 export function validateOptions(
   stage: unknown,

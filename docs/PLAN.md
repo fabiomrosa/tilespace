@@ -596,8 +596,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Contract:** the `spaceGap` option.
 - **Acceptance criteria:** 1. With `spaceGap: 50`, a neighbour rests and the slide starts a Stage
   size plus 50 px away. 2. An invalid `spaceGap` throws before any write.
-- **Files:** ~9: `src/{create-tilespace.ts,default-transition.ts,validate-options.ts}`, two tests,
-  the demo, DECISIONS, PLAN, STATE.
+- **Files:** ~12: `src/{create-tilespace.ts,default-transition.ts,validate-options.ts}`, three
+  tests, two e2e flows, the demo, DECISIONS, ARCHITECTURE, PLAN, STATE.
 
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the

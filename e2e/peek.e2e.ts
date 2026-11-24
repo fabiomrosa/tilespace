@@ -4,6 +4,8 @@ test("peeks at the next Space beside the Stage, clipped by the page's frame", as
   await page.setViewportSize({ width: 1200, height: 800 });
   await page.goto("/");
 
+  await page.getByLabel("Space gap").fill("40");
+  await page.getByLabel("Space gap").dispatchEvent("change");
   await page.getByLabel("Peek").check();
 
   const seen = await page.evaluate(() => {
@@ -16,7 +18,8 @@ test("peeks at the next Space beside the Stage, clipped by the page's frame", as
     ) as HTMLElement;
     const [s, f, n] = [stage, frame, next].map((el) => el.getBoundingClientRect());
     return {
-      gap: Number.parseFloat(getComputedStyle(stage).columnGap),
+      // The demo's Space gap field: the distance between two Spaces.
+      gap: Number((document.getElementById("space-gap") as HTMLInputElement).value),
       stageRight: s?.right ?? 0,
       frameRight: f?.right ?? 0,
       frameClips: getComputedStyle(frame).overflowX,

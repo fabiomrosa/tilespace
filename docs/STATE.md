@@ -26,7 +26,7 @@ custom fade, none), the axis and `loop` to choose. `npm run e2e` (in the gate) d
 Playwright: the rendered boxes match the Packing through `next` and a resize, and `destroy()`
 leaves the Stage as the page wrote it.
 `createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
-score, packer, loop, transition, axis })`
+score, packer, loop, transition, axis, peek, spaceGap })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
 Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
