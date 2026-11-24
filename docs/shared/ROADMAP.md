@@ -48,25 +48,26 @@ write-up and the first npm publish. The owner pushes the release tag (T3.6).
 
 | Repository | Slices |
 |---|---|
-| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled region that announces the Current space, T3.3 the packages are publishable, T3.4 the README of each package, T3.5 the lab write-up, T3.6 the first publish |
+| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.6 the first publish |
 
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
   (OWNER_PLAN §0). Needed by T0.1.
-- **P2** · The npm scope `@tilespace` (or the unscoped fallback names, DEC-13). Needed by the first
-  publish (T3.6).
-- **P3** · An npm automation token with publish rights to the scope, as the repository secret
-  `NPM_TOKEN`. Needed by T3.6.
+- **P2** · The npm organization `@tilespace` (or the unscoped fallback names, DEC-13), on an account
+  with 2FA. Needed by the first publish (T3.6).
+- **P3** · A granular npm access token with publish rights to `@tilespace` and "bypass 2FA" (npm has
+  no classic automation tokens; a granular one lasts at most 90 days), as the repository secret
+  `NPM_TOKEN`. Needed by T3.6; after it, trusted publishing can replace it.
 
 ## Later milestones (split when they start)
 - **M4 · React adapter.** **M5 · Angular adapter.**
 
 ## Recommended order (one session at a time)
-M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4 → T3.5 → T3.6 (the owner tags v1.0.0), then
+M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 → T3.6 (the owner tags v1.0.0), then
 "close M3" and "plan M4".
 
 ## Open decisions (see DECISIONS.md)
 | Id | Question | Status | Needed by |
 |---|---|---|---|
-| DEC-14 | ARIA on the Stage: an APG carousel region, labelled and polite | Proposed | T3.2 |
+| DEC-14 | ARIA on the Stage, and who announces the Current space | Proposed | T3.2 |
 | DEC-15 | License, versions and how a release publishes | Proposed | T3.3, T3.6 |
