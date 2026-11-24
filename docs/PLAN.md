@@ -798,8 +798,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   1. In Chromium the toggle switches the theme and the choice survives a reload; with no choice,
      `prefers-color-scheme: dark` gives the dark tokens.
   2. The header's GitHub link is the real repository.
-- **Files:** ~9, ~350 lines: `index.html`, `src/{main.ts,theme.ts}`, three style files,
-  `e2e/site.e2e.ts`, PLAN, STATE.
+- **Files:** 10, ~395 lines: `index.html`, `src/{main.ts,theme.ts}`, three style files,
+  `e2e/site.e2e.ts`, PLAN, ROADMAP, STATE.
 - **References:** `docs/site/HANDOFF.md` "Design tokens", row 0.
 
 ### T3.7c · The site's phone menu and footer

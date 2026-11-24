@@ -83,6 +83,10 @@
 }
 
 @media (max-width: 639px) {
+  /* On a phone the links wait for the menu sheet (T3.7c): they don't fit beside the logo. */
+  .main-nav {
+    display: none;
+  }
   .header-actions {
     gap: var(--s-2);
   }

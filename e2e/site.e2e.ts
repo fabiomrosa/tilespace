@@ -43,6 +43,18 @@ test("follows the system's theme until the toggle picks one, which survives a re
   expect(await background(page)).toBe(DARK);
 });
 
+test("never scrolls sideways, down to a 360 px phone", async ({ page }) => {
+  for (const width of [360, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto("./");
+    const [scroll, client] = await page.evaluate(() => [
+      document.documentElement.scrollWidth,
+      document.documentElement.clientWidth,
+    ]);
+    expect(scroll, `at ${width} px`).toBeLessThanOrEqual(client);
+  }
+});
+
 test("links the real repository from the header", async ({ page }) => {
   await page.goto("./");
 
