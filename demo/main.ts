@@ -1,6 +1,6 @@
 /**
  * The demo (T2.6): Tiles of mixed Shapes on a Stage whose Grid follows its size, with Prev and
- * Next (or the arrow keys from the Timer's button or the Stage), and Destroy to see the Stage put
+ * Next (or the arrow keys from the Timer's button or the Stage, or the wheel), and Destroy to see the Stage put
  * back as the page wrote it. Built with DOM APIs only.
  */
 import { createTilespace, type Tilespace } from "../packages/vanilla/src/index.ts";
