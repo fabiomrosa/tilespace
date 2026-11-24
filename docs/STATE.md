@@ -80,43 +80,7 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-24, T2.6 merged** after the owner's midway check; the demo now numbers each Tile by its
-  place in the HTML (the owner asked which way the Tiles fill: row by row, DEC-08).
-- **2026-11-24, T2.7 (the default Transition):** merged (#28).
-- **2026-11-24, T2.8 (custom, none and reduced-motion Transitions):** the `transition` option, a
-  function of an exported `TransitionContext` or `false`; reduced motion cross-fades (checked in
-  Chromium with Playwright's media emulation). A Transition that throws swaps at once, then throws.
-- **2026-11-24, T2.8:** merged (#29).
-- **2026-11-24, T2.9 (the keyboard):** `keyboard.ts` and the `axis` option, which also turns the
-  default slide vertical. Checked in Chromium: each key moves once, and a field in a shadow root
-  keeps its arrows. The slice was split: the wheel is T2.9b.
-- **2026-11-24, T2.9b (the wheel):** `wheel.ts`, written with T2.9 and split out for size, with
-  the T2.9 review's fixes (scrollers, handlers, pinch zoom). Checked in Chromium: a burst of six
-  wheel events moves one Space.
-- **2026-11-24, T2.10a:** merged (#32), a refactor split from T2.10.
-- **2026-11-24, T2.10 (the Drag):** `drag.ts` on `begin`/`end`. Checked in Chromium with the
-  mouse: the Animations stay paused under the pointer, a full Drag finishes, no text is selected.
-- **2026-11-24, T2.11 (the demo):** a gallery and a dashboard beside the showcase, and the
-  Transition, axis and `loop` controls. Checked in Chromium: a dashboard note and counter survive a
-  move away and back, and the examples and Transitions switch from the page.
-- **2026-11-24, the owner's end check of M2:** two changes asked for, planned as T2.12 (the fill
-  follows the axis: columns on a horizontal one, as on the Xbox dashboard) and T2.13 (the Space moves, then the cards settle).
-- **2026-11-24, T2.12 (the fill follows the axis):** column by column on a horizontal axis, by a
-  quarter turn in the engine; `core` exports `validateGrid` and `validateShapes`. On the demo,
-  some Holes of the second Spaces sit mid-flow: T2.12b.
-- **2026-11-24, T2.13 (the Space moves, then the cards settle):** the default Transition in two
-  phases; the Drag scrubs the whole timeline. Checked in Chromium.
-- **2026-11-24, T2.13b (the owner's pace):** a 500 ms slide, then each card settles from 40 px in
-  450 ms, 80 ms apart.
-- **2026-11-24, T2.12b (Holes at the end of the flow):** a Score term after the Span ranks and
-  before the Displacement, with its bound, and the `holes` option (`"end"` or `"order"`).
-- **2026-11-24, T2.13c:** going back, the cards settle in reverse; the demo has Holes and Gap
-  controls.
-- **2026-11-24, T2.14 (peek):** the neighbouring Spaces rest beside the Stage, `inert`, in the
-  user's clipping container; the default slide travels a Stage size plus the gap. The demo has a
-  Peek checkbox. Checked in Chromium.
-- **2026-11-24, T2.14b:** `spaceGap`, the distance between Spaces (`gap` by default).
-- **2026-11-24, T2.14c:** the demo's Peek is off / inset / bleed, both ways being the page's CSS.
-- **2026-11-24, T2.14d:** the demo's bleed keeps the container's width (the owner); the centred
-  1040 px site is a fourth option. Checked in Chromium on both axes.
-- **Next:** the owner's look at the demo, then closing M2.
+- **2026-11-24, close M2:** the owner checked the demo (T2.11 and the follow-ups T2.12–T2.14d) and
+  every M2 slice is done; `ROADMAP.md` marks M2 done. The unapplied retro proposals are listed in
+  the close pull request.
+- **Next:** the owner's ok on the close, then "plan M3".
