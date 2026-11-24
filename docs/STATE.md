@@ -66,10 +66,8 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   `listenDrag` and `Grip` (`drag.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
-- `demo/` (not a package): `index.html`, `main.ts` and `examples.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`,
-  `e2e/transition.e2e.ts`, `e2e/input.e2e.ts`, `e2e/drag.e2e.ts`, `e2e/demo.e2e.ts` and `playwright.config.ts`
-  drive
-  it.
+- `demo/` (not a package): `index.html`, `main.ts` and `examples.ts`, over `vanilla`'s source;
+  `e2e/*.e2e.ts` and `playwright.config.ts` drive it.
 
 ## Contract
 None yet.
