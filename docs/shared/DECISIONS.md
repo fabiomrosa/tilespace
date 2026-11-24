@@ -82,7 +82,9 @@ depth-first: take the first empty Cell along the flow (column by column on a hor
 on the Xbox dashboard, so the Tiles gather at the left and Holes fall at the end; row by row on a
 vertical axis; DEC-11, amended by the owner 2026-11-24), try each candidate Tile with each Span of its
 Shape that fits there, then a Hole; recurse; keep the best complete filling by the Score, compared
-in order: Holes, then the sum of Span preference ranks, then the Displacement. A branch is cut when
+in order: Holes, then the sum of Span preference ranks, then how early in the flow the Holes sit
+(so they gather at its end; amended by the owner 2026-11-24), then the Displacement. The option
+`holes: "order"` puts the Displacement before the Holes' place instead (`"end"` is the default). A branch is cut when
 its Holes so far plus the Cells the remaining Tiles cannot cover already reach the best; a Space
 with no Hole stops the search. The search stops after the Node budget and keeps the best filling
 found. Candidates: in `fill` mode (the default) the earliest remaining Tile of each distinct Shape;

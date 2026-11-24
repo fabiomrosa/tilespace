@@ -69,7 +69,7 @@ frame budget, written down.
 | Packing | The Placements of every Tile, Space by Space |
 | Hole | A Cell of a Space that no Tile covers |
 | Packer | A pure function from the Tiles' Shapes and the Grid to a Packing |
-| Score | How the Packer ranks two fillings of a Space: Holes, then Span preference, then Displacement |
+| Score | How the Packer ranks two fillings of a Space: Holes, then Span preference, then Holes at the end of the flow, then Displacement (`holes: "order"` swaps the last two) |
 | Displacement | How many places a Tile moved from its order in the Stage |
 | Order mode | `fill` (may reorder, at a Displacement cost) or `strict` (keeps the order) |
 | Node budget | The search steps the Packer takes per Space before keeping the best filling found; it always completes its first filling, at most one step more per Cell |

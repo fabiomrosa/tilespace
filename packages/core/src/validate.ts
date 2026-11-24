@@ -1,16 +1,19 @@
-import type { Grid, Order, Shape } from "./packing.ts";
+import type { Grid, Holes, Order, Shape } from "./packing.ts";
 
-type Options = { order: Order; nodeBudget: number };
+type Options = { order: Order; nodeBudget: number; holes: Holes };
 
 /** Throws a `tilespace:` error naming the first invalid value of the Shapes, the Grid or the options. */
 export function validate(
   shapes: readonly Shape[],
   grid: Grid,
-  { order, nodeBudget }: Options,
+  { order, nodeBudget, holes }: Options,
 ): void {
   validateGrid(grid);
   if (order !== "fill" && order !== "strict") {
     throw new Error(`tilespace: order must be 'fill' or 'strict', got ${order}`);
+  }
+  if (holes !== "end" && holes !== "order") {
+    throw new Error(`tilespace: holes must be 'end' or 'order', got ${holes}`);
   }
   positiveInteger(nodeBudget, "nodeBudget");
   validateShapes(shapes);
