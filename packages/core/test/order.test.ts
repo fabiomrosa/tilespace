@@ -20,6 +20,20 @@ describe("pack order modes", () => {
     ]);
   });
 
+  it("keeps the Stage's order first with holes 'order', and the Holes at the end only then", () => {
+    const shapes: Shape[] = [[span(2, 1)], [span(2, 1)], [span(1, 1)]];
+
+    const packing = pack(shapes, { columns: 3, rows: 2 }, { holes: "order" });
+
+    expect(packing.spaces).toEqual([
+      [
+        { tile: 0, col: 0, row: 0, span: span(2, 1) },
+        { tile: 1, col: 0, row: 1, span: span(2, 1) },
+        { tile: 2, col: 2, row: 1, span: span(1, 1) },
+      ],
+    ]);
+  });
+
   it("puts a 1x2 first so the Holes fall at the end of the flow", () => {
     const shapes: Shape[] = [[span(1, 1)], [span(1, 2)], [span(1, 1)]];
 

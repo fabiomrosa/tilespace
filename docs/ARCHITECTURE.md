@@ -48,7 +48,7 @@ Each package is created by the first slice that needs it.
 - **Search order:** first empty Cell row by row; candidates per DEC-09; Spans in Shape order; a Hole
   last. The Score is a tuple compared in order: `[holes, spanRank, early,
   displacement]`, where `early` sums how many Cells each Hole sits before the last one, so the Holes
-  gather at the end of the flow (T2.12b).
+  gather at the end of the flow (T2.12b). `holes: "order"` compares `displacement` before `early`.
 - **Bound:** `holesSoFar + max(0, freeCells − areaLeft)` (areaLeft is the area of the remaining
   candidates at their largest Span, so the bound never overstates the Holes to come) against the
   best tuple's Holes; equal Holes go on only while the lower terms can still improve. `early`'s
@@ -83,7 +83,7 @@ Each package is created by the first slice that needs it.
   on `translate` and `opacity`, in two phases: the Space slides 500 ms along the axis as one block
   (the leaving Tiles out, the entering ones in from the Stage's size away, faint, landing 40 px
   short); then each entering Tile settles in 450 ms (the 40 px and the fade), in its order within
-  the Space (the fill's flow), at most 80 ms apart and about 600 ms in all. One Animation per
+  the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about 600 ms in all. One Animation per
   Tile. With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
 - Both Spaces show while a Transition runs. At its end (its Animations finish, or one is cancelled)
   the Animations are cancelled and the old Space gets `visibility: hidden`, so nothing stays

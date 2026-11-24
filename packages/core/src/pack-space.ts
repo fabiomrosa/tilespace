@@ -1,4 +1,4 @@
-import type { Grid, Order, Placement, Score, Shape, Span } from "./packing.ts";
+import type { Grid, Holes, Order, Placement, Score, Shape, Span } from "./packing.ts";
 
 /** A Tile waiting for a Space: its index in the Stage and its Shape, clamped to the Grid. */
 export type Candidate = { tile: number; shape: Shape };
@@ -13,6 +13,7 @@ export type SpaceSearch = {
   placedBefore: number;
   score: Score | undefined;
   shapes: readonly Shape[];
+  holes: Holes;
 };
 
 /**
@@ -26,7 +27,7 @@ export type SpaceSearch = {
 export function packSpace(
   candidates: readonly Candidate[],
   grid: Grid,
-  { order, nodeBudget, placedBefore, score, shapes }: SpaceSearch,
+  { order, nodeBudget, placedBefore, score, shapes, holes: where }: SpaceSearch,
 ): Placement[] {
   const { columns, rows } = grid;
   const cells = columns * rows;
@@ -68,8 +69,13 @@ export function packSpace(
   };
 
   /** Compares a Score with the best one, term by term: negative when it is better. */
+  // With `holes: "order"` the Displacement comes before `early`.
   const compare = (h: number, r: number, e: number, d: number): number =>
-    h - bestHoles || r - bestRank || e - bestEarly || d - bestDisplacement;
+    h - bestHoles ||
+    r - bestRank ||
+    (where === "end"
+      ? e - bestEarly || d - bestDisplacement
+      : d - bestDisplacement || e - bestEarly);
 
   const search = (from: number): void => {
     // The budget stops the search only once it has a filling, so the first path, which takes the

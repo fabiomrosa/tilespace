@@ -30,6 +30,12 @@ describe("pack input", () => {
     expect(() => pack(shapes, grid)).toThrow(new Error(message));
   });
 
+  it("throws when holes is neither 'end' nor 'order'", () => {
+    expect(() => pack([[span(1, 1)]], grid, { holes: "spread" as "end" })).toThrow(
+      new Error("tilespace: holes must be 'end' or 'order', got spread"),
+    );
+  });
+
   it("packs when the Grid is wider than 32 columns", () => {
     const space = pack([[span(40, 1)], [span(39, 1)], [span(1, 1)]], { columns: 40, rows: 2 })
       .spaces[0];

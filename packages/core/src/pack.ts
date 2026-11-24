@@ -1,12 +1,12 @@
 import { type Candidate, packSpace } from "./pack-space.ts";
-import type { Grid, Order, Packing, Placement, Score, Shape } from "./packing.ts";
+import type { Grid, Holes, Order, Packing, Placement, Score, Shape } from "./packing.ts";
 import { validate } from "./validate.ts";
 
 /** The default search steps per Space, chosen by the benchmark (docs/decisions/0001). */
 const NODE_BUDGET = 100_000;
 
 /** How `pack` searches; every option has a default. */
-export type PackOptions = { order?: Order; nodeBudget?: number; score?: Score };
+export type PackOptions = { order?: Order; nodeBudget?: number; score?: Score; holes?: Holes };
 
 /**
  * Packs the Tiles' Shapes into the Spaces of the Grid, one Space at a time with the Tiles left
@@ -15,9 +15,9 @@ export type PackOptions = { order?: Order; nodeBudget?: number; score?: Score };
 export function pack(
   shapes: readonly Shape[],
   grid: Grid,
-  { order = "fill", nodeBudget = NODE_BUDGET, score }: PackOptions = {},
+  { order = "fill", nodeBudget = NODE_BUDGET, score, holes = "end" }: PackOptions = {},
 ): Packing {
-  validate(shapes, grid, { order, nodeBudget });
+  validate(shapes, grid, { order, nodeBudget, holes });
   const candidates: Candidate[] = shapes.map((shape, tile) => ({
     tile,
     shape: shape.map((span) => ({
@@ -30,7 +30,14 @@ export function pack(
   let placedBefore = 0;
   // Every Span fits an empty Space, so each Space places a Tile: at most one Space per Tile.
   for (let i = 0; i < candidates.length && left.length > 0; i++) {
-    const space = packSpace(left, grid, { order, nodeBudget, placedBefore, score, shapes });
+    const space = packSpace(left, grid, {
+      order,
+      nodeBudget,
+      placedBefore,
+      score,
+      shapes,
+      holes,
+    });
     placedBefore += space.length;
     const placed = new Set(space.map((placement) => placement.tile));
     left = left.filter((candidate) => !placed.has(candidate.tile));
