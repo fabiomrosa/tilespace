@@ -1,0 +1,116 @@
+/* The page's components: the hero and its buttons (HANDOFF row 1). */
+.eyebrow {
+  font: 400 clamp(12px, 0.1vw + 12px, 13px) / 1.5 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hero {
+  padding-top: var(--s-14);
+}
+.hero-head {
+  align-items: end;
+  row-gap: var(--s-8);
+}
+.hero-text {
+  grid-column: 1 / span 7;
+}
+.hero h1 {
+  margin-top: var(--s-4);
+  font-size: clamp(64px, 6.4vw + 23px, 112px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+.lead {
+  margin-top: var(--s-6);
+  max-width: 600px;
+  font-size: clamp(18px, 0.75vw + 15px, 24px);
+  line-height: 1.35;
+  color: var(--muted);
+}
+.hero-actions {
+  grid-column: 8 / span 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+.install {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  max-width: 100%;
+  padding: 6px 6px 6px var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  font: 15px / 1.4 var(--font-mono);
+}
+.install code {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.button-small {
+  min-height: 36px;
+  font-family: var(--font-ui);
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+}
+.hero-links {
+  display: flex;
+  gap: var(--s-3);
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.button.solid {
+  background: var(--ink);
+  color: var(--bg);
+}
+.button.outline {
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+@media (max-width: 1023px) {
+  .hero-text,
+  .hero-actions {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 639px) {
+  .hero h1 {
+    line-height: 0.95;
+  }
+  /* The whole command fits at 360 px: 12 px type, no prompt, and a 44 px Copy. */
+  .install {
+    font-size: 12px;
+    justify-content: space-between;
+  }
+  .install .prompt,
+  .eyebrow .wide {
+    display: none;
+  }
+  .button-small {
+    min-height: 44px;
+  }
+  .hero-actions,
+  .hero-links,
+  .install {
+    width: 100%;
+  }
+  .hero-links .button {
+    flex: 1;
+    justify-content: center;
+  }
+}

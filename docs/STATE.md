@@ -105,4 +105,6 @@ None.
 - **2026-11-24, T3.7c (the site's phone menu and footer):** the menu button opens the header's
   links as a sheet on a phone (Escape and a link close it); the footer has the about text, the
   packages and the links. Pages is still off (P4).
-- **Next:** T3.8.
+- **2026-11-24, T3.8a (the site's hero text):** the eyebrow, the name, the tagline, the install
+  line with Copy, and the GitHub and npm buttons. Split at 469 lines: the wall is T3.8b.
+- **Next:** T3.8b.

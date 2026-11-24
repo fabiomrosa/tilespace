@@ -1,8 +1,6 @@
 import { expect, type Page, test } from "@playwright/test";
 
-test("serves the site's build under the Pages base path, with a mounted Tilespace", async ({
-  page,
-}) => {
+test("serves the site's build under the Pages base path", async ({ page }) => {
   // The project's `baseURL` ends in `/tilespace/`, as on GitHub Pages.
   await page.goto("./");
 
@@ -13,10 +11,7 @@ test("serves the site's build under the Pages base path, with a mounted Tilespac
     .evaluateAll((els) => els.map((el) => new URL((el as HTMLScriptElement).src).pathname));
   expect(scripts.length).toBeGreaterThan(0);
   for (const path of scripts) expect(path).toMatch(/^\/tilespace\//);
-
-  const stage = page.getByRole("region", { name: /arrow keys/ });
-  await expect(stage).toHaveAttribute("aria-roledescription", "carousel");
-  await expect(stage.locator("> [data-ts-space]").first()).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("tilespace");
 });
 
 /** The page's background, from the tokens: light #F6F6F3, dark #0F1115. */
@@ -82,12 +77,14 @@ test("opens the same links in a menu sheet on a phone, next in the Tab order", a
   await expect(menu).toBeFocused();
 });
 
-test("gives every header and footer control a 44 px target on a phone", async ({ page }) => {
+test("gives every control a 44 px target on a phone, and shows each code line whole", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto("./");
   await page.getByRole("button", { name: "Menu" }).click();
 
-  const controls = page.locator("header a, header button, footer a");
+  const controls = page.locator("header a, header button, main a, main button, footer a");
   for (const control of await controls.all()) {
     if (!(await control.isVisible())) continue;
     const box = await control.boundingBox();
@@ -95,6 +92,9 @@ test("gives every header and footer control a 44 px target on a phone", async ({
       Math.min(box?.width ?? 0, box?.height ?? 0),
       (await control.textContent()) ?? "",
     ).toBeGreaterThanOrEqual(44);
+  }
+  for (const code of await page.locator("main code").all()) {
+    expect(await code.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
   }
 });
 
@@ -107,4 +107,18 @@ test("links the real repository from the header and the footer", async ({ page }
   await expect(
     page.getByRole("contentinfo").getByRole("link", { name: "MIT License" }),
   ).toHaveAttribute("href", "https://github.com/fabiomrosa/tilespace/blob/main/LICENSE");
+});
+
+test("copies the install line", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("./");
+
+  await page.getByRole("button", { name: "Copy" }).click();
+
+  await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+  // Announced too: the button's own text changing isn't read out reliably.
+  await expect(page.getByRole("status")).toHaveText("Copied");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "npm install @tilespace/vanilla",
+  );
 });

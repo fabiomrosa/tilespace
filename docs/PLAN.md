@@ -818,18 +818,30 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** `docs/site/HANDOFF.md` rows 0 and 6.
 
-### T3.8 · The site's hero wall
+### T3.8a · The site's hero text
+- **Status:** done (2026-11-24)
+- **Goal:** the hero says what tilespace is and how to install it.
+- **Depends on:** T3.7c.
+- **In scope:** the eyebrow, the name, the tagline, the install line with Copy, the GitHub and npm
+  buttons, on a desktop and a phone. Split from the wall (T3.8b) at 469 lines.
+- **Out of scope:** the wall (T3.8b).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Copy puts `npm install @tilespace/vanilla` on the clipboard and says "Copied".
+- **Files:** ~7, ~250 lines: `index.html`, `main.ts`, `components.css`, `e2e/site.e2e.ts`, PLAN,
+  ROADMAP, STATE.
+- **References:** `docs/site/HANDOFF.md` row 1.
+
+### T3.8b · The site's hero wall
 - **Status:** next
 - **Goal:** the hero shows a live wall that bleeds past the screen's right edge and moves by
   buttons, keys, wheel and drag.
-- **Depends on:** T3.7c.
-- **In scope:** the hero's text, the install pill with Copy, the GitHub and npm buttons; the wall on
-  `@tilespace/vanilla` with `peek` and the handoff's bleed, its Grid per breakpoint (10x4 at
-  436 px, 8x4 on a tablet, 4x4 at 312 px on a phone; mounted again when a `matchMedia` breakpoint
-  changes); the Stage is the region (`tabindex="0"`, `label` naming the keys), with no wrapper
-  region; prev/next and one live "Space n of N" counter from the `change` and `pack` events
-  (`ui/live-counter.ts`, DEC-14), updated when a move ends; static fallback tiles with JavaScript
-  off.
+- **Depends on:** T3.8a.
+- **In scope:** the wall on `@tilespace/vanilla` with `peek` and the handoff's bleed, its Grid per
+  breakpoint (10x4 at 436 px, 8x4 on a tablet, 4x4 at 312 px on a phone; mounted again when a
+  `matchMedia` breakpoint changes); the Stage is the region (`tabindex="0"`, `label` naming the
+  keys), with no wrapper region; prev/next and one live "Space n of N" counter from the `change`
+  and `pack` events (`ui/live-counter.ts`, DEC-14); static fallback tiles with JavaScript off.
 - **Out of scope:** the playground (T3.9a on).
 - **Contract:** none.
 - **Acceptance criteria:**
@@ -837,15 +849,14 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
      sideways; Next and the arrow keys move it, and the counter shows the packed count.
   2. Resizing from 1440 to 390 px mounts the 4x4 Grid.
   3. With JavaScript off the hero shows its fallback tiles with no broken layout.
-- **Files:** ~8, ~300 lines: `index.html`, `demos/hero.ts`, `demos/tiles.ts` (new, the site's own
-  factories in its tile colours; the demo keeps its own), `ui/live-counter.ts`, `components.css`,
-  `e2e/site.e2e.ts`, PLAN, STATE.
+- **Files:** ~8, ~330 lines: `index.html`, `demos/hero.ts`, `ui/live-counter.ts`,
+  `components.css`, `base.css`, `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** `docs/site/HANDOFF.md` row 1, "Motion and accessibility", DEC-14.
 
 ### T3.9a · The site's playground: the examples
-- **Status:** waiting (T3.8)
+- **Status:** waiting (T3.8b)
 - **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
-- **Depends on:** T3.8.
+- **Depends on:** T3.8b.
 - **In scope:** the tablist (APG tabs: roving focus, `aria-selected`), the Showcase, Gallery and
   Dashboard factories in `demos/tiles.ts` (the Gallery's images as the owner decides), the framed
   Stage (8x4 at 480 px; 4x5 at 360 px on a phone, mounted again across breakpoints), prev/next and
