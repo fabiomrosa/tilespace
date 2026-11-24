@@ -102,4 +102,7 @@ None.
 - **2026-11-24, T3.7b (the site's look):** the handoff's tokens, the fonts from Google Fonts, the
   theme (the system's until the toggle saves one) and the header. Split at 533 lines: the phone
   menu and the footer are T3.7c. Not live yet: Pages is off until the owner does P4.
-- **Next:** T3.7c.
+- **2026-11-24, T3.7c (the site's phone menu and footer):** the menu button opens the header's
+  links as a sheet on a phone (Escape and a link close it); the footer has the about text, the
+  packages and the links. Pages is still off (P4).
+- **Next:** T3.8.
