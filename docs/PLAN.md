@@ -550,6 +550,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   ARCHITECTURE, PLAN, STATE.
 
 ## Later
+- The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
+  Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.
+  It costs ~32% per Space at 12x8 with 1x1 Tiles (1.7 → 2.3 ms at the default budget).
 - The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`;
   leave a press to a Tile's handler or slider, and a touch to a Tile's scroller (as the wheel does).
 - A guard for a derived Grid on a content-height Stage (GOTCHAS "DOM"), e.g. ignoring a resize the
