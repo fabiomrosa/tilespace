@@ -507,6 +507,17 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
      adds a Score tie-break that puts them there.
 - **Files:** ~6: `src/create-tilespace.ts`, `test/fill.test.ts`, ARCHITECTURE, PLAN, STATE, e2e.
 
+### T2.13b · The owner's pace
+- **Status:** done (2026-11-24)
+- **Goal:** the default Transition reads clearly: slower, with a settle that visibly slides (the
+  owner, after T2.13: "accelerated, and the translates don't show").
+- **Depends on:** T2.13, DEC-10 (its numbers, as the owner chose).
+- **In scope:** a 500 ms slide; each card settles in 450 ms from 40 px short, at most 80 ms apart
+  and about 600 ms in all.
+- **Contract:** none.
+- **Acceptance criteria:** 1. The Transition's timings and distances are those numbers.
+- **Files:** ~6: `src/default-transition.ts`, two tests, DECISIONS, ARCHITECTURE, PLAN.
+
 ### T2.12b · Holes at the end of the flow
 - **Status:** waiting (T2.13)
 - **Goal:** the last Space's Holes gather at the end of the fill's flow (the right on a horizontal

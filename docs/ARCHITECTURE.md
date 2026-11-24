@@ -77,10 +77,10 @@ Each package is created by the first slice that needs it.
   undoing a shorthand would wipe the longhands the user had set.
 - `next`, `prev` and `goTo` set the Current space, move `data-ts-current` and emit `change` at
   once, then run the Transition (DEC-10). The default (`default-transition.ts`) uses Web Animations
-  on `translate` and `opacity`, in two phases: the Space slides 300 ms along the axis as one block
-  (the leaving Tiles out, the entering ones in from the Stage's size away, faint, landing 8 px
-  short); then each entering Tile settles in 200 ms (the 8 px and the fade), in its order within
-  the Space (the fill's flow), at most 40 ms apart and about 300 ms in all. One Animation per
+  on `translate` and `opacity`, in two phases: the Space slides 500 ms along the axis as one block
+  (the leaving Tiles out, the entering ones in from the Stage's size away, faint, landing 40 px
+  short); then each entering Tile settles in 450 ms (the 40 px and the fade), in its order within
+  the Space (the fill's flow), at most 80 ms apart and about 600 ms in all. One Animation per
   Tile. With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
 - Both Spaces show while a Transition runs. At its end (its Animations finish, or one is cancelled)
   the Animations are cancelled and the old Space gets `visibility: hidden`, so nothing stays

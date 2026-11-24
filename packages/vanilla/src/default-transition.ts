@@ -21,14 +21,14 @@ export type TransitionContext = {
 };
 
 /** The Space's slide, as one block (DEC-10). */
-const SLIDE = 300;
+const SLIDE = 500;
 /** Each entering Tile's settle after the slide: a fade and a short slide. */
-const SETTLE = 200;
+const SETTLE = 450;
 /** How far a Tile lands short of its place before it settles, in CSS pixels. */
-const SHORT = 8;
+const SHORT = 40;
 /** At most this long between two Tiles' settles, and about this long for them all. */
-const STAGGER = 40;
-const CASCADE = 300;
+const STAGGER = 80;
+const CASCADE = 600;
 /** How faint the entering Tiles are while the Space slides. */
 const GHOST = 0.4;
 const EASING = "cubic-bezier(0.2, 0, 0, 1)";
@@ -38,7 +38,7 @@ const FADE = 150;
 /**
  * Two phases (DEC-10): the Space slides along the axis as one block, the leaving Tiles out and the
  * entering ones in, faint; then each entering Tile settles with a fade and a short slide, in its
- * order within the Space (the fill's flow), at most 40 ms apart and about 300 ms in all. Web
+ * order within the Space (the fill's flow), at most 80 ms apart and about 600 ms in all. Web
  * Animations on `translate` and `opacity`: nothing is written to the Tiles' styles. With
  * `prefers-reduced-motion`, a short cross-fade in place instead.
  */

@@ -85,13 +85,17 @@ describe("the default Transition", () => {
     expect(first.faint).toBe("0.4");
     expect(first.easing).not.toBe("linear");
     // Then each settles, a short slide from where it landed, in the Space's order.
-    expect(first.landed).toBe("8px 0px");
+    // The owner's pace (DEC-10): a 500 ms slide, then a 450 ms settle from 40 px, 80 ms apart.
+    expect(leaving.end).toBe(500);
+    expect(first.end).toBe(950);
+    expect(second.end).toBe(1030);
+    expect(first.landed).toBe("40px 0px");
     expect(first.end).toBeGreaterThan(leaving.end);
     expect(second.end).toBeGreaterThan(first.end);
 
     tilespace.prev();
     // Backwards, in from the left, still in the Space's own order.
-    expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", landed: "-8px 0px" });
+    expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", landed: "-40px 0px" });
     expect(motion(tiles[1]).end).toBeGreaterThan(motion(tiles[0]).end);
   });
 

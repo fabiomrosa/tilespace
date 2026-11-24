@@ -104,4 +104,6 @@ None.
   some Holes of the second Spaces sit mid-flow: T2.12b.
 - **2026-11-24, T2.13 (the Space moves, then the cards settle):** the default Transition in two
   phases; the Drag scrubs the whole timeline. Checked in Chromium.
+- **2026-11-24, T2.13b (the owner's pace):** a 500 ms slide, then each card settles from 40 px in
+  450 ms, 80 ms apart.
 - **Next:** T2.12b (Holes at the end of the flow), then closing M2.
