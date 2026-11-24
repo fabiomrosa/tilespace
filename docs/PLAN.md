@@ -562,7 +562,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~6: `src/default-transition.ts`, `test/transition.test.ts`, the demo, PLAN, STATE.
 
 ### T2.14 · Peek: the neighbouring Spaces show beside the Stage
-- **Status:** waiting (owner's ok on this plan)
+- **Status:** done (2026-11-24)
 - **Goal:** like the Netflix rows, the edges of the Spaces before and after the Current one show
   beside the Stage, inside a container of the user's that clips (the owner, 2026-11-24).
 - **Depends on:** T2.13c, DEC-06 and DEC-10 (amended).

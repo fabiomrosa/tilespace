@@ -39,6 +39,11 @@ export type TilespaceOptions = PackOptions & {
   shape?: ShapeOption;
   /** The arrow keys and the default slide: `horizontal` (default) or `vertical`. */
   axis?: Axis;
+  /**
+   * The Spaces before and after the Current one show beside the Stage, one Stage size plus the gap
+   * away, `inert`: the Stage overflows, and a container of the user's clips how much shows.
+   */
+  peek?: boolean;
   /** `next` from the last Space goes to the first, and `prev` from the first to the last. */
   loop?: boolean;
   /**
@@ -90,12 +95,13 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     loop = false,
     transition = defaultTransition,
     axis = "horizontal",
+    peek = false,
     ...packOptions
   } = options;
   const fit: GridFit | undefined =
     minCellWidth === undefined ? undefined : { minCellWidth, cellAspect, gap };
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
-  validateOptions(stage, gap, fit, transition, axis);
+  validateOptions(stage, gap, fit, transition, axis, peek);
   const log = createWriteLog();
   let tiles = Array.from(stage.children) as Tile[];
   const shapesOf = (children: Tile[]) =>
@@ -135,18 +141,31 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       }
     });
   };
-  /** Shows one Space's Tiles and hides the others'. */
+  const last = () => packing.spaces.length - 1;
+  const size = () => (axis === "horizontal" ? stage.clientWidth : stage.clientHeight);
+  /** How far a neighbouring Space rests from the Stage: read before any write of the same task. */
+  let reach = peek ? size() + gap : 0;
+  const at = (distance: number) =>
+    axis === "horizontal" ? `${distance}px 0px` : `0px ${distance}px`;
+  /** Shows one Space's Tiles and hides the others'; with `peek`, its neighbours rest beside it. */
   const show = (space: number) => {
+    const before = space > 0 ? space - 1 : loop ? last() : -1;
+    const after = space < last() ? space + 1 : loop ? 0 : -1;
     packing.spaces.forEach((placements, k) => {
+      const side = !peek || k === space ? 0 : k === after ? 1 : k === before ? -1 : 0;
       for (const { tile } of placements) {
         const el = tiles[tile] as Tile;
         if (el.parentNode !== stage) continue;
-        if (k === space) {
-          log.resetStyle(el, "visibility");
-          log.attribute(el, "data-ts-current", "");
+        if (k === space || side !== 0) log.resetStyle(el, "visibility");
+        else log.style(el, "visibility", "hidden");
+        if (k === space) log.attribute(el, "data-ts-current", "");
+        else log.resetAttribute(el, "data-ts-current");
+        if (side !== 0) {
+          log.style(el, "translate", at(side * reach));
+          log.attribute(el, "inert", "");
         } else {
-          log.style(el, "visibility", "hidden");
-          log.resetAttribute(el, "data-ts-current");
+          log.resetStyle(el, "translate");
+          log.resetAttribute(el, "inert");
         }
       }
     });
@@ -157,15 +176,14 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   log.style(stage, "row-gap", `${gap}px`);
   log.style(stage, "column-gap", `${gap}px`);
   log.style(stage, "position", "relative");
-  log.style(stage, "overflow-x", "clip");
-  log.style(stage, "overflow-y", "clip");
+  log.style(stage, "overflow-x", peek ? "visible" : "clip");
+  log.style(stage, "overflow-y", peek ? "visible" : "clip");
   // The Drag takes the axis; the page keeps the other one, and pinch zoom.
   log.style(stage, "touch-action", `${axis === "horizontal" ? "pan-y" : "pan-x"} pinch-zoom`);
   place();
   show(0);
 
   const events = createEmitter<TilespaceEvents>();
-  const last = () => packing.spaces.length - 1;
   let current = 0;
   let destroyed = false;
   /** A Transition between two Spaces; `space` is the one shown when it is settled. */
@@ -193,6 +211,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const begin = (to: number, direction: 1 | -1): Run => {
     // Read before any write, so the move forces no layout.
     const [width, height] = [stage.clientWidth, stage.clientHeight];
+    if (peek) reach = (axis === "horizontal" ? width : height) + gap;
     settle();
     const leaving = tilesIn(current);
     const entering = tilesIn(to);
@@ -201,7 +220,17 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     running = run;
     try {
       if (transition) {
-        const context = { leaving, entering, direction, axis, grid: { ...grid }, width, height };
+        const context = {
+          leaving,
+          entering,
+          direction,
+          axis,
+          grid: { ...grid },
+          width,
+          height,
+          gap,
+          peek,
+        };
         const out = transition(context);
         if (!Array.isArray(out) || !out.every((a) => typeof a?.cancel === "function")) {
           throw new Error(`tilespace: transition must return an array of Animations, got ${out}`);
@@ -254,6 +283,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
    * Tile first on screen, or the nearest one if it left.
    */
   const repack = (next: Grid, children: Tile[]) => {
+    if (peek) reach = size() + gap;
     settle();
     const first = tiles[packing.spaces[current]?.[0]?.tile ?? -1];
     const before = current;
@@ -270,8 +300,14 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const resized = () => {
     const next = gridNow();
     if (next.columns !== grid.columns || next.rows !== grid.rows) repack(next, tiles);
+    else if (peek) {
+      // The same Grid on a new size: the neighbours move to rest beside it.
+      reach = size() + gap;
+      show(running ? running.space : current);
+    }
   };
-  const resizes = fit ? new ResizeObserver(resized) : undefined;
+  // With `peek` the neighbours follow the Stage's size, on a fixed Grid too.
+  const resizes = fit || peek ? new ResizeObserver(resized) : undefined;
   resizes?.observe(stage);
   // A Tile that left gets back what was written on it; an added child is adopted.
   const mutations = new MutationObserver(() => {

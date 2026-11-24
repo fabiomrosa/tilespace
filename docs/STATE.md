@@ -46,7 +46,8 @@ Space. One wheel gesture (momentum included, ended by 200 ms of quiet) moves one
 the page scroll when it moved nothing, and leaves a gesture to a scroller or handler in a Tile.
 The Tiles fill column by column on a horizontal axis (as on the Xbox dashboard) and row by row on
 a vertical one. A pointer Drag along the axis scrubs the Transition and commits past half or on a flick, else
-plays it back. `axis` also turns the default slide vertical. With `minCellWidth` (and `cellAspect`, 1 by default) the
+plays it back. `axis` also turns the default slide vertical. With `peek`, the Spaces before and after the
+Current one show beside the Stage, `inert`, for a container of the user's to clip. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
 removing a child repacks the same way, and a removed child gets back what the library wrote. A missing
@@ -111,4 +112,7 @@ None.
   before the Displacement, with its bound, and the `holes` option (`"end"` or `"order"`).
 - **2026-11-24, T2.13c:** going back, the cards settle in reverse; the demo has Holes and Gap
   controls.
-- **Next:** T2.14 (peek, the owner's Netflix-like rows), then closing M2.
+- **2026-11-24, T2.14 (peek):** the neighbouring Spaces rest beside the Stage, `inert`, in the
+  user's clipping container; the default slide travels a Stage size plus the gap. The demo has a
+  Peek checkbox. Checked in Chromium.
+- **Next:** the owner's look at the demo, then closing M2.

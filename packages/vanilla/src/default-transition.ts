@@ -18,6 +18,10 @@ export type TransitionContext = {
   /** The Stage's client size, in CSS pixels. */
   width: number;
   height: number;
+  /** The gap between Cells, in CSS pixels: a neighbouring Space rests a Stage size plus it away. */
+  gap: number;
+  /** Whether the neighbouring Spaces show beside the Stage (the `peek` option). */
+  peek: boolean;
 };
 
 /** The Space's slide, as one block (DEC-10). */
@@ -43,7 +47,7 @@ const FADE = 150;
  * styles. With `prefers-reduced-motion`, a short cross-fade in place instead.
  */
 export function defaultTransition(context: TransitionContext): Animation[] {
-  const { leaving, entering, direction, width, height, axis } = context;
+  const { leaving, entering, direction, width, height, axis, gap, peek } = context;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const fade = (tile: Tile, from: number, fill: FillMode) =>
       tile.animate([{ opacity: from }, { opacity: 1 - from }], { duration: FADE, fill });
@@ -54,14 +58,17 @@ export function defaultTransition(context: TransitionContext): Animation[] {
   }
   const horizontal = axis === "horizontal";
   const at = (distance: number) => (horizontal ? `${distance}px 0px` : `0px ${distance}px`);
-  const size = horizontal ? width : height;
+  // A Space slides one Stage size plus the gap, to where a neighbour rests with `peek`.
+  const size = (horizontal ? width : height) + gap;
+  // Peeking Tiles are already in full view: they stay so, and nothing flashes.
+  const faint = peek ? 1 : GHOST;
   const step = Math.min(STAGGER, CASCADE / Math.max(1, entering.length - 1));
   return [
     ...leaving.map(({ tile }) =>
       tile.animate(
         [
           { translate: "0px 0px", opacity: 1 },
-          { translate: at(-direction * size), opacity: GHOST },
+          { translate: at(-direction * size), opacity: faint },
         ],
         { duration: SLIDE, easing: EASING, fill: "forwards" },
       ),
@@ -72,10 +79,10 @@ export function defaultTransition(context: TransitionContext): Animation[] {
       const turn = direction === 1 ? i : entering.length - 1 - i;
       const start = SLIDE + turn * step;
       const total = start + SETTLE;
-      const landed = { translate: at(direction * SHORT), opacity: GHOST };
+      const landed = { translate: at(direction * SHORT), opacity: faint };
       return tile.animate(
         [
-          { offset: 0, translate: at(direction * size), opacity: GHOST, easing: EASING },
+          { offset: 0, translate: at(direction * size), opacity: faint, easing: EASING },
           { offset: SLIDE / total, ...landed },
           { offset: start / total, ...landed, easing: EASING },
           { offset: 1, translate: "0px 0px", opacity: 1 },

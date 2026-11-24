@@ -2,9 +2,9 @@
  * The demo (T2.6, T2.11): three examples (a showcase of mixed Shapes, a gallery, a dashboard of
  * widgets that keep their state) on Stages whose Grid follows their size. Every input moves:
  * Prev and Next, the arrow keys with focus inside the Stage, the wheel and the Drag. The
- * Transition, the axis, where the Holes go, the gap and `loop` can be changed (the Tilespace is
- * mounted again), and Destroy
- * puts the Stage back as the page wrote it. Built with DOM APIs only.
+ * Transition, the axis, where the Holes go, the gap, `loop` and `peek` can be changed (the
+ * Tilespace is mounted again), and Destroy puts the Stage back as the page wrote it. Built with
+ * DOM APIs only.
  */
 import {
   createTilespace,
@@ -21,6 +21,8 @@ const axis = byId<HTMLSelectElement>("axis");
 const loop = byId<HTMLInputElement>("loop");
 const holes = byId<HTMLSelectElement>("holes");
 const gap = byId<HTMLInputElement>("gap");
+const peek = byId<HTMLInputElement>("peek");
+const frame = byId("frame");
 buildGallery(byId("gallery"));
 buildDashboard(byId("dashboard"));
 let stage = byId("stage");
@@ -42,6 +44,8 @@ const show = () => {
 };
 
 const mount = () => {
+  frame.classList.toggle("peek", peek.checked);
+  frame.classList.toggle("vertical", axis.value === "vertical");
   tilespace = createTilespace(stage, {
     // About 7 columns at most, so a large screen still has several Spaces to move between.
     minCellWidth: Math.max(160, stage.clientWidth / 7),
@@ -50,6 +54,7 @@ const mount = () => {
     holes: holes.value as "end" | "order",
     axis: axis.value as "horizontal" | "vertical",
     loop: loop.checked,
+    peek: peek.checked,
     ...(transition.value === "fade" && { transition: fade }),
     ...(transition.value === "none" && { transition: false }),
   });
@@ -87,7 +92,7 @@ for (const button of document.querySelectorAll<HTMLButtonElement>("[data-example
     mount();
   });
 }
-for (const control of [transition, axis, loop, holes, gap]) {
+for (const control of [transition, axis, loop, holes, gap, peek]) {
   control.addEventListener("change", () => {
     unmount();
     mount();

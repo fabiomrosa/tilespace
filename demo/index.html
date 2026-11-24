@@ -10,7 +10,11 @@
       nav h1 { font-size: 18px; margin: 0 auto 0 0; }
       [aria-pressed="true"] { font-weight: 600; }
       /* The Stage's height comes from the page, never from its content (GOTCHAS "DOM"). */
-      .stage { flex: 1 1 0; min-height: 0; }
+      /* The frame clips; with Peek it leaves room beside the Stage for the neighbouring Spaces. */
+      .frame { flex: 1 1 0; min-height: 0; display: flex; overflow: hidden; }
+      .frame.peek { padding: 0 64px; }
+      .frame.peek.vertical { padding: 64px 0; }
+      .stage { flex: 1 1 0; min-width: 0; }
       .stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; overflow: hidden; background: hsl(var(--hue) 55% 78%); }
       .stage > div:nth-child(4n + 1) { --hue: 210; }
       .stage > div:nth-child(4n + 2) { --hue: 150; }
@@ -51,11 +55,13 @@
       </label>
       <label>Gap <input id="gap" type="number" min="0" max="48" step="4" value="12" /></label>
       <label><input id="loop" type="checkbox" /> Loop</label>
+      <label><input id="peek" type="checkbox" /> Peek</label>
       <button id="prev" type="button">Prev</button>
       <span id="space" aria-live="polite"></span>
       <button id="next" type="button">Next</button>
       <button id="toggle" type="button">Destroy</button>
     </nav>
+    <div id="frame" class="frame">
     <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus when the Tile holding it hides, so the keys keep moving -->
     <div id="stage" class="stage" tabindex="0" style="row-gap: 12px;">
       <div data-ts-shape="3x2 2x2">Weather</div>
@@ -77,6 +83,7 @@
     <div id="gallery" class="stage" tabindex="0" hidden></div>
     <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: as the showcase's Stage, it keeps the focus for the keys -->
     <div id="dashboard" class="stage" tabindex="0" hidden></div>
+    </div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>
