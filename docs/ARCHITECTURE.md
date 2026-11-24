@@ -46,10 +46,13 @@ Each package is created by the first slice that needs it.
   width (T1.1); the search keeps one occupancy and undoes each step on the way back, so its memory
   is its depth.
 - **Search order:** first empty Cell row by row; candidates per DEC-09; Spans in Shape order; a Hole
-  last. The Score is a tuple compared in order: `[holes, spanRank, displacement]`.
+  last. The Score is a tuple compared in order: `[holes, spanRank, early,
+  displacement]`, where `early` sums how many Cells each Hole sits before the last one, so the Holes
+  gather at the end of the flow (T2.12b).
 - **Bound:** `holesSoFar + max(0, freeCells − areaLeft)` (areaLeft is the area of the remaining
   candidates at their largest Span, so the bound never overstates the Holes to come) against the
-  best tuple's Holes; equal Holes go on only while the lower terms can still improve.
+  best tuple's Holes; equal Holes go on only while the lower terms can still improve. `early`'s
+  bound adds `k(k−1)/2` for the `k` Holes still to come, as if they were the last Cells.
 - **Node budget:** a count of search steps per Space (default 100,000, chosen by the T1.9 benchmark,
   `docs/decisions/0001-node-budget.md`); every loop is bounded by it.
 - **Last Space:** when every remaining Tile fits in one Space, it is packed with the same search;

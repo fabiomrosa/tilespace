@@ -19,7 +19,8 @@ export type SpaceSearch = {
  * Fills one Space with the Candidates by depth-first branch and bound (DEC-08): at the first empty
  * Cell, try the earliest Candidate of each distinct Shape (in `strict` mode only the next one) with
  * each of its Spans in order, then a Hole. Keeps the best filling by the Score
- * `[holes, spanRank, displacement]` found within the Node budget; a filling with no Hole stops the
+ * `[holes, spanRank, early, displacement]` found within the Node budget (`early`: how far before the
+ * end of the flow its Holes sit, so they gather at the end); a filling with no Hole stops the
  * search. A custom Score replaces it, with no cut and no stop: only the Node budget bounds it.
  */
 export function packSpace(
@@ -37,12 +38,14 @@ export function packSpace(
   let best: Placement[] | undefined;
   let bestHoles = Number.POSITIVE_INFINITY;
   let bestRank = Number.POSITIVE_INFINITY;
+  let bestEarly = Number.POSITIVE_INFINITY;
   let bestDisplacement = Number.POSITIVE_INFINITY;
   let bestTerms: number[] = [];
   let areaLeft = largest.reduce((area, a) => area + a, 0);
   let freeCells = cells;
   let holes = 0;
   let rank = 0;
+  let early = 0;
   let displacement = 0;
   let nodes = 0;
 
@@ -65,8 +68,8 @@ export function packSpace(
   };
 
   /** Compares a Score with the best one, term by term: negative when it is better. */
-  const compare = (h: number, r: number, d: number): number =>
-    h - bestHoles || r - bestRank || d - bestDisplacement;
+  const compare = (h: number, r: number, e: number, d: number): number =>
+    h - bestHoles || r - bestRank || e - bestEarly || d - bestDisplacement;
 
   const search = (from: number): void => {
     // The budget stops the search only once it has a filling, so the first path, which takes the
@@ -92,17 +95,24 @@ export function packSpace(
         return;
       }
       const total = holes + freeCells;
-      if (compare(total, rank, displacement) < 0) {
+      // The free Cells left are Holes too: each counts how far it sits before the last Cell.
+      let allEarly = early;
+      for (let c = cell; c < cells; c++) if (!occupied[c]) allEarly += cells - 1 - c;
+      if (compare(total, rank, allEarly, displacement) < 0) {
         bestHoles = total;
         bestRank = rank;
+        bestEarly = allEarly;
         bestDisplacement = displacement;
         best = placements.slice();
       }
       return;
     }
     // Every term of the Score only grows deeper down, so a branch that cannot beat the best is cut.
-    if (!score && compare(holes + Math.max(0, freeCells - areaLeft), rank, displacement) >= 0)
-      return;
+    // The Holes still to come are at least the Cells no Tile can cover; at best they are the last
+    // Cells of the flow, which sit 0, 1, … k-1 before the end.
+    const coming = Math.max(0, freeCells - areaLeft);
+    const soon = early + (coming * (coming - 1)) / 2;
+    if (!score && compare(holes + coming, rank, soon, displacement) >= 0) return;
 
     const tried = new Set<string>();
     const col = cell % columns;
@@ -139,9 +149,11 @@ export function packSpace(
 
     occupied[cell] = 1;
     holes++;
+    early += cells - 1 - cell;
     freeCells--;
     search(cell + 1);
     freeCells++;
+    early -= cells - 1 - cell;
     holes--;
     occupied[cell] = 0;
   };

@@ -519,7 +519,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~7: `src/default-transition.ts`, two tests, DECISIONS, ARCHITECTURE, PLAN, STATE.
 
 ### T2.12b · Holes at the end of the flow
-- **Status:** waiting (T2.13)
+- **Status:** done (2026-11-24)
 - **Goal:** the last Space's Holes gather at the end of the fill's flow (the right on a horizontal
   axis), so a partly filled Space still looks balanced.
 - **Depends on:** T2.12.

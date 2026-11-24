@@ -8,7 +8,8 @@ An npm workspace that builds, formats, lints, type-checks and tests, with one ga
 that CI runs in the `gate` job, beside the size, frozen-files, title and secret checks.
 `pack(shapes, grid, { order, nodeBudget, score })` places every Tile, Space after Space with the
 Tiles left (the last Space holds what remains). In each Space every Tile gets a Span of its Shape
-(clamped to the Grid), with the best Score `[holes, spanRank, displacement]` that the depth-first
+(clamped to the Grid), with the best Score `[holes, spanRank, early, displacement]` (`early`: the
+Holes gather at the end of the flow) that the depth-first
 search of DEC-08 finds under the Node budget (`nodeBudget` steps per Space, 100,000 by default,
 `docs/decisions/0001-node-budget.md`). `order: 'fill'` (default) may reorder Tiles at a Displacement
 cost; `'strict'` keeps the Stage's order. A Grid or Span that is not a positive integer, an empty
@@ -106,4 +107,6 @@ None.
   phases; the Drag scrubs the whole timeline. Checked in Chromium.
 - **2026-11-24, T2.13b (the owner's pace):** a 500 ms slide, then each card settles from 40 px in
   450 ms, 80 ms apart.
-- **Next:** T2.12b (Holes at the end of the flow), then closing M2.
+- **2026-11-24, T2.12b (Holes at the end of the flow):** a Score term after the Span ranks and
+  before the Displacement, with its bound. On the demo, the second Spaces' Holes sit at the end.
+- **Next:** the owner's look at the demo, then closing M2.

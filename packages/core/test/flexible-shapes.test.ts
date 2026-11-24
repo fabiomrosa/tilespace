@@ -39,9 +39,10 @@ describe("pack with flexible Shapes", () => {
 
     const packing = pack(shapes, { columns: 3, rows: 2 });
 
+    // The 3x1 goes first so the Hole is the last Cell (DEC-08).
     expect(packing.spaces[0]).toEqual([
-      { tile: 0, col: 0, row: 0, span: span(2, 1) },
-      { tile: 1, col: 0, row: 1, span: span(3, 1) },
+      { tile: 1, col: 0, row: 0, span: span(3, 1) },
+      { tile: 0, col: 0, row: 1, span: span(2, 1) },
     ]);
   });
 });
