@@ -39,6 +39,8 @@ const shapeOf = (value: string): Shape =>
  * the Space's, each where its Placement says. Returns the Packing.
  */
 const expectSpace = async (page: Page, space: number) => {
+  // After the Transition: until then both Spaces show, and `translate` moves the boxes.
+  await page.waitForFunction(() => document.getAnimations().length === 0);
   const seen = await read(page);
   const grid: Grid = seen.grid;
   const packing = pack(seen.shapes.map(shapeOf), grid);

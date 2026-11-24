@@ -30,8 +30,11 @@ Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and 
 `visibility: hidden`. `destroy()` puts back every style and attribute it wrote. A custom
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
 `validatePacking`. `next()`, `prev()`
-and `goTo(space)` change the Current space at once (`loop` wraps at the ends), `current` reads it,
-and `on('change', fn)` hears each move. With `minCellWidth` (and `cellAspect`, 1 by default) the
+and `goTo(space)` change the Current space (`loop` wraps at the ends), `current` reads it, and
+`on('change', fn)` hears each move. Each move runs the default Transition: the Tiles slide along
+the row with Web Animations (`translate`, `opacity`), the entering ones staggered by Cell; at its
+end only the new Space shows and nothing stays written. A new move, a repack or `destroy()`
+during a Transition ends it at once. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
 removing a child repacks the same way, and a removed child gets back what the library wrote. A missing
@@ -49,10 +52,11 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
 - `packages/vanilla` (`@tilespace/vanilla`): `createTilespace`, `Tilespace`, `TilespaceOptions`
   (`create-tilespace.ts`), `ShapeOption` and `Tile` (`read-shape.ts`, with `readShape`, internal),
   the write log (`write-log.ts`, internal), `validateOptions` (`validate-options.ts`, internal), `deriveGrid` (`derive-grid.ts`, internal), the emitter (`emitter.ts`, internal),
+  `defaultTransition` and `TransitionContext` (`default-transition.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
-- `demo/` (not a package): `index.html` and `main.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`
-  and `playwright.config.ts` drive it.
+- `demo/` (not a package): `index.html` and `main.ts`, over `vanilla`'s source; `e2e/mount.e2e.ts`,
+  `e2e/transition.e2e.ts` and `playwright.config.ts` drive it.
 
 ## Contract
 None yet.
@@ -61,8 +65,10 @@ None yet.
 None.
 
 ## Last session
-- **2026-11-23, T2.6 (the demo page in a real browser):** `demo/` with 14 Tiles of mixed Shapes,
-  Prev, Next and Destroy, and Playwright (Chromium) in the gate and CI. The e2e flow packs the
-  page's Shapes in Node and checks every shown Tile's box against its Placement, after `next` and a
-  resize; a second flow checks `destroy()` against the page's source (the T2.1 "Later" item).
-- **Next:** the owner's midway check of the demo (`npm run demo`), then T2.7.
+- **2026-11-24, T2.6 merged** after the owner's midway check; the demo now numbers each Tile by its
+  place in the HTML (the owner asked which way the Tiles fill: row by row, DEC-08).
+- **2026-11-24, T2.7 (the default Transition):** `next`, `prev` and `goTo` slide the Spaces with
+  Web Animations, the entering Tiles staggered by Cell. Checked in Chromium (Playwright): the
+  Animations run, both Spaces show meanwhile, and at the end only the new Space shows with nothing
+  written. Every e2e flow now waits for the Transition before reading boxes.
+- **Next:** T2.8 (custom, none and reduced-motion Transitions) or T2.9 (keyboard and wheel).

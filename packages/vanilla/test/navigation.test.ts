@@ -16,6 +16,12 @@ const mount = (options: Partial<TilespaceOptions> = {}) => {
   return { stage, tilespace, changes, tiles: Array.from(stage.children) as HTMLElement[] };
 };
 
+/** Ends every running Transition (happy-dom never ends an Animation by itself). */
+const finish = async (tiles: HTMLElement[]) => {
+  for (const tile of tiles) for (const animation of tile.getAnimations()) animation.finish();
+  await new Promise((resolve) => setTimeout(resolve));
+};
+
 /** The Spaces whose Tiles are shown, read from the DOM. */
 const shown = (tiles: HTMLElement[]) =>
   tiles.flatMap((t, i) =>
@@ -23,17 +29,19 @@ const shown = (tiles: HTMLElement[]) =>
   );
 
 describe("navigation", () => {
-  it("moves one Space with next and prev and stops at the ends", () => {
+  it("moves one Space with next and prev and stops at the ends", async () => {
     const { tilespace, changes, tiles } = mount();
 
     tilespace.prev();
     tilespace.next();
     tilespace.next();
     expect(tilespace.current).toBe(2);
+    await finish(tiles);
     expect(shown(tiles)).toEqual([2]);
     tilespace.next();
     tilespace.next();
     tilespace.prev();
+    await finish(tiles);
 
     expect(tilespace.current).toBe(2);
     expect(shown(tiles)).toEqual([2]);
@@ -51,12 +59,13 @@ describe("navigation", () => {
     expect(changes).toEqual([3, 0]);
   });
 
-  it("goes to a Space, and fires nothing for the Current space", () => {
+  it("goes to a Space, and fires nothing for the Current space", async () => {
     const { tilespace, changes, tiles } = mount();
 
     tilespace.goTo(3);
     tilespace.goTo(3);
     tilespace.goTo(0);
+    await finish(tiles);
 
     expect(changes).toEqual([3, 0]);
     expect(shown(tiles)).toEqual([0]);

@@ -69,8 +69,15 @@ Each package is created by the first slice that needs it.
   (showing a Space puts back the user's own `visibility`), and `destroy()` puts back all of them,
   with their priority. It writes longhands only (`grid-column-start`, `row-gap`, `overflow-x`…):
   undoing a shorthand would wipe the longhands the user had set.
-- `next`, `prev` and `goTo` swap the Current space at once: the other Spaces' Tiles get
-  `visibility: hidden`. Events go through `emitter.ts` (`on` returns the unsubscribe function).
+- `next`, `prev` and `goTo` set the Current space, move `data-ts-current` and emit `change` at
+  once, then run the default Transition (`default-transition.ts`, DEC-10): Web Animations on
+  `translate` and `opacity`, the leaving Tiles sliding out along the row and the entering ones in
+  from the Stage's width away, staggered 40 ms per Cell from the edge they enter from (forward:
+  the right). Both Spaces show while it runs; at its end the Animations are cancelled and the old
+  Space gets `visibility: hidden`, so nothing stays written. A move, a repack or `destroy()` during
+  a Transition first ends it at once. A move reads the Stage's width before its own writes; a move
+  made from a `pack` or `change` listener, after the engine's writes in the same task, forces a
+  layout. Events go through `emitter.ts` (`on` returns the unsubscribe function).
   After `destroy()` a move does nothing. As with DOM events, a listener removed during an emit
   (or by `destroy()`) is skipped; a move made inside a `change` listener reaches the later
   listeners first; a listener that throws stops the ones after it, after the move is done.

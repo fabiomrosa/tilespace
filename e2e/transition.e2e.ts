@@ -1,0 +1,37 @@
+import { expect, test } from "@playwright/test";
+
+test("runs the default Transition on next and leaves nothing written", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 800 });
+  await page.goto("/");
+  const tiles = page.locator("#stage > div");
+  const rest = await tiles.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().x));
+
+  await page.getByRole("button", { name: "Next" }).click();
+
+  // Right after the click: Animations run, and both Spaces show.
+  const during = await page.evaluate(() => ({
+    running: document.getAnimations().filter((a) => a.playState === "running").length,
+    spaces: new Set(
+      Array.from(document.querySelectorAll("#stage > div"))
+        .filter((el) => getComputedStyle(el).visibility === "visible")
+        .map((el) => el.getAttribute("data-ts-space")),
+    ).size,
+  }));
+  expect(during.running).toBeGreaterThan(0);
+  expect(during.spaces).toBe(2);
+
+  await page.waitForFunction(() => document.getAnimations().length === 0);
+  const after = await tiles.evaluateAll((els) =>
+    els.map((el) => ({
+      space: el.getAttribute("data-ts-space"),
+      visible: getComputedStyle(el).visibility === "visible",
+      style: [(el as HTMLElement).style.translate, (el as HTMLElement).style.opacity],
+    })),
+  );
+  expect(after.filter((t) => t.visible).every((t) => t.space === "1")).toBe(true);
+  expect(after.filter((t) => t.space === "1").every((t) => t.visible)).toBe(true);
+  expect(after.flatMap((t) => t.style).every((v) => v === "")).toBe(true);
+  // The Space 0 Tiles slid out and back into place once hidden: no Animation is left holding them.
+  const back = await tiles.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().x));
+  expect(back).toEqual(rest);
+});
