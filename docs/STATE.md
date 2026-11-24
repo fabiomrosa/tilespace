@@ -29,7 +29,7 @@ leaves the Stage as the page wrote it.
 score, packer, loop, transition, axis, peek, spaceGap })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
-Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and the other Spaces are
+Tile's Placement (DEC-06), and makes the Stage a carousel region named by `label` (DEC-14). Space 0 is shown and the other Spaces are
 `visibility: hidden` and `inert`. `destroy()` puts back every style and attribute it wrote. A custom
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
 `validatePacking`. `next()`, `prev()`
@@ -90,4 +90,8 @@ None.
 - **2026-11-24, T3.1 (hidden Spaces are inert):** every Tile outside the Current space is `inert`,
   and the leaving Tiles from the start of a move. Checked in Chromium: Tab never reaches a child
   that sets `visibility: visible` inside a hidden Tile.
-- **Next:** T3.2.
+- **2026-11-24, T3.2 (the Stage is a labelled carousel region):** `role="region"`,
+  `aria-roledescription="carousel"` and `aria-label` from the `label` option, each only where the
+  user set none. The demo names each example and keeps its live "Space n of N" (DEC-14's recipe).
+  Not checked in VoiceOver: the agent can't drive it.
+- **Next:** T3.3.

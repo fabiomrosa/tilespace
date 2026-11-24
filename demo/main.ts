@@ -59,6 +59,8 @@ const mount = () => {
     axis: axis.value as "horizontal" | "vertical",
     loop: loop.checked,
     peek: peek.value !== "off",
+    // The Stage's name, read with its role "carousel"; the arrow keys work inside it.
+    label: `${document.querySelector('[aria-pressed="true"]')?.textContent}, arrow keys move between Spaces`,
     ...(transition.value === "fade" && { transition: fade }),
     ...(transition.value === "none" && { transition: false }),
   });

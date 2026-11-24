@@ -24,6 +24,13 @@ describe("createTilespace options", () => {
     ["a Span after a letter", ["a2x1"], {}, 'tile 0 has data-ts-shape "a2x1"'],
     ["a Span of 0 rows", ["1x0"], {}, 'tile 0 has data-ts-shape "1x0"'],
     [
+      "a label that is not a string",
+      [null],
+      { label: 3 as unknown as string },
+      "label must be a non-empty string, got 3",
+    ],
+    ["an empty label", [null], { label: "" }, 'label must be a non-empty string, got ""'],
+    [
       "a gap of Infinity",
       [null],
       { gap: Number.POSITIVE_INFINITY },
