@@ -68,8 +68,10 @@
       <div data-ts-shape="2x1">Reminders</div>
       <div data-ts-shape="1x3 1x2">News</div>
     </div>
-    <div id="gallery" class="stage" hidden></div>
-    <div id="dashboard" class="stage" hidden></div>
+    <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: as the showcase's Stage, it keeps the focus for the keys -->
+    <div id="gallery" class="stage" tabindex="0" hidden></div>
+    <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: as the showcase's Stage, it keeps the focus for the keys -->
+    <div id="dashboard" class="stage" tabindex="0" hidden></div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

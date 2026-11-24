@@ -25,6 +25,12 @@ test("switches examples and Transitions from the page", async ({ page }) => {
   await page.getByRole("button", { name: "Gallery" }).click();
   await expect(page.getByRole("img").first()).toBeVisible();
   await expect(page.locator("#stage")).toBeHidden();
+  // The keys work from the Stage itself, with nothing focusable in a picture.
+  await page.locator("#gallery").focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("#space")).toHaveText(/^Space 2 of/);
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
 
   await page.getByLabel("Transition").selectOption("none");
   await page.getByRole("button", { name: "Next" }).click();
