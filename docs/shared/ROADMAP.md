@@ -44,11 +44,12 @@ checks the demo in the browser midway (T2.6) and at the end (T2.11).
 
 ## M3 · v1 release
 Hidden Spaces `inert`, ARIA on the Stage, publishable packages with their READMEs, the lab
-write-up and the first npm publish. The owner pushes the release tag (T3.6).
+write-up, the first npm publish, then the project's site on GitHub Pages from the owner's design
+handoff. The owner pushes the release tag (T3.6).
 
 | Repository | Slices |
 |---|---|
-| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.7 the site's skeleton on GitHub Pages, T3.8 its hero wall, T3.9 its playground on a desktop, T3.10 on a phone and the first section, T3.11 its quick start and lab, T3.12 its accessibility and motion checks, T3.6 the first publish |
+| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.6 the first publish, T3.7a the site's pipeline to GitHub Pages, T3.7b its tokens, theme, header and footer, T3.8 its hero wall, T3.9a its playground's examples, T3.9b its control bar, T3.10 its first section, T3.11 its quick start and lab, T3.12 its accessibility and motion checks |
 
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
@@ -59,13 +60,13 @@ write-up and the first npm publish. The owner pushes the release tag (T3.6).
   no classic automation tokens; a granular one lasts at most 90 days), as the repository secret
   `NPM_TOKEN`. Needed by T3.6; after it, trusted publishing can replace it.
 - **P4** · GitHub Pages turned on for `tilespace`, with "GitHub Actions" as the source. Needed by
-  T3.7.
+  T3.7a.
 
 ## Later milestones (split when they start)
 - **M4 · React adapter.** **M5 · Angular adapter.**
 
 ## Recommended order (one session at a time)
-M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 → T3.7 → T3.8 → T3.9 → T3.10 → T3.11 → T3.12 → T3.6 (the owner tags v1.0.0), then
+M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 → T3.6 → T3.7a → T3.7b → T3.8 → T3.9a → T3.9b → T3.10 → T3.11 → T3.12 (the owner tags v1.0.0), then
 "close M3" and "plan M4".
 
 ## Open decisions (see DECISIONS.md)
@@ -73,4 +74,4 @@ M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 �
 |---|---|---|---|
 | DEC-14 | ARIA on the Stage, and who announces the Current space | Accepted | T3.2 |
 | DEC-15 | License, versions and how a release publishes | Accepted | T3.3, T3.6 |
-| DEC-16 | The site in this repository, on GitHub Pages | Proposed | T3.7 |
+| DEC-16 | The site in this repository, on GitHub Pages | Proposed | T3.7a |
