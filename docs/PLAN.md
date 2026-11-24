@@ -778,7 +778,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Acceptance criteria:**
   1. `npm run verify` builds `site/dist`, and `e2e/site.e2e.ts` loads it under `/tilespace/` with
      a mounted Tilespace (seen red with the base path wrong).
-  2. Checked in T3.7b: after this merge the page is live at the Pages URL.
+  2. Checked in T3.7c: after this merge the page is live at the Pages URL.
 - **Files:** ~11, ~150 lines: `site/{package.json,tsconfig.json,vite.config.ts,index.html,src/main.ts}`,
   root `package.json`, `tsconfig.json`, `package-lock.json`, `pages.yml`, `playwright.config.ts`,
   `e2e/site.e2e.ts` (new), ARCHITECTURE, PLAN, STATE.
