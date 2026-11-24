@@ -6,7 +6,7 @@
     <title>tilespace demo</title>
     <style>
       body { font: 14px/1.4 system-ui, sans-serif; margin: 0; padding: 16px; box-sizing: border-box; height: 100vh; display: flex; flex-direction: column; gap: 12px; color: #222; background: #f4f4f6; }
-      nav { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+      nav { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; position: relative; z-index: 1; background: #f4f4f6; box-shadow: 0 -16px 0 16px #f4f4f6, 0 12px 0 #f4f4f6; }
       nav h1 { font-size: 18px; margin: 0 auto 0 0; }
       [aria-pressed="true"] { font-weight: 600; }
       /* The Stage's height comes from the page, never from its content (GOTCHAS "DOM"). */
@@ -16,12 +16,16 @@
       /* Inset: the frame is the site's width and makes room inside, so the Stage shrinks. */
       .frame.inset { padding: 0 64px; }
       .frame.inset.vertical { padding: 64px 0; }
-      /* Bleed: the frame spans the screen, and the Stage keeps a 1040 px site's width, centred. */
+      /* Bleed: the Stage keeps its container's width and the neighbours spill past it, clipped by
+         the screen; the nav covers the one above, and the page's gap. */
+      .frame.bleed { overflow: visible; }
+      html:has(.frame.bleed), html:has(.frame.bleed) body { overflow: clip; }
+      /* Centred: the frame spans the screen, and the Stage keeps a 1040 px site's width, centred. */
       /* -16px: out to the screen's edges, past the body's padding. Under 1040 px there's no margin. */
-      .frame.bleed { margin: 0 -16px; }
-      .frame.bleed .stage { max-width: 1040px; margin: 0 auto; }
+      .frame.centred { margin: 0 -16px; }
+      .frame.centred .stage { max-width: 1040px; margin: 0 auto; }
       /* Vertically the neighbours come from above and below: the Stage leaves room there instead. */
-      .frame.bleed.vertical .stage { max-width: none; max-height: calc(100% - 160px); align-self: center; height: 100%; margin: 0 16px; }
+      .frame.centred.vertical .stage { max-width: none; max-height: calc(100% - 160px); align-self: center; height: 100%; margin: 0 16px; }
       .stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; overflow: hidden; background: hsl(var(--hue) 55% 78%); }
       .stage > div:nth-child(4n + 1) { --hue: 210; }
       .stage > div:nth-child(4n + 2) { --hue: 150; }
@@ -68,6 +72,7 @@
           <option value="off">off</option>
           <option value="inset">inset</option>
           <option value="bleed">bleed</option>
+          <option value="centred">bleed, centred</option>
         </select>
       </label>
       <button id="prev" type="button">Prev</button>

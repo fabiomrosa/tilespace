@@ -613,6 +613,18 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   frame spans the screen, and the next Space starts a `spaceGap` past the Stage.
 - **Files:** ~6: the demo, `e2e/peek.e2e.ts`, `e2e/input.e2e.ts`, PLAN, STATE.
 
+### T2.14d · The demo bleeds past its container
+- **Status:** done (2026-11-24)
+- **Goal:** bleed keeps the container's width, whatever it is (the owner, after T2.14c).
+- **Depends on:** T2.14c.
+- **In scope:** the demo's Peek becomes off / inset / bleed (the Stage keeps its container's width
+  and the neighbours spill past it, clipped by the screen; the nav covers the one above) / bleed,
+  centred (T2.14c's bleed). The library is unchanged.
+- **Contract:** none.
+- **Acceptance criteria:** 1. In Chromium at 1440 px, with bleed the Stage is the container's width,
+  the next Space starts a `spaceGap` past it, and the page does not scroll sideways.
+- **Files:** ~5: the demo, `e2e/peek.e2e.ts`, PLAN, STATE.
+
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.

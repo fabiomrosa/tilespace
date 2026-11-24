@@ -45,9 +45,9 @@ const show = () => {
 };
 
 const mount = () => {
-  // Where the neighbours show is the page's CSS: room inside the site, or the screen's margins.
-  frame.classList.toggle("inset", peek.value === "inset");
-  frame.classList.toggle("bleed", peek.value === "bleed");
+  // Where the neighbours show is the page's CSS: room inside the site, past the container, or the
+  // screen's margins around a centred site.
+  for (const way of ["inset", "bleed", "centred"]) frame.classList.toggle(way, peek.value === way);
   frame.classList.toggle("vertical", axis.value === "vertical");
   tilespace = createTilespace(stage, {
     // About 7 columns and 4 or 5 rows at most, so a large screen still has several Spaces.
