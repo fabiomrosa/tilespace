@@ -142,11 +142,12 @@ describe("the Drag", () => {
     const { stage, tilespace, tiles } = mount();
     pointer(stage, "pointerdown", 300, 0);
     pointer(stage, "pointermove", 100, 100);
+    const [scrubbed] = tiles[0]?.getAnimations() ?? [];
 
     tilespace.goTo(2);
-    // Scrubbing the cancelled Animations would bring them back.
+    // Scrubbing the cancelled Animations would bring them back (Chrome applies them again).
     pointer(stage, "pointermove", 50, 150);
-    expect(tiles[1]?.getAnimations()).toEqual([]);
+    expect(scrubbed?.currentTime).toBeNull();
     pointer(stage, "pointerup", 100, 200);
     await finish(tiles);
     expect(tilespace.current).toBe(2);
