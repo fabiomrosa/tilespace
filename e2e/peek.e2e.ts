@@ -42,6 +42,8 @@ test("bleeds past its container: the Stage keeps the container's width", async (
   await page.getByLabel("Peek").selectOption("bleed");
 
   const seen = await page.evaluate(() => {
+    // The page clips the neighbours: it never scrolls sideways.
+    window.scrollTo(500, 0);
     const stage = document.getElementById("stage") as HTMLElement;
     const next = Array.from(stage.children).find(
       (t) =>
@@ -52,15 +54,15 @@ test("bleeds past its container: the Stage keeps the container's width", async (
       width: box.width,
       right: box.right,
       nextLeft: next.getBoundingClientRect().left,
-      // The page clips the neighbours: it never scrolls sideways.
-      scrollX: (window.scrollTo(500, 0), window.scrollX),
+      scrollX: window.scrollX,
     };
   });
 
   // The body's 16 px padding on each side: the container is the rest of the screen.
   expect(seen.width).toBeCloseTo(1440 - 32, 0);
   expect(seen.nextLeft).toBeCloseTo(seen.right + 12, 0);
-  expect(seen.nextLeft).toBeLessThan(1440);
+  // What shows of it: the body's padding past the Space gap.
+  expect(seen.nextLeft).toBeLessThanOrEqual(1440 - 4);
   expect(seen.scrollX).toBe(0);
 });
 
