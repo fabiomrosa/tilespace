@@ -116,4 +116,5 @@ None.
   user's clipping container; the default slide travels a Stage size plus the gap. The demo has a
   Peek checkbox. Checked in Chromium.
 - **2026-11-24, T2.14b:** `spaceGap`, the distance between Spaces (`gap` by default).
+- **2026-11-24, T2.14c:** the demo's Peek is off / inset / bleed, both ways being the page's CSS.
 - **Next:** the owner's look at the demo, then closing M2.

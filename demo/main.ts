@@ -21,7 +21,7 @@ const axis = byId<HTMLSelectElement>("axis");
 const loop = byId<HTMLInputElement>("loop");
 const holes = byId<HTMLSelectElement>("holes");
 const gap = byId<HTMLInputElement>("gap");
-const peek = byId<HTMLInputElement>("peek");
+const peek = byId<HTMLSelectElement>("peek");
 const spaceGap = byId<HTMLInputElement>("space-gap");
 const frame = byId("frame");
 buildGallery(byId("gallery"));
@@ -45,18 +45,20 @@ const show = () => {
 };
 
 const mount = () => {
-  frame.classList.toggle("peek", peek.checked);
+  // Where the neighbours show is the page's CSS: room inside the site, or the screen's margins.
+  frame.classList.toggle("inset", peek.value === "inset");
+  frame.classList.toggle("bleed", peek.value === "bleed");
   frame.classList.toggle("vertical", axis.value === "vertical");
   tilespace = createTilespace(stage, {
-    // About 7 columns at most, so a large screen still has several Spaces to move between.
-    minCellWidth: Math.max(160, stage.clientWidth / 7),
+    // About 7 columns and 4 or 5 rows at most, so a large screen still has several Spaces.
+    minCellWidth: Math.max(160, stage.clientWidth / 7, (stage.clientHeight * (4 / 3)) / 4.5),
     cellAspect: 4 / 3,
     gap: Math.min(48, Math.max(0, Number(gap.value) || 0)),
     spaceGap: Math.min(200, Math.max(0, Number(spaceGap.value) || 0)),
     holes: holes.value as "end" | "order",
     axis: axis.value as "horizontal" | "vertical",
     loop: loop.checked,
-    peek: peek.checked,
+    peek: peek.value !== "off",
     ...(transition.value === "fade" && { transition: fade }),
     ...(transition.value === "none" && { transition: false }),
   });

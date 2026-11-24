@@ -599,6 +599,20 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~12: `src/{create-tilespace.ts,default-transition.ts,validate-options.ts}`, three
   tests, two e2e flows, the demo, DECISIONS, ARCHITECTURE, PLAN, STATE.
 
+### T2.14c · The demo peeks inset or bleeding
+- **Status:** done (2026-11-24)
+- **Goal:** the owner sees both ways a page can clip `peek` (the owner, after T2.14b).
+- **Depends on:** T2.14b.
+- **In scope:** the demo's Peek becomes off / inset (the frame makes room inside the site's width,
+  so the Stage shrinks) / bleed (the frame spans the screen and the Stage keeps a 1040 px site's
+  width, so the neighbours fill the margins; on a vertical axis it leaves room above and below).
+  The library is unchanged: both are the page's CSS. The demo's `minCellWidth` also caps the rows,
+  so a tall Stage still has several Spaces.
+- **Contract:** none.
+- **Acceptance criteria:** 1. In Chromium at 1440 px, with bleed the Stage is 1040 px wide, the
+  frame spans the screen, and the next Space starts a `spaceGap` past the Stage.
+- **Files:** ~6: the demo, `e2e/peek.e2e.ts`, `e2e/input.e2e.ts`, PLAN, STATE.
+
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.
