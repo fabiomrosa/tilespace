@@ -41,9 +41,8 @@ something else (then throws a `tilespace:` error) or throws. With focus inside t
 arrow keys of the `axis` (`horizontal` by default, or `vertical`) and Page Up and Down move one
 Space. One wheel gesture (momentum included, ended by 200 ms of quiet) moves one Space; it lets
 the page scroll when it moved nothing, and leaves a gesture to a scroller or handler in a Tile.
-A pointer Drag along the axis scrubs the Transition and, on release, commits past half the
-Stage or on a flick, otherwise plays it back; the click after a Drag is stopped, and the Stage
-gets `touch-action` for the other axis. `axis` also turns the default slide vertical. With `minCellWidth` (and `cellAspect`, 1 by default) the
+A pointer Drag along the axis scrubs the Transition and commits past half or on a flick, else
+plays it back. `axis` also turns the default slide vertical. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
 removing a child repacks the same way, and a removed child gets back what the library wrote. A missing
@@ -91,7 +90,6 @@ None.
   the T2.9 review's fixes (scrollers, handlers, pinch zoom). Checked in Chromium: a burst of six
   wheel events moves one Space.
 - **2026-11-24, T2.10a:** merged (#32), a refactor split from T2.10.
-- **2026-11-24, T2.10 (the Drag):** `drag.ts` on `begin`/`end`, so a Drag decides on release.
-  Checked in Chromium with the mouse: a short Drag plays back, a long one commits, the Animations
-  stay paused under the pointer, and no text is selected.
+- **2026-11-24, T2.10 (the Drag):** `drag.ts` on `begin`/`end`. Checked in Chromium with the
+  mouse: the Animations stay paused under the pointer, a full Drag finishes, no text is selected.
 - **Next:** T2.11 (the demo: showcase, gallery and dashboard; the owner's end check of M2).

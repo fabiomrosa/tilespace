@@ -490,6 +490,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** PRODUCT "Headless, children keep their behaviour", ROADMAP M2.
 
 ## Later
+- The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`;
+  leave a press to a Tile's handler or slider, and a touch to a Tile's scroller (as the wheel does).
 - A guard for a derived Grid on a content-height Stage (GOTCHAS "DOM"), e.g. ignoring a resize the
   engine's own writes caused; T2.4 only documents that the Stage needs a height.
 - T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the
