@@ -159,10 +159,6 @@ taken, `tilespace` (core and vanilla), `tilespace-react`, `tilespace-angular`.
   changes across packages.
 - **Consequences:** the scope is confirmed before the first publish (P2).
 
----
-
-## Proposed (waiting for the owner)
-
 ## DEC-14 · The Stage is a labelled carousel region; the user announces the Current space — Accepted (owner, 2026-11-24)
 The Stage gets `role="region"`, `aria-roledescription="carousel"` and an `aria-label` from a
 `label` option (`"Tiles"` by default), each only where the user set none. The library writes no
@@ -187,3 +183,19 @@ when the owner pushes a `v*` tag, with npm provenance.
 - **Consequences:** the workflow needs `id-token: write`, and each package's `repository` matches
   the GitHub repository; an npm token in the repository's secrets for the first publish (P3), which
   trusted publishing can replace afterwards; a changelog entry per release.
+
+## DEC-16 · The site lives in this repository as `site/`, on GitHub Pages — Accepted (owner, 2026-11-24)
+The project's site is a package of this workspace, `site/`, built with Vite from the owner's Claude
+Design handoff (`docs/site/HANDOFF.md`) and deployed to GitHub Pages by a workflow on each push to
+`main`. Its demos import `@tilespace/vanilla` by name, so the site always runs the current build.
+Where the handoff and an accepted decision disagree, the decision wins: the Transition keeps
+DEC-10's pace (the handoff's 420 ms and 180 ms are "starting values"), reduced motion keeps the engine's 150 ms
+cross-fade, and `peek` is the boolean option plus the page's CSS, as in the demo.
+- **Why:** one repository keeps the site and the library changing together (DEC-13); a static
+  build needs no provider beyond GitHub.
+- **Consequences:** the owner turns on Pages with "GitHub Actions" as the source (P4); the site's
+  checks join the gate; `demo/` stays the e2e test bed.
+
+---
+
+## Proposed (waiting for the owner)
