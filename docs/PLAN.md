@@ -742,17 +742,16 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** decision 0001, CONVENTIONS §5 "Benchmarks", ROADMAP "The end goal".
 
 ### T3.6 · The first publish
-- **Status:** waiting (T3.5, P2, P3)
+- **Status:** waiting (T3.12, P2, P3)
 - **Goal:** `npm install @tilespace/vanilla` works for anyone.
-- **Depends on:** T3.5, DEC-15, P2, P3.
+- **Depends on:** T3.12, DEC-15, P2, P3.
 - **In scope:** `.github/workflows/release.yml`: on a `v*` tag, check that the tag matches both
   packages' version and that the tagged commit is on `main` (an ancestor of `origin/main`), run
   the gate, then `npm publish --provenance --access public` for `core`, then `vanilla`
   (`permissions: id-token: write`); `CHANGELOG.md` with 1.0.0. The owner pushes the tag `v1.0.0`;
   the agent then installs both from npm in a scratch project.
 - **Out of scope:** automated versioning; trusted publishing (after the first publish, if the owner
-  wants to drop the token); hosting the demo, which goes on GitHub Pages in the owner's site (the
-  owner, 2026-11-24).
+  wants to drop the token); the site (T3.7–T3.12).
 - **Contract:** none.
 - **Acceptance criteria:**
   1. Before publishing, a tag on a commit outside `main` or with a different version fails (seen
@@ -761,6 +760,112 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
      project installs and imports them.
 - **Files:** ~5, ~120 lines: `release.yml`, `CHANGELOG.md`, README, PLAN, STATE.
 - **References:** DEC-15.
+
+### T3.7 · The site's skeleton on GitHub Pages
+- **Status:** waiting (T3.5, DEC-16, P4)
+- **Goal:** `site/` builds and deploys to GitHub Pages from `main`, with the header, the footer and
+  the theme.
+- **Depends on:** T3.5, DEC-16, P4.
+- **In scope:** `site/` as a workspace package (Vite, TypeScript, `base: '/tilespace/'`), importing
+  `@tilespace/vanilla` by name; `tokens.css`, `base.css`, `layout.css`; the theme (system default,
+  a toggle saved in `localStorage` in try/catch); the header (desktop links, the phone menu sheet)
+  and the footer; `.github/workflows/pages.yml` (on a push to `main`: build and deploy); the gate
+  type-checks and builds `site/`.
+- **Out of scope:** the sections between header and footer (T3.8–T3.11).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. `npm run verify` builds `site/dist` with the base path.
+  2. In Chromium, the toggle switches the theme and the choice survives a reload; with no choice,
+     `prefers-color-scheme: dark` gives the dark tokens.
+  3. At 390 px the menu button opens the sheet (`aria-expanded`) with the same links.
+  4. After the merge, the page is live at the Pages URL.
+- **Files:** ~13, ~350 lines: `site/{package.json,tsconfig.json,vite.config.ts,index.html}`,
+  `site/src/{main.ts,theme.ts}`, three style files, `pages.yml`, `e2e/site.e2e.ts` (new),
+  `playwright.config.ts`, ARCHITECTURE, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` "Stack", "Design tokens", rows 0 and 6, DEC-16.
+
+### T3.8 · The site's hero wall
+- **Status:** waiting (T3.7)
+- **Goal:** the hero shows a live wall that bleeds past the screen's right edge and moves by
+  buttons, keys, wheel and drag.
+- **Depends on:** T3.7.
+- **In scope:** the hero's text, install pill with Copy, GitHub and npm buttons; the wall (10x4
+  cells, 436 px; 4x4 and 312 px on a phone) on `@tilespace/vanilla` with `peek` and the handoff's
+  bleed, its own prev/next and one live "Space n of N" counter (`ui/live-counter.ts`), static
+  fallback tiles with JavaScript off.
+- **Out of scope:** the playground (T3.9, T3.10).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. In Chromium at 1440 px the next Space shows past the container and the page does not scroll
+     sideways; Next and the arrow keys move it and the counter follows.
+  2. With JavaScript off the hero shows its fallback tiles with no broken layout.
+- **Files:** ~8, ~300 lines: `index.html`, `demos/hero.ts`, `demos/tiles.ts`, `ui/live-counter.ts`,
+  `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` row 1, "Motion and accessibility".
+
+### T3.9 · The site's playground on a desktop
+- **Status:** waiting (T3.8)
+- **Goal:** a visitor tries every option on the three examples.
+- **Depends on:** T3.8.
+- **In scope:** the tablist (Showcase, Gallery, Dashboard, roving focus), the three tile factories
+  (the demo's, in the site's tile colours), the framed demo (8x4, 480 px), the control bar wired to
+  the options (axis, Transition, peek off / inset / bleed, gap, space gap, loop), prev/next and the
+  counter, a note per tab.
+- **Out of scope:** the phone's Options disclosure (T3.10).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. In Chromium, each control changes the mounted Tilespace (checked as in `e2e/demo.e2e.ts`).
+  2. A dashboard value survives a move away and back.
+  3. The tabs follow the APG tabs pattern: arrow keys move focus, `aria-selected` follows.
+- **Files:** ~8, ~350 lines: `index.html`, `demos/playground.ts`, `demos/tiles.ts`,
+  `ui/segmented.ts`, `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` row 3 and "Playground tabs".
+
+### T3.10 · The site's playground on a phone, and the first section
+- **Status:** waiting (T3.9)
+- **Goal:** the playground works at 390 px, and "Bring your own tiles" explains the idea.
+- **Depends on:** T3.9.
+- **In scope:** the phone layout of the playground (3-up tabs, 4x5 frame, 360 px, the Options
+  disclosure with `aria-expanded`); the "Bring your own tiles" section (static markup).
+- **Out of scope:** the quick start and the lab (T3.11).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. In Chromium at 390 px the Options button reveals the same controls, and a swipe moves a Space.
+  2. No page scroll sideways at 360, 768, 1024 and 1440 px.
+- **Files:** ~6, ~250 lines: `index.html`, `demos/playground.ts`, `components.css`,
+  `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` rows 2 and 3.
+
+### T3.11 · The site's quick start and lab
+- **Status:** waiting (T3.10)
+- **Goal:** the code shown is the code run, and the lab's answer is on the page.
+- **Depends on:** T3.10.
+- **In scope:** the quick start from one snippet source that `demos/quickstart.ts` runs and the
+  page prints; its live result; the lab card in HTML/SVG with T3.5's numbers and `role="img"`
+  labels, linking `docs/LAB.md`.
+- **Out of scope:** new benchmark numbers (T3.5's are used as they are).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. The printed snippet and the run one come from the same string (a test compares them).
+  2. Each number on the lab card is a row of `docs/LAB.md`.
+- **Files:** ~6, ~250 lines: `index.html`, `demos/quickstart.ts`, `components.css`,
+  `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` rows 4 and 5, "Lab chart".
+
+### T3.12 · The site's accessibility and motion checks
+- **Status:** waiting (T3.11)
+- **Goal:** the site meets the handoff's "Done when".
+- **Depends on:** T3.11.
+- **In scope:** every open item of the handoff resolved; reduced motion, keyboard-only and
+  VoiceOver checked by hand; Lighthouse accessibility run; the fixes these find.
+- **Out of scope:** analytics, a backend.
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Lighthouse accessibility is 100 on the deployed page (the report in the PR).
+  2. With `prefers-reduced-motion: reduce` every demo cross-fades (Playwright media emulation).
+  3. Tab never lands in a hidden Space of any demo.
+- **Files:** ~5, ~150 lines: what the checks find, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` "Done when", "Motion and accessibility", "Open items".
 
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the

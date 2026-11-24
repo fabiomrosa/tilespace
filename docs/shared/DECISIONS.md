@@ -178,6 +178,18 @@ in a live region of their page, the recipe the demo and the README show.
   `change` (`current`, and the `pack` event's `spaces`); a user who wants APG's behaviour sets
   `aria-live="polite"` on the Stage.
 
+## DEC-16 · The site lives in this repository as `site/`, on GitHub Pages — Proposed
+The project's site is a package of this workspace, `site/`, built with Vite from the owner's Claude
+Design handoff (`docs/site/HANDOFF.md`) and deployed to GitHub Pages by a workflow on each push to
+`main`. Its demos import `@tilespace/vanilla` by name, so the site always runs the current build.
+Where the handoff and an accepted decision disagree, the decision wins: the Transition keeps
+DEC-10's pace (the handoff's 420 ms and 180 ms are "starting values"), and peek is the boolean
+option plus the page's CSS, as in the demo.
+- **Why:** one repository keeps the site and the library changing together (DEC-13); a static
+  build needs no provider beyond GitHub.
+- **Consequences:** the owner turns on Pages with "GitHub Actions" as the source (P4); the site's
+  checks join the gate; `demo/` stays the e2e test bed.
+
 ## DEC-15 · MIT, lockstep versions, published from CI on a tag — Accepted (owner, 2026-11-24)
 Both packages are MIT, share one version (1.0.0 first) and publish from a GitHub Actions workflow
 when the owner pushes a `v*` tag, with npm provenance.
