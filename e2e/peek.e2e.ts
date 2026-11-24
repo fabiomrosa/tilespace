@@ -6,7 +6,7 @@ test("peeks at the next Space beside the Stage, clipped by the page's frame", as
 
   await page.getByLabel("Space gap").fill("40");
   await page.getByLabel("Space gap").dispatchEvent("change");
-  await page.getByLabel("Peek").check();
+  await page.getByLabel("Peek").selectOption("inset");
 
   const seen = await page.evaluate(() => {
     const stage = document.getElementById("stage") as HTMLElement;
@@ -33,4 +33,35 @@ test("peeks at the next Space beside the Stage, clipped by the page's frame", as
   expect(seen.nextLeft).toBeLessThan(seen.frameRight);
   expect(seen.frameClips).toBe("hidden");
   expect(seen).toMatchObject({ inert: true, visible: "visible" });
+});
+
+test("bleeds into the screen's margins: the Stage keeps the site's width", async ({ page }) => {
+  // A 1040 px site on a 1440 px screen: 200 px of margin on each side for the neighbours.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  await page.getByLabel("Peek").selectOption("bleed");
+
+  const seen = await page.evaluate(() => {
+    const stage = document.getElementById("stage") as HTMLElement;
+    const next = Array.from(stage.children).find(
+      (t) =>
+        t.getAttribute("data-ts-space") === "1" && (t as HTMLElement).style.gridColumnStart === "1",
+    ) as HTMLElement;
+    const frame = (document.getElementById("frame") as HTMLElement).getBoundingClientRect();
+    const box = stage.getBoundingClientRect();
+    return {
+      width: box.width,
+      right: box.right,
+      frameLeft: frame.left,
+      frameRight: frame.right,
+      nextLeft: next.getBoundingClientRect().left,
+    };
+  });
+
+  expect(seen.width).toBeCloseTo(1040, 0);
+  expect(seen.frameLeft).toBeCloseTo(0, 0);
+  expect(seen.frameRight).toBeCloseTo(1440, 0);
+  // The demo's Space gap starts at 12.
+  expect(seen.nextLeft).toBeCloseTo(seen.right + 12, 0);
 });

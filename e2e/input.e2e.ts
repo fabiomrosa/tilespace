@@ -50,9 +50,11 @@ test("leaves a wheel gesture to a scroller inside a shadow root in a Tile", asyn
     list.style.cssText = "height: 40px; overflow-y: auto";
     list.textContent = "Lorem ipsum ".repeat(200);
     host.attachShadow({ mode: "open" }).append(list);
-    document.getElementById("timer")?.after(host);
+    host.id = "scroller";
+    // In a Tile of the Current space, wherever the Grid puts the demo's Tiles.
+    document.querySelector("#stage > [data-ts-current]")?.append(host);
   });
-  const box = await page.locator("#timer + div").boundingBox();
+  const box = await page.locator("#scroller").boundingBox();
 
   await page.mouse.move((box?.x ?? 0) + 10, (box?.y ?? 0) + 10);
   await page.mouse.wheel(0, 40);
@@ -61,7 +63,7 @@ test("leaves a wheel gesture to a scroller inside a shadow root in a Tile", asyn
   await expect
     .poll(() =>
       page.evaluate(
-        () => document.querySelector("#timer + div")?.shadowRoot?.firstElementChild?.scrollTop,
+        () => document.getElementById("scroller")?.shadowRoot?.firstElementChild?.scrollTop,
       ),
     )
     .toBeGreaterThan(0);
