@@ -365,7 +365,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Stack" (Playwright), CONVENTIONS §5.
 
 ### T2.7 · The default Transition
-- **Status:** waiting (T2.6)
+- **Status:** done (2026-11-24)
 - **Goal:** changing Space slides the Tiles, staggered, instead of swapping.
 - **Depends on:** T2.6, DEC-10.
 - **In scope:**

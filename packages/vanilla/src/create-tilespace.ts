@@ -6,6 +6,7 @@ import {
   type Shape,
   validatePacking,
 } from "@tilespace/core";
+import { defaultTransition } from "./default-transition.ts";
 import { deriveGrid, type GridFit } from "./derive-grid.ts";
 import { createEmitter } from "./emitter.ts";
 import { readShape, type ShapeOption, type Tile } from "./read-shape.ts";
@@ -118,7 +119,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       }
     });
   };
-  /** Shows one Space's Tiles and hides the others': an instant swap, no Transition. */
+  /** Shows one Space's Tiles and hides the others'. */
   const show = (space: number) => {
     packing.spaces.forEach((placements, k) => {
       for (const { tile } of placements) {
@@ -149,10 +150,44 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   const last = () => packing.spaces.length - 1;
   let current = 0;
   let destroyed = false;
-  const move = (space: number) => {
-    if (destroyed || space === current || space < 0) return;
-    current = space;
+  let running: { animations: Animation[]; space: number } | undefined;
+  /** Ends the running Transition at once: its Animations are cancelled and its Space shown. */
+  const settle = () => {
+    if (!running) return;
+    const { animations, space } = running;
+    running = undefined;
+    for (const animation of animations) animation.cancel();
     show(space);
+  };
+  const tilesIn = (space: number) =>
+    (packing.spaces[space] ?? []).flatMap((placement) => {
+      const tile = tiles[placement.tile] as Tile;
+      return tile.parentNode === stage ? [{ tile, placement }] : [];
+    });
+  const move = (space: number, direction: 1 | -1) => {
+    if (destroyed || space === current || space < 0) return;
+    // Read before any write, so the move forces no layout.
+    const width = stage.clientWidth;
+    settle();
+    const from = current;
+    current = space;
+    const entering = tilesIn(space);
+    // Both Spaces show while the Transition runs; the leaving one is hidden at its end.
+    for (const { tile } of entering) log.resetStyle(tile, "visibility");
+    const animations = defaultTransition({
+      leaving: tilesIn(from),
+      entering,
+      direction,
+      grid,
+      width,
+    });
+    const run = { animations, space };
+    running = run;
+    Promise.all(animations.map((a) => a.finished)).then(
+      () => running === run && settle(),
+      // Cancelled: whoever cancelled it has settled.
+      () => {},
+    );
     events.emit("change", { current });
   };
   /**
@@ -160,6 +195,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
    * Tile first on screen, or the nearest one if it left.
    */
   const repack = (next: Grid, children: Tile[]) => {
+    settle();
     const first = tiles[packing.spaces[current]?.[0]?.tile ?? -1];
     const before = current;
     // Packed first: a packer that throws leaves the old state, so the next change tries again.
@@ -192,14 +228,14 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     get current() {
       return current;
     },
-    next: () => move(current < last() ? current + 1 : loop ? 0 : current),
-    prev: () => move(current > 0 ? current - 1 : loop ? last() : current),
+    next: () => move(current < last() ? current + 1 : loop ? 0 : current, 1),
+    prev: () => move(current > 0 ? current - 1 : loop ? last() : current, -1),
     goTo(space) {
       if (last() < 0) throw new Error("tilespace: goTo needs a Space, but the Stage has no Tiles");
       if (!Number.isInteger(space) || space < 0 || space > last()) {
         throw new Error(`tilespace: goTo needs a Space from 0 to ${last()}, got ${space}`);
       }
-      move(space);
+      move(space, space > current ? 1 : -1);
     },
     on: (event, listener) => events.on(event, listener),
     destroy() {
@@ -207,6 +243,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       resizes?.disconnect();
       mutations.disconnect();
       events.clear();
+      settle();
       log.restore();
     },
   };
