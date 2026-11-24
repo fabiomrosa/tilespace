@@ -39,3 +39,30 @@ test("leaves the arrow keys to a field inside a shadow root in a Tile", async ({
 
   await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
 });
+
+test("leaves a wheel gesture to a scroller inside a shadow root in a Tile", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 800 });
+  await page.goto("/");
+  // happy-dom doesn't retarget events at a shadow boundary; Chromium does.
+  await page.evaluate(() => {
+    const host = document.createElement("div");
+    const list = document.createElement("div");
+    list.style.cssText = "height: 40px; overflow-y: auto";
+    list.textContent = "Lorem ipsum ".repeat(200);
+    host.attachShadow({ mode: "open" }).append(list);
+    document.getElementById("timer")?.after(host);
+  });
+  const box = await page.locator("#timer + div").boundingBox();
+
+  await page.mouse.move((box?.x ?? 0) + 10, (box?.y ?? 0) + 10);
+  await page.mouse.wheel(0, 40);
+
+  await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.querySelector("#timer + div")?.shadowRoot?.firstElementChild?.scrollTop,
+      ),
+    )
+    .toBeGreaterThan(0);
+});

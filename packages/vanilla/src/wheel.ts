@@ -1,14 +1,26 @@
 /** A gesture ends after this long with no wheel event: trackpad momentum stays one gesture. */
 const QUIET = 200;
 
-/** Whether an element between the target and the Stage can still scroll along the delta. */
-function scrolls(stage: HTMLElement, from: EventTarget | null, dx: number, dy: number): boolean {
-  for (let el = from as HTMLElement | null; el && el !== stage; el = el.parentElement) {
-    const { overflowX, overflowY } = getComputedStyle(el);
-    const can = (overflow: string, delta: number, at: number, size: number, view: number) =>
-      delta !== 0 && /auto|scroll/.test(overflow) && (delta > 0 ? at + view < size : at > 0);
-    if (can(overflowY, dy, el.scrollTop, el.scrollHeight, el.clientHeight)) return true;
-    if (can(overflowX, dx, el.scrollLeft, el.scrollWidth, el.clientWidth)) return true;
+/**
+ * Whether an element between the target and the Stage, shadow trees included, can still scroll
+ * along the gesture's axis. A reversed scroller (`column-reverse`, `row-reverse`, `rtl`) runs from
+ * 0 down; 1 px of slack absorbs a fractional position.
+ */
+function scrolls(stage: HTMLElement, path: EventTarget[], vertical: boolean, delta: number) {
+  for (const node of path) {
+    if (node === stage) return false;
+    if ((node as Node).nodeType !== 1) continue;
+    const el = node as HTMLElement;
+    const style = getComputedStyle(el);
+    if (!/auto|scroll/.test(vertical ? style.overflowY : style.overflowX)) continue;
+    const flex = style.display.endsWith("flex") ? style.flexDirection : "";
+    const reversed = vertical
+      ? flex === "column-reverse"
+      : (style.direction === "rtl") !== (flex === "row-reverse");
+    const at = vertical ? el.scrollTop : el.scrollLeft;
+    const max = vertical ? el.scrollHeight - el.clientHeight : el.scrollWidth - el.clientWidth;
+    const [low, high] = reversed ? [-max, 0] : [0, max];
+    if (delta > 0 ? at < high - 1 : at > low + 1) return true;
   }
   return false;
 }
@@ -25,14 +37,16 @@ export function listenWheel(stage: HTMLElement, step: (direction: 1 | -1) => boo
   let quiet: ReturnType<typeof setTimeout> | undefined;
   const onWheel = (event: WheelEvent) => {
     if (event.ctrlKey) return;
-    const { deltaX: dx, deltaY: dy } = event;
-    const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+    const vertical = Math.abs(event.deltaY) >= Math.abs(event.deltaX);
+    const delta = vertical ? event.deltaY : event.deltaX;
     if (!gesture && delta !== 0) {
       // Read before `step` writes: the layout read comes first.
-      const theirs = event.defaultPrevented || scrolls(stage, event.target, dx, dy);
+      const theirs =
+        event.defaultPrevented || scrolls(stage, event.composedPath(), vertical, delta);
       gesture = { moved: !theirs && step(delta > 0 ? 1 : -1) };
     }
-    if (gesture?.moved) event.preventDefault();
+    // Chrome lets only a scroll sequence's first event be cancelled.
+    if (gesture?.moved && event.cancelable) event.preventDefault();
     clearTimeout(quiet);
     quiet = setTimeout(() => {
       gesture = undefined;

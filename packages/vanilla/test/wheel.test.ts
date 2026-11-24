@@ -78,6 +78,48 @@ describe("the wheel", () => {
 
     expect(tilespace.current).toBe(1);
     expect(scrolled.defaultPrevented).toBe(false);
+    // At its end, it can still scroll back up: that gesture is the list's.
+    vi.advanceTimersByTime(300);
+    wheel(list, -40);
+    expect(tilespace.current).toBe(1);
+  });
+
+  it("reads a reversed scroller's position, which runs from 0 down", () => {
+    vi.useFakeTimers();
+    const { stage, tilespace } = mount();
+    tilespace.next();
+    // A chat list: `column-reverse` starts at its bottom, at scrollTop 0, and scrolls up below 0.
+    const chat = document.createElement("div");
+    chat.style.cssText = "display: flex; flex-direction: column-reverse; overflow-y: auto";
+    Object.defineProperty(chat, "scrollHeight", { value: 400 });
+    Object.defineProperty(chat, "clientHeight", { value: 40 });
+    stage.children[1]?.append(chat);
+
+    wheel(chat, -40);
+    vi.advanceTimersByTime(300);
+    expect(tilespace.current).toBe(1);
+    wheel(chat, 40);
+
+    expect(tilespace.current).toBe(2);
+  });
+
+  it("checks only the axis the gesture moves along", () => {
+    vi.useFakeTimers();
+    const { stage, tilespace } = mount();
+    const carousel = document.createElement("div");
+    carousel.style.overflowX = "auto";
+    Object.defineProperty(carousel, "scrollWidth", { value: 400 });
+    Object.defineProperty(carousel, "clientWidth", { value: 40 });
+    stage.firstElementChild?.append(carousel);
+
+    // Mostly vertical: the carousel, which only scrolls sideways, doesn't take it.
+    wheel(carousel, 40, 5);
+    expect(tilespace.current).toBe(1);
+    vi.advanceTimersByTime(300);
+    // Sideways, it does.
+    wheel(carousel, 0, 40);
+
+    expect(tilespace.current).toBe(1);
   });
 
   it("ignores a pinch zoom", () => {
@@ -96,13 +138,16 @@ describe("destroy", () => {
   it("removes the wheel listener and its timer", () => {
     vi.useFakeTimers();
     const { stage, tilespace } = mount();
+    wheel(stage, 40);
     tilespace.destroy();
+    // The gesture's quiet-gap timer goes with the listener.
+    expect(vi.getTimerCount()).toBe(0);
 
+    vi.advanceTimersByTime(300);
     const event = wheel(stage, 40);
 
-    expect(tilespace.current).toBe(0);
+    expect(tilespace.current).toBe(1);
     expect(event.defaultPrevented).toBe(false);
-    // A wheel listener left behind would start its quiet-gap timer.
     expect(vi.getTimerCount()).toBe(0);
   });
 });

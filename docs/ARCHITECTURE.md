@@ -95,8 +95,10 @@ Each package is created by the first slice that needs it.
   with no wheel event, so trackpad momentum is one gesture. A gesture that moved stops the page
   scrolling; one that moved nothing (at an end) lets the page scroll, so with `loop` the wheel
   over the Stage never scrolls the page. A gesture that starts on something in a Tile that can
-  still scroll along it, or that handles it (`preventDefault`), and a pinch zoom (`ctrlKey`), are
-  left alone.
+  still scroll along the gesture's axis (shadow trees and reversed scrollers included), or that
+  handles it (`preventDefault`), and a pinch zoom (`ctrlKey`), are left alone. Chrome lets only a
+  scroll sequence's first event be cancelled, so a gesture that starts mid-sequence may also
+  scroll the page.
 - `axis` also turns the default slide and its stagger vertical. `destroy()` removes the key and
   wheel listeners and the gesture's timer.
 - A move reads the Stage's size before its own writes; a move made from a `pack` or `change`
