@@ -97,7 +97,7 @@ describe("the Drag", () => {
     expect(tilespace.current).toBe(0);
   });
 
-  it("lets a click below the threshold reach the Tile, and stops the one after a Drag", () => {
+  it("lets a click below the threshold reach the Tile, and stops the one after a Drag", async () => {
     const { tiles } = mount({ transition: false });
     const clicks: number[] = [];
     tiles[0]?.addEventListener("click", () => clicks.push(0));
@@ -109,8 +109,12 @@ describe("the Drag", () => {
     // Stopped at the Stage, in the capture phase, before it reaches the Tile.
     tiles[1]?.click();
     tiles[1]?.click();
+    // A touch Drag, with no click after it, stops none later.
+    drag(tiles[0] as HTMLElement, [200, 50]);
+    await new Promise((resolve) => setTimeout(resolve));
+    tiles[1]?.click();
 
-    expect(clicks).toEqual([0, 1]);
+    expect(clicks).toEqual([0, 1, 1]);
   });
 
   it("leaves a mostly cross-axis gesture alone, and uses the vertical axis when asked", () => {

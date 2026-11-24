@@ -226,8 +226,11 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     if (run.animations.length === 0) settle();
     else {
       for (const animation of run.animations) {
-        if (commit) animation.play();
-        else animation.reverse();
+        const [at, stop] = [animation.currentTime, animation.effect?.getComputedTiming().endTime];
+        if (!commit) animation.playbackRate = -1;
+        // Already where it heads (a scrubbed stagger): play() would rewind it and replay.
+        if (commit ? Number(at) >= Number(stop) : Number(at) <= 0) animation.finish();
+        else animation.play();
       }
       Promise.all(run.animations.map((a) => a.finished)).then(
         () => running === run && settle(),

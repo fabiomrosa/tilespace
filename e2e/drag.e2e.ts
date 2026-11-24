@@ -23,8 +23,11 @@ test("drags with the mouse past half and commits, selecting no text", async ({ p
   await page.mouse.down();
   await page.mouse.move(600, 400, { steps: 10 });
   const states = await page.evaluate(() => document.getAnimations().map((a) => a.playState));
-  await page.mouse.move(300, 400, { steps: 10 });
+  await page.mouse.move(-100, 400, { steps: 10 });
   await page.mouse.up();
+  // Scrubbed to the end, it finishes there: replaying from the start would rewind the times.
+  const times = await page.evaluate(() => document.getAnimations().map((a) => a.currentTime));
+  expect(times.every((t) => Number(t) > 0)).toBe(true);
   await settled();
 
   expect(states.length).toBeGreaterThan(0);

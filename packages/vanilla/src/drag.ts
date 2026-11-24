@@ -69,6 +69,8 @@ export function listenDrag(
     const d = drag;
     const distance = along(event);
     press = drag = undefined;
+    // A touch Drag fires no click: the guard lasts only to the click this task dispatches.
+    setTimeout(() => (dragged = false));
     if (!d) return;
     // The speed over the last 100 ms of the Drag.
     const [t0, x0] = d.samples[0] ?? [event.timeStamp, distance];
@@ -79,6 +81,7 @@ export function listenDrag(
     if (!press || event.pointerId !== press.id) return;
     drag?.grip?.release(false);
     press = drag = undefined;
+    setTimeout(() => (dragged = false));
   };
   const onClick = (event: MouseEvent) => {
     if (!dragged) return;
