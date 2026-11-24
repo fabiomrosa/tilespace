@@ -55,21 +55,47 @@ test("never scrolls sideways, down to a 360 px phone", async ({ page }) => {
   }
 });
 
-test("opens the same links in a menu sheet on a phone", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test("opens the same links in a menu sheet on a phone, next in the Tab order", async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 800 });
   await page.goto("./");
   const menu = page.getByRole("button", { name: "Menu" });
   const links = page.getByRole("navigation", { name: "Main" }).getByRole("link");
+  await expect(menu).toBeHidden();
+  await page.setViewportSize({ width: 390, height: 844 });
   await expect(links.first()).toBeHidden();
 
   await menu.click();
   await expect(menu).toHaveAttribute("aria-expanded", "true");
   await expect(links).toHaveText(["Playground", "Quick start", "The lab", "GitHub"]);
-  await expect(links.first()).toBeVisible();
+  for (const link of await links.all()) await expect(link).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(links.first()).toBeFocused();
 
   await page.keyboard.press("Escape");
   await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await expect(menu).toBeFocused();
   await expect(links.first()).toBeHidden();
+
+  await menu.click();
+  await links.first().click();
+  await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await expect(menu).toBeFocused();
+});
+
+test("gives every header and footer control a 44 px target on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Menu" }).click();
+
+  const controls = page.locator("header a, header button, footer a");
+  for (const control of await controls.all()) {
+    if (!(await control.isVisible())) continue;
+    const box = await control.boundingBox();
+    expect(
+      Math.min(box?.width ?? 0, box?.height ?? 0),
+      await control.innerText(),
+    ).toBeGreaterThanOrEqual(44);
+  }
 });
 
 test("links the real repository from the header and the footer", async ({ page }) => {

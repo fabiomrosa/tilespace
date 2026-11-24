@@ -24,6 +24,7 @@
 }
 .logo {
   display: flex;
+  min-height: 44px;
   align-items: center;
   gap: 10px;
   color: var(--ink);
@@ -72,9 +73,6 @@
 .main-nav a:hover {
   color: var(--ink);
 }
-.menu-button {
-  display: none;
-}
 .icon-button {
   width: 40px;
   height: 40px;
@@ -84,10 +82,16 @@
   border-radius: 10px;
   background: var(--surface);
 }
+/* After `.icon-button`, which sets `display`: on a phone only (below). */
+.menu-button {
+  display: none;
+}
 
 @media (max-width: 639px) {
+  /* First in the Tab order, so the sheet's links follow it; shown last, as in the handoff. */
   .menu-button {
     display: grid;
+    order: 1;
   }
   /* The menu sheet: the same links, stacked, under the header (they don't fit beside the logo). */
   .main-nav {
@@ -176,6 +180,8 @@
   .footer-links a {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    min-width: 44px;
     min-height: 44px;
   }
 }

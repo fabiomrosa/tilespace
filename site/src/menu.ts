@@ -6,7 +6,10 @@ export function setUpMenu(button: HTMLButtonElement, nav: HTMLElement): void {
   };
   button.addEventListener("click", () => open(button.getAttribute("aria-expanded") !== "true"));
   nav.addEventListener("click", (event) => {
-    if ((event.target as Element).closest("a")) open(false);
+    if ((event.target as Element).closest("a")) {
+      open(false);
+      button.focus();
+    }
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && button.getAttribute("aria-expanded") === "true") {
