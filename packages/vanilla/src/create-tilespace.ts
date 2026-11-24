@@ -8,6 +8,7 @@ import {
 } from "@tilespace/core";
 import { type Axis, defaultTransition, type TransitionContext } from "./default-transition.ts";
 import { deriveGrid, type GridFit } from "./derive-grid.ts";
+import { type Grip, listenDrag } from "./drag.ts";
 import { createEmitter } from "./emitter.ts";
 import { listenKeys } from "./keyboard.ts";
 import { readShape, type ShapeOption, type Tile } from "./read-shape.ts";
@@ -154,6 +155,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   log.style(stage, "position", "relative");
   log.style(stage, "overflow-x", "clip");
   log.style(stage, "overflow-y", "clip");
+  // The Drag takes the axis; the page keeps the other one, and pinch zoom.
+  log.style(stage, "touch-action", `${axis === "horizontal" ? "pan-y" : "pan-x"} pinch-zoom`);
   place();
   show(0);
 
@@ -180,8 +183,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       return tile.parentNode === stage ? [{ tile, placement: copy }] : [];
     });
   /**
-   * Builds the Transition to a Space, with both Spaces showing; `end` commits it. A Transition that
-   * throws or returns something else is kept as `error`.
+   * Builds the Transition to a Space, with both Spaces showing, and leaves it undecided: `end`
+   * commits or cancels it. A Transition that throws or returns something else is kept as `error`.
    */
   const begin = (to: number, direction: 1 | -1): Run => {
     // Read before any write, so the move forces no layout.
@@ -200,34 +203,47 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
           throw new Error(`tilespace: transition must return an array of Animations, got ${out}`);
         }
         run.animations = out;
+        // A Drag's Run can be cancelled before `end` watches it.
+        for (const animation of out) animation.finished.catch(() => {});
       }
     } catch (error) {
       run.error = error;
     }
+    // Nothing to watch: the entering Space stays hidden until the Run ends.
+    if (run.animations.length === 0) show(run.space);
     return run;
   };
   /**
-   * Commits a Run: the Current space becomes its target, and `change` fires. With no Animation it
-   * ends at once. Throws the Transition's error last.
+   * Commits a Run (the Current space becomes its target, and `change` fires) or cancels it, playing
+   * it back. With no Animation it ends at once. Throws the Transition's error last.
    */
-  const end = (run: Run) => {
-    for (const { tile } of tilesIn(current)) log.resetAttribute(tile, "data-ts-current");
-    for (const { tile } of tilesIn(run.to)) log.attribute(tile, "data-ts-current", "");
-    current = run.space = run.to;
+  const end = (run: Run, commit: boolean) => {
+    if (commit) {
+      for (const { tile } of tilesIn(current)) log.resetAttribute(tile, "data-ts-current");
+      for (const { tile } of tilesIn(run.to)) log.attribute(tile, "data-ts-current", "");
+      current = run.space = run.to;
+    }
     if (run.animations.length === 0) settle();
     else {
+      for (const animation of run.animations) {
+        const [at, stop] = [animation.currentTime, animation.effect?.getComputedTiming().endTime];
+        if (!commit) animation.playbackRate = -1;
+        // Already where it heads (a scrubbed stagger): play() would rewind it and replay.
+        if (commit ? Number(at) >= Number(stop) : Number(at) <= 0) animation.finish();
+        else animation.play();
+      }
       Promise.all(run.animations.map((a) => a.finished)).then(
         () => running === run && settle(),
         // Cancelled: by the engine, which has settled, or by someone else.
         () => running === run && settle(),
       );
     }
-    events.emit("change", { current });
+    if (commit) events.emit("change", { current });
     if ("error" in run) throw run.error;
   };
   const move = (space: number, direction: 1 | -1) => {
     if (destroyed || space === current || space < 0) return;
-    end(begin(space, direction));
+    end(begin(space, direction), true);
   };
   /**
    * Packs again for a Grid and the Stage's children; the Current space becomes the one holding the
@@ -273,8 +289,30 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     move(neighbour(direction), direction);
     return current !== before;
   };
+  /** Starts a Drag's Transition, paused; nothing when there is no Space that way. */
+  const grab = (direction: 1 | -1): Grip | undefined => {
+    const to = neighbour(direction);
+    if (destroyed || to === current || to < 0) return undefined;
+    const run = begin(to, direction);
+    if ("error" in run) end(run, false);
+    for (const animation of run.animations) animation.pause();
+    const length = Math.max(
+      0,
+      ...run.animations.map((a) => Number(a.effect?.getComputedTiming().endTime ?? 0)),
+    );
+    // A move, a repack or destroy() that ended the Run drops the rest of the Drag.
+    return {
+      seek(progress) {
+        if (running === run) for (const a of run.animations) a.currentTime = progress * length;
+      },
+      release(commit) {
+        if (running === run) end(run, commit);
+      },
+    };
+  };
   const removeKeys = listenKeys(stage, axis, step);
   const removeWheel = listenWheel(stage, step);
+  const removeDrag = listenDrag(stage, axis, grab);
 
   return {
     get current() {
@@ -300,6 +338,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       mutations.disconnect();
       removeKeys();
       removeWheel();
+      removeDrag();
       events.clear();
       settle();
       log.restore();

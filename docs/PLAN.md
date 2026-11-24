@@ -455,7 +455,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Split:** from T2.10, whose first version came to 473 lines.
 
 ### T2.10 · The Drag scrubs the Transition
-- **Status:** waiting (T2.8)
+- **Status:** done (2026-11-24)
 - **Goal:** a user drags a Space under the finger and lets go to commit or cancel.
 - **Depends on:** T2.8, T2.9, DEC-10, DEC-11.
 - **In scope:**
@@ -490,6 +490,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** PRODUCT "Headless, children keep their behaviour", ROADMAP M2.
 
 ## Later
+- The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`;
+  leave a press to a Tile's handler or slider, and a touch to a Tile's scroller (as the wheel does).
 - A guard for a derived Grid on a content-height Stage (GOTCHAS "DOM"), e.g. ignoring a resize the
   engine's own writes caused; T2.4 only documents that the Stage needs a height.
 - T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the
