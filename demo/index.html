@@ -5,32 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>tilespace demo</title>
     <style>
-      body { font: 14px/1.4 system-ui, sans-serif; margin: 16px; color: #222; background: #f4f4f6; }
-      nav { display: flex; gap: 12px; align-items: center; height: 40px; margin-bottom: 12px; }
+      body { font: 14px/1.4 system-ui, sans-serif; margin: 0; padding: 16px; box-sizing: border-box; height: 100vh; display: flex; flex-direction: column; gap: 12px; color: #222; background: #f4f4f6; }
+      nav { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
       nav h1 { font-size: 18px; margin: 0 auto 0 0; }
-      #stage { height: calc(100vh - 84px); }
-      #stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; background: hsl(var(--hue) 55% 78%); }
+      [aria-pressed="true"] { font-weight: 600; }
+      /* The Stage's height comes from the page, never from its content (GOTCHAS "DOM"). */
+      .stage { flex: 1 1 0; min-height: 0; }
+      .stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; overflow: hidden; background: hsl(var(--hue) 55% 78%); }
+      .stage > div:nth-child(4n + 1) { --hue: 210; }
+      .stage > div:nth-child(4n + 2) { --hue: 150; }
+      .stage > div:nth-child(4n + 3) { --hue: 35; }
+      .stage > div:nth-child(4n + 4) { --hue: 330; }
       /* The Tile's place in the HTML, to read the fill order (left to right, row by row) on screen. */
       #stage { counter-reset: tile; }
       #stage > div { counter-increment: tile; }
       #stage > div::before { content: counter(tile); font-size: 12px; font-weight: 600; }
       #stage > div::after { content: attr(data-ts-span); font-size: 12px; opacity: 0.6; }
-      #stage > div:nth-child(4n + 1) { --hue: 210; }
-      #stage > div:nth-child(4n + 2) { --hue: 150; }
-      #stage > div:nth-child(4n + 3) { --hue: 35; }
-      #stage > div:nth-child(4n + 4) { --hue: 330; }
+      #gallery > div { padding: 0; position: relative; }
+      #gallery img { width: 100%; height: 100%; object-fit: cover; }
+      #gallery span { position: absolute; left: 10px; bottom: 8px; color: #fff; }
+      #dashboard textarea, #dashboard input:not([type]) { width: 100%; box-sizing: border-box; }
     </style>
   </head>
   <body>
     <nav>
       <h1>tilespace</h1>
+      <span>
+        <button type="button" data-example="stage" aria-pressed="true">Showcase</button>
+        <button type="button" data-example="gallery" aria-pressed="false">Gallery</button>
+        <button type="button" data-example="dashboard" aria-pressed="false">Dashboard</button>
+      </span>
+      <label>Transition
+        <select id="transition">
+          <option value="slide">Slide</option>
+          <option value="fade">Fade (custom)</option>
+          <option value="none">None</option>
+        </select>
+      </label>
+      <label>Axis
+        <select id="axis"><option>horizontal</option><option>vertical</option></select>
+      </label>
+      <label><input id="loop" type="checkbox" /> Loop</label>
       <button id="prev" type="button">Prev</button>
       <span id="space" aria-live="polite"></span>
       <button id="next" type="button">Next</button>
       <button id="toggle" type="button">Destroy</button>
     </nav>
     <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus when the Tile holding it hides, so the keys keep moving -->
-    <div id="stage" tabindex="0" style="row-gap: 12px;">
+    <div id="stage" class="stage" tabindex="0" style="row-gap: 12px;">
       <div data-ts-shape="3x2 2x2">Weather</div>
       <div data-ts-shape="1x1" style="grid-column-start: 1;">Clock</div>
       <div data-ts-shape="2x1">Battery</div>
@@ -46,6 +68,10 @@
       <div data-ts-shape="2x1">Reminders</div>
       <div data-ts-shape="1x3 1x2">News</div>
     </div>
+    <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: as the showcase's Stage, it keeps the focus for the keys -->
+    <div id="gallery" class="stage" tabindex="0" hidden></div>
+    <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: as the showcase's Stage, it keeps the focus for the keys -->
+    <div id="dashboard" class="stage" tabindex="0" hidden></div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

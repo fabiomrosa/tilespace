@@ -32,7 +32,7 @@ Exact versions are pinned in the root `package.json` (the same toolchain as `../
 | `packages/core` | The Grid, Shapes and Spans, the Packer and its Score, the Packing. No DOM. | nothing |
 | `packages/vanilla` (M2) | `createTilespace(stage, options)`: adopts the Stage's children, reads their Shapes, derives the Grid from the Stage's size, packs, writes Placements, runs Transitions, handles input | `core` |
 | `playground/` (T1.x) | A local page that draws Packings and exercises the Packer by hand; not a package, never published | `core` (source) |
-| `demo/` (M2) | The demo page: the engine over Tiles of mixed Shapes, and the page the e2e flows drive; not a package | `vanilla` (source) |
+| `demo/` (M2) | The demo page: a showcase, a gallery and a dashboard (`examples.ts`) with every input, Transition and axis, and the page the e2e flows drive; not a package | `vanilla` (source) |
 | `packages/react` (M4) | `<Tilespace>` and a hook over the engine | `core`, `vanilla` |
 | `packages/angular` (M5) | A component with `<ng-content>` over the engine | `core`, `vanilla` |
 
