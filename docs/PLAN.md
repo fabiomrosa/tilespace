@@ -408,7 +408,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-10.
 
 ### T2.9 · Keyboard and wheel
-- **Status:** waiting (T2.7)
+- **Status:** done (2026-11-24)
 - **Goal:** a user moves between Spaces with the arrow keys, Page Up and Down, or one wheel gesture.
 - **Depends on:** T2.7, DEC-11.
 - **In scope:**

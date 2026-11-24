@@ -73,17 +73,27 @@ Each package is created by the first slice that needs it.
   once, then run the Transition (DEC-10). The default (`default-transition.ts`) uses Web Animations
   on `translate` and `opacity`: the leaving Tiles slide out along the row, and the entering ones
   slide in from the Stage's width away, staggered 40 ms per Cell from the edge they enter from
-  (forward: the right). With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
+  (forward: the right; on a vertical `axis`, the bottom). With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
 - Both Spaces show while a Transition runs. At its end (its Animations finish, or one is cancelled)
   the Animations are cancelled and the old Space gets `visibility: hidden`, so nothing stays
   written. A move, a repack or `destroy()` during a Transition first ends it at once.
 - The `transition` option replaces the default: a function of a `TransitionContext` (the leaving
-  and entering Tiles with copies of their Placements, the direction, a copy of the Grid, the
+  and entering Tiles with copies of their Placements, the direction, the `axis`, a copy of the Grid, the
   Stage's client `width` and `height`) returning an array of Animations; reduced motion is then
   the function's to handle. `false`, an empty array, a throw, or anything but an array of
   Animations swaps at once; the error (a `tilespace:` one for a wrong return) is thrown after the
   swap and `change`, unless a `change` listener throws first. Animations a Transition made before
   throwing are its own to cancel, and a Transition must not move the Tilespace itself.
+- Input (DEC-11): `keyboard.ts` listens for `keydown` on the Stage, so a key moves only with focus
+  inside it. The arrows of the `axis` (`horizontal` by default: Left and Right; `vertical`: Up and
+  Down) and Page Up and Down move one Space and stop the page scrolling. A held key (`repeat`), a
+  modifier, a key typed in a field or one already handled is left alone. `wheel.ts` moves one
+  Space per wheel gesture, along the larger delta: a gesture ends after 200 ms with no wheel event,
+  so trackpad momentum is one gesture. A gesture that moved stops the page scrolling; one that
+  moved nothing (at an end) lets the page scroll, and a pinch zoom (`ctrlKey`) is left alone.
+  `axis` also turns the default slide and its stagger vertical. `destroy()` removes both
+  listeners and the gesture's timer. The engine makes nothing focusable: the user's Tiles hold
+  the focus.
 - A move reads the Stage's size before its own writes; a move made from a `pack` or `change`
   listener, after the engine's writes in the same task, forces a layout. Events go through
   `emitter.ts` (`on` returns the unsubscribe function). After `destroy()` a move does nothing. As

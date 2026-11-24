@@ -6,11 +6,13 @@ import {
   type Shape,
   validatePacking,
 } from "@tilespace/core";
-import { defaultTransition, type TransitionContext } from "./default-transition.ts";
+import { type Axis, defaultTransition, type TransitionContext } from "./default-transition.ts";
 import { deriveGrid, type GridFit } from "./derive-grid.ts";
 import { createEmitter } from "./emitter.ts";
+import { listenKeys } from "./keyboard.ts";
 import { readShape, type ShapeOption, type Tile } from "./read-shape.ts";
 import { validateOptions } from "./validate-options.ts";
+import { listenWheel } from "./wheel.ts";
 import { createWriteLog } from "./write-log.ts";
 
 /**
@@ -30,6 +32,8 @@ export type TilespaceOptions = PackOptions & {
   cellAspect?: number;
   gap?: number;
   shape?: ShapeOption;
+  /** The arrow keys and the default slide: `horizontal` (default) or `vertical`. */
+  axis?: Axis;
   /** `next` from the last Space goes to the first, and `prev` from the first to the last. */
   loop?: boolean;
   /**
@@ -80,12 +84,13 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     packer,
     loop = false,
     transition = defaultTransition,
+    axis = "horizontal",
     ...packOptions
   } = options;
   const fit: GridFit | undefined =
     minCellWidth === undefined ? undefined : { minCellWidth, cellAspect, gap };
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
-  validateOptions(stage, gap, fit, transition);
+  validateOptions(stage, gap, fit, transition, axis);
   const log = createWriteLog();
   let tiles = Array.from(stage.children) as Tile[];
   const shapesOf = (children: Tile[]) =>
@@ -190,7 +195,15 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     let animations: Animation[] = [];
     try {
       if (transition) {
-        const out = transition({ leaving, entering, direction, grid: { ...grid }, width, height });
+        const out = transition({
+          leaving,
+          entering,
+          direction,
+          axis,
+          grid: { ...grid },
+          width,
+          height,
+        });
         if (!Array.isArray(out) || !out.every((a) => typeof a?.cancel === "function")) {
           throw new Error(`tilespace: transition must return an array of Animations, got ${out}`);
         }
@@ -245,13 +258,37 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     repack(grid, children);
   });
   mutations.observe(stage, { childList: true });
+  /** One Space towards the direction (wrapping with `loop`); whether the Current space changed. */
+  const step = (direction: 1 | -1) => {
+    const before = current;
+    const space =
+      direction === 1
+        ? current < last()
+          ? current + 1
+          : loop
+            ? 0
+            : current
+        : current > 0
+          ? current - 1
+          : loop
+            ? last()
+            : current;
+    move(space, direction);
+    return current !== before;
+  };
+  const removeKeys = listenKeys(stage, axis, step);
+  const removeWheel = listenWheel(stage, step);
 
   return {
     get current() {
       return current;
     },
-    next: () => move(current < last() ? current + 1 : loop ? 0 : current, 1),
-    prev: () => move(current > 0 ? current - 1 : loop ? last() : current, -1),
+    next: () => {
+      step(1);
+    },
+    prev: () => {
+      step(-1);
+    },
     goTo(space) {
       if (last() < 0) throw new Error("tilespace: goTo needs a Space, but the Stage has no Tiles");
       if (!Number.isInteger(space) || space < 0 || space > last()) {
@@ -264,6 +301,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       destroyed = true;
       resizes?.disconnect();
       mutations.disconnect();
+      removeKeys();
+      removeWheel();
       events.clear();
       settle();
       log.restore();
