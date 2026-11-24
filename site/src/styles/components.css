@@ -52,6 +52,7 @@
 }
 .button-small {
   min-height: 36px;
+  font-family: var(--font-ui);
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: var(--r-control);
@@ -88,6 +89,21 @@
   }
 }
 @media (max-width: 639px) {
+  .hero h1 {
+    line-height: 0.95;
+  }
+  /* The whole command fits at 360 px: 12 px type, no prompt, and a 44 px Copy. */
+  .install {
+    font-size: 12px;
+    justify-content: space-between;
+  }
+  .install .prompt,
+  .eyebrow .wide {
+    display: none;
+  }
+  .button-small {
+    min-height: 44px;
+  }
   .hero-actions,
   .hero-links,
   .install {

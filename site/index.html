@@ -7,7 +7,7 @@
     <meta name="description" content="Pack your own elements into pages of a grid, and move between them like desktop workspaces." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@700&display=swap" />
     <script>
       // The saved theme before the first paint (theme.ts wires the toggle after).
       try { const t = localStorage.getItem("tilespace-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch {}
@@ -42,14 +42,15 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="container grid-12 hero-head">
           <div class="hero-text">
-            <p class="eyebrow">Open source · TypeScript · MIT · 0 dependencies</p>
+            <p class="eyebrow">Open source · TypeScript · MIT<span class="wide"> · 0 dependencies</span></p>
             <h1 id="hero-title">tilespace</h1>
             <p class="lead">Pack your own elements into pages of a grid, and move between them like desktop workspaces.</p>
           </div>
           <div class="hero-actions">
             <div class="install">
-              <code><span class="muted">$</span> npm install @tilespace/vanilla</code>
+              <code><span class="muted prompt">$ </span>npm install @tilespace/vanilla</code>
               <button id="copy" class="button-small" type="button">Copy</button>
+              <span id="copied" class="visually-hidden" role="status"></span>
             </div>
             <div class="hero-links">
               <a class="button solid" href="https://github.com/fabiomrosa/tilespace">GitHub</a>

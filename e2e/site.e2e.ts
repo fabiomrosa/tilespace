@@ -77,12 +77,14 @@ test("opens the same links in a menu sheet on a phone, next in the Tab order", a
   await expect(menu).toBeFocused();
 });
 
-test("gives every header and footer control a 44 px target on a phone", async ({ page }) => {
+test("gives every control a 44 px target on a phone, and shows each code line whole", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto("./");
   await page.getByRole("button", { name: "Menu" }).click();
 
-  const controls = page.locator("header a, header button, footer a");
+  const controls = page.locator("header a, header button, main a, main button, footer a");
   for (const control of await controls.all()) {
     if (!(await control.isVisible())) continue;
     const box = await control.boundingBox();
@@ -90,6 +92,9 @@ test("gives every header and footer control a 44 px target on a phone", async ({
       Math.min(box?.width ?? 0, box?.height ?? 0),
       (await control.textContent()) ?? "",
     ).toBeGreaterThanOrEqual(44);
+  }
+  for (const code of await page.locator("main code").all()) {
+    expect(await code.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
   }
 });
 
@@ -111,6 +116,8 @@ test("copies the install line", async ({ page, context }) => {
   await page.getByRole("button", { name: "Copy" }).click();
 
   await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+  // Announced too: the button's own text changing isn't read out reliably.
+  await expect(page.getByRole("status")).toHaveText("Copied");
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "npm install @tilespace/vanilla",
   );
