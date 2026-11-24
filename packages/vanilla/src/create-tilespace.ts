@@ -300,10 +300,10 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     const run = begin(to, direction);
     if ("error" in run) end(run, false);
     for (const animation of run.animations) animation.pause();
-    const length = Math.max(
-      0,
-      ...run.animations.map((a) => Number(a.effect?.getComputedTiming().endTime ?? 0)),
-    );
+    // The Drag scrubs to the shortest Animation's end: the default's slide; its settle plays on
+    // release.
+    const ends = run.animations.map((a) => Number(a.effect?.getComputedTiming().endTime ?? 0));
+    const length = ends.length > 0 ? Math.min(...ends) : 0;
     // A move, a repack or destroy() that ended the Run drops the rest of the Drag.
     return {
       seek(progress) {

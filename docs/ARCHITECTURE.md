@@ -77,9 +77,11 @@ Each package is created by the first slice that needs it.
   undoing a shorthand would wipe the longhands the user had set.
 - `next`, `prev` and `goTo` set the Current space, move `data-ts-current` and emit `change` at
   once, then run the Transition (DEC-10). The default (`default-transition.ts`) uses Web Animations
-  on `translate` and `opacity`: the leaving Tiles slide out along the row, and the entering ones
-  slide in from the Stage's width away, staggered 40 ms per Cell from the edge they enter from
-  (forward: the right; on a vertical `axis`, the bottom). With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
+  on `translate` and `opacity`, in two phases: the Space slides 300 ms along the axis as one block
+  (the leaving Tiles out, the entering ones in from the Stage's size away, faint, landing 8 px
+  short); then each entering Tile settles in 200 ms (the 8 px and the fade), in its order within
+  the Space (the fill's flow), at most 40 ms apart and about 300 ms in all. One Animation per
+  Tile. With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
 - Both Spaces show while a Transition runs. At its end (its Animations finish, or one is cancelled)
   the Animations are cancelled and the old Space gets `visibility: hidden`, so nothing stays
   written. A move, a repack or `destroy()` during a Transition first ends it at once.
@@ -107,7 +109,8 @@ Each package is created by the first slice that needs it.
   scroll the page.
 - `drag.ts`: a press on the Stage becomes a Drag 10 px along the axis (across it first, it is the
   page's). The Drag captures the pointer and scrubs the paused Transition to the neighbouring Space
-  by the distance over the Stage's size. Released past half or on a flick (0.5 px/ms over 100 ms)
+  by the distance over the Stage's size, up to the shortest Animation's end (the default's slide;
+  its settle plays on release). Released past half or on a flick (0.5 px/ms over 100 ms)
   it commits; otherwise it plays back. Its click is stopped in the capture phase; a click below the
   threshold reaches the Tile. It clears the text selection it would make. A move, a repack or
   `destroy()` drops a Drag. The Stage gets `touch-action: pan-y pinch-zoom` (`pan-x` if vertical).

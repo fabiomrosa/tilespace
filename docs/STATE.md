@@ -33,9 +33,9 @@ Tile's Placement (DEC-06, without ARIA or `touch-action`). Space 0 is shown and 
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
 `validatePacking`. `next()`, `prev()`
 and `goTo(space)` change the Current space (`loop` wraps at the ends), `current` reads it, and
-`on('change', fn)` hears each move. Each move runs the default Transition: the Tiles slide along
-the row with Web Animations (`translate`, `opacity`), the entering ones staggered by Cell; at its
-end only the new Space shows and nothing stays written. A new move, a repack or `destroy()`
+`on('change', fn)` hears each move. Each move runs the default Transition, with Web Animations
+(`translate`, `opacity`): the Space slides as one block, then its Tiles settle in their order
+within it; at its end only the new Space shows and nothing stays written. A new move, a repack or `destroy()`
 during a Transition ends it at once. With `prefers-reduced-motion` it is a short cross-fade.
 The `transition` option replaces it with a function of a `TransitionContext` (exported) that
 returns Animations; `false` swaps at once, and so does a function that returns none, returns
@@ -102,4 +102,6 @@ None.
 - **2026-11-24, T2.12 (the fill follows the axis):** column by column on a horizontal axis, by a
   quarter turn in the engine; `core` exports `validateGrid` and `validateShapes`. On the demo,
   some Holes of the second Spaces sit mid-flow: T2.12b.
-- **Next:** T2.13 (the Space moves, then the cards settle), then T2.12b, then closing M2.
+- **2026-11-24, T2.13 (the Space moves, then the cards settle):** the default Transition in two
+  phases; the Drag scrubs the slide and the settle plays on release. Checked in Chromium.
+- **Next:** T2.12b (Holes at the end of the flow), then closing M2.

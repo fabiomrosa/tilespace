@@ -521,7 +521,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Files:** ~5: `core/src/{pack-space.ts,score}`, its tests, PLAN, STATE.
 
 ### T2.13 · The Space moves, then the cards settle
-- **Status:** waiting (T2.12)
+- **Status:** done (2026-11-24)
 - **Goal:** the default Transition reads as a page turn: the Space moves as one block, then its
   cards arrive (the owner's M2 end check).
 - **Depends on:** T2.12, DEC-10 (amended).

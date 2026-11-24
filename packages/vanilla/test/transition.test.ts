@@ -30,8 +30,10 @@ const motion = (tile: HTMLElement | undefined) => {
   return {
     from: frames[0]?.translate,
     to: frames.at(-1)?.translate,
-    delay: effect?.getTiming().delay,
     fill: effect?.getTiming().fill,
+    end: Number(effect?.getComputedTiming().endTime),
+    /** Where the Tile is when the Space's slide is over. */
+    landed: frames.find((f) => f.offset === frames[1]?.offset)?.translate,
   };
 };
 
@@ -60,18 +62,30 @@ describe("the default Transition", () => {
     }
   });
 
-  it("staggers the entering Tiles by their Cells from the edge they enter from", () => {
+  it("slides the Space as one block, then settles its Tiles in their order within it", () => {
     const { tilespace, tiles } = mount();
 
     tilespace.next();
-    // Entering from the right: the right Tile first.
-    expect(motion(tiles[3]).delay).toBe(0);
-    expect(motion(tiles[2]).delay).toBeGreaterThan(0);
+    const [leaving, first, second] = [motion(tiles[0]), motion(tiles[2]), motion(tiles[3])];
+    // The block: every Tile lands when the leaving ones end, with no stagger.
+    expect(motion(tiles[1]).end).toBe(leaving.end);
+    const landsAt = (tile: HTMLElement | undefined) => {
+      const effect = tile?.getAnimations()[0]?.effect as KeyframeEffect;
+      return (
+        (effect.getKeyframes()[1]?.computedOffset ?? 0) * Number(effect.getComputedTiming().endTime)
+      );
+    };
+    expect(landsAt(tiles[2])).toBeCloseTo(leaving.end);
+    expect(landsAt(tiles[3])).toBeCloseTo(leaving.end);
+    // Then each settles, a short slide from where it landed, in the Space's order.
+    expect(first.landed).toBe("8px 0px");
+    expect(first.end).toBeGreaterThan(leaving.end);
+    expect(second.end).toBeGreaterThan(first.end);
 
     tilespace.prev();
-    // Entering from the left: the left Tile first, sliding in from the left.
-    expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", delay: 0 });
-    expect(motion(tiles[1]).delay).toBeGreaterThan(0);
+    // Backwards, in from the left, still in the Space's own order.
+    expect(motion(tiles[0])).toMatchObject({ from: "-400px 0px", landed: "-8px 0px" });
+    expect(motion(tiles[1]).end).toBeGreaterThan(motion(tiles[0]).end);
   });
 
   it("slides goTo towards a lower Space in from the left", () => {
