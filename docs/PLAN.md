@@ -513,13 +513,14 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   cards arrive (the owner's M2 end check).
 - **Depends on:** T2.12, DEC-10 (amended).
 - **In scope:** the default Transition in two phases: both Spaces slide by the Stage's size as one
-  block (~300 ms, no stagger), then each entering Tile fades in with an 8 px slide (~200 ms),
-  staggered by its Cells from the entering edge. The Drag scrubs the whole timeline as before.
+  block (~300 ms, no stagger), then each entering Tile fades in with an 8 px slide (~200 ms), in
+  its order within the Space along the fill's flow, at most 40 ms apart and ~300 ms for the whole
+  cascade. The Drag scrubs the whole timeline as before.
   Reduced motion keeps the cross-fade.
 - **Contract:** none new.
 - **Acceptance criteria:**
   1. The leaving and entering Tiles slide the same distance in the same time, with no stagger.
-  2. The entering Tiles settle after the slide, the one nearest the entering edge first.
+  2. The entering Tiles settle after the slide, in their order within the Space.
   3. In the browser, the Transition runs and ends with nothing written.
 - **Files:** ~6: `src/default-transition.ts`, `test/transition.test.ts`, `test/input.test.ts`,
   ARCHITECTURE, PLAN, STATE.
