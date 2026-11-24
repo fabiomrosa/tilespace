@@ -40,7 +40,8 @@ const show = () => {
 
 const mount = () => {
   tilespace = createTilespace(stage, {
-    minCellWidth: 160,
+    // About 7 columns at most, so a large screen still has several Spaces to move between.
+    minCellWidth: Math.max(160, stage.clientWidth / 7),
     cellAspect: 4 / 3,
     gap: 12,
     axis: axis.value as "horizontal" | "vertical",
