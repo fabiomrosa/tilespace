@@ -74,4 +74,4 @@ M0, M1 and M2 (done), then T3.1 → T3.2 → T3.3 → T3.4a → T3.4b → T3.5 �
 |---|---|---|---|
 | DEC-14 | ARIA on the Stage, and who announces the Current space | Accepted | T3.2 |
 | DEC-15 | License, versions and how a release publishes | Accepted | T3.3, T3.6 |
-| DEC-16 | The site in this repository, on GitHub Pages | Proposed | T3.7a |
+| DEC-16 | The site in this repository, on GitHub Pages | Accepted | T3.7a |

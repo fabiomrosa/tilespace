@@ -184,11 +184,7 @@ when the owner pushes a `v*` tag, with npm provenance.
   the GitHub repository; an npm token in the repository's secrets for the first publish (P3), which
   trusted publishing can replace afterwards; a changelog entry per release.
 
----
-
-## Proposed (waiting for the owner)
-
-## DEC-16 · The site lives in this repository as `site/`, on GitHub Pages — Proposed
+## DEC-16 · The site lives in this repository as `site/`, on GitHub Pages — Accepted (owner, 2026-11-24)
 The project's site is a package of this workspace, `site/`, built with Vite from the owner's Claude
 Design handoff (`docs/site/HANDOFF.md`) and deployed to GitHub Pages by a workflow on each push to
 `main`. Its demos import `@tilespace/vanilla` by name, so the site always runs the current build.
@@ -199,3 +195,7 @@ cross-fade, and `peek` is the boolean option plus the page's CSS, as in the demo
   build needs no provider beyond GitHub.
 - **Consequences:** the owner turns on Pages with "GitHub Actions" as the source (P4); the site's
   checks join the gate; `demo/` stays the e2e test bed.
+
+---
+
+## Proposed (waiting for the owner)
