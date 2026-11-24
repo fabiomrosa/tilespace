@@ -34,7 +34,7 @@ When the shape of that interface is itself in question, the project's `docs/ARCH
 - **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
 - **Refactoring is not part of the loop.** It belongs to the review stage (the project's `tilespace-code-review` skill), not the red → green implementation cycle.
-- **Every red is seen.** Run the new test and watch it fail for the expected reason before writing the code; that is the proof SESSION §3.2 asks for.
+- **Every red is seen.** Run the new test and watch it fail for the expected reason before writing the code; that is the proof SESSION §3.2 asks for. A test that needs a server or a page goes red on its own assertion, against this project's server (GOTCHAS "Browser checks").
 - **Every fixture discriminates.** A rule that only ranks results (the best, not the first; a tie-break) needs an input where breaking the rule changes the output: find the smallest by differential search, the code against a scratch copy missing the rule, and assert the difference (`expect(withRule).not.toEqual(withoutRule)`).
 - **Break code safely.** Before breaking code on purpose to see a test fail, commit (or copy the file to the scratchpad); restore from that, never with `git checkout <file>`, which also wipes uncommitted work.
 

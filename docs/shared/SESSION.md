@@ -68,8 +68,8 @@ owner to confirm.
 
 ## 3. Verify
 1. The repository's gate passes (`AGENTS.md` "Commands").
-2. Every acceptance criterion has a test that was seen red, and coverage stays at or above the
-   floor (`docs/CONVENTIONS.md` §5; the gate checks it).
+2. Every acceptance criterion has a planted bug: the code broken once, its test seen red. Coverage
+   stays at or above the floor (`docs/CONVENTIONS.md` §5; the gate checks it).
 3. Run it once live (curl for an API; simulator or browser for a client; the binary for a CLI).
    For a page, read it as it loads before any scripted input.
 4. The size check passes: `scripts/check-pr-size.py main`.

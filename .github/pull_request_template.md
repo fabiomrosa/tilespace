@@ -11,7 +11,7 @@
 ## Verified
 - **Gate:** `npm run verify` passes locally (<n> tests); CI is green on this pull request.
 - **Size:** <files>/15 files, <lines>/400 lines (`scripts/check-pr-size.py main`)
-- **Seen red:** <!-- each acceptance criterion: written test-first, or broken once and restored -->
+- **Seen red:** <!-- each acceptance criterion: a planted bug: the code broken once and restored, its test seen red -->
 - **Live:** <!-- what was exercised, and how -->
 
 ## Review
