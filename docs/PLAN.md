@@ -561,6 +561,31 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   and Gap controls remount the Tilespace with those options.
 - **Files:** ~6: `src/default-transition.ts`, `test/transition.test.ts`, the demo, PLAN, STATE.
 
+### T2.14 · Peek: the neighbouring Spaces show beside the Stage
+- **Status:** waiting (owner's ok on this plan)
+- **Goal:** like the Netflix rows, the edges of the Spaces before and after the Current one show
+  beside the Stage, inside a container of the user's that clips (the owner, 2026-11-24).
+- **Depends on:** T2.13c, DEC-06 and DEC-10 (amended).
+- **In scope:**
+  - `peek?: boolean` (default `false`). With it, the Stage doesn't clip (`overflow: visible`), and
+    the Spaces just before and after the Current one (wrapping with `loop`) show at rest one Stage
+    size plus the gap away along the axis (an inline `translate`), `inert`. The user's container
+    clips how much of them shows. They are visual only in this first version (no click).
+  - The default slide travels the Stage's size plus the gap, with or without `peek`, so the next
+    Space arrives from where it rests; `TransitionContext` gains `gap`.
+  - During a Transition, the Space beyond the entering one appears only at its end (first
+    version).
+  - The demo: a Peek checkbox; the Stages sit in a frame that clips, with room beside them.
+- **Contract:** the `peek` option; `TransitionContext.gap`.
+- **Acceptance criteria:**
+  1. With `peek`, the neighbouring Spaces' Tiles are visible, `inert` and one Stage size plus the
+     gap away; the others are hidden; `destroy()` puts everything back.
+  2. After a move, the neighbours are the new Current space's.
+  3. In Chromium, a neighbour Tile's box starts one Stage width plus the gap to the right, and the
+     demo's frame clips it.
+- **Files:** ~9: `src/{create-tilespace.ts,default-transition.ts,validate-options.ts}`,
+  `test/peek.test.ts`, `e2e/peek.e2e.ts`, the demo, ARCHITECTURE, PLAN, STATE.
+
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.

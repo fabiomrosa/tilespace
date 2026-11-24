@@ -52,10 +52,12 @@ only for a web version of an app).
 The Stage's direct children are the Tiles, adopted as they are: never created, cloned, moved,
 re-parented or changed inside. The library writes, and restores on `destroy()`:
 - on the Stage: `display: grid`, the Grid's `grid-template-columns`, `grid-template-rows` and `gap`,
-  `position: relative`, `overflow: clip`, `touch-action` for the Drag axis, and ARIA attributes;
+  `position: relative`, `overflow: clip` (`visible` with `peek`), `touch-action` for the Drag axis,
+  and ARIA attributes;
 - on each Tile: `grid-column`, `grid-row`, `visibility`, `inert`, the attributes `data-ts-space`,
   `data-ts-span` (`3x2`) and `data-ts-current`, and the CSS variables `--ts-cols` and `--ts-rows`
-  (the chosen Span).
+  (the chosen Span); with `peek`, a neighbouring Space's Tiles also get a resting `translate`
+  (amended by the owner 2026-11-24).
 
 Transitions run as Web Animations on the Tiles (DEC-10) and leave nothing written when they end.
 - **Why:** the owner's core requirement: only the container is the library's, the content is the
@@ -114,7 +116,8 @@ better, preferring, among equal Holes and Span ranks, the filling that moves Til
 Changing Space runs a Transition: a function `(context) → Animation[]` given the leaving and
 entering Tiles with their Placements, the direction and the Stage's size. The default moves in two
 phases (amended by the owner 2026-11-24): the Space slides along the axis as one block, the leaving
-Tiles out and the entering ones in; then each entering Tile settles with a fade and a short slide,
+Tiles out and the entering ones in, one Stage size plus the gap apart; then each entering Tile
+settles with a fade and a short slide,
 in its order within the Space along the fill's flow (CSS `translate` and `opacity`). The owner's
 pace (2026-11-24): a 500 ms slide, then each Tile settles in 450 ms from 40 px short, at most 80 ms
 apart and about 600 ms in all. `transition: false` swaps instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
