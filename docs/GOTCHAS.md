@@ -55,6 +55,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - happy-dom runs Web Animations but never ends one by itself, even with fake timers: tests call
   `finish()` on each of `getAnimations()`. `cancel()` rejects `finished`, an unhandled rejection
   unless the engine catches it.
+- happy-dom doesn't rewind a finished Animation on `play()` or `reverse()`; Chrome does, so a
+  scrubbed Transition played to its end can replay from the start. Check end states in Playwright.
 - happy-dom doesn't retarget an event at a shadow boundary: a test of shadow-root behaviour runs
   in Playwright.
 - happy-dom's `WheelEvent` extends `UIEvent`, so it has no `ctrlKey` (a pinch zoom in a browser):
@@ -66,6 +68,8 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - Under Vitest, an error thrown in a happy-dom `MutationObserver` callback escapes as an uncaught
   exception and fails the run (no `error` event on `window`). To test a throwing callback, stub the
   observer and call its callback yourself.
+- To clip at the screen with no sideways scroll, set `overflow: clip` on both `html` and `body`: on
+  `body` alone it reaches the viewport as `hidden`, which `scrollTo` still scrolls.
 - happy-dom's `getComputedStyle` ignores inline padding on an element outside the document.
 - `packages/vanilla` imports `@tilespace/core` through its `dist/` (package exports), so `core` must
   be built before vanilla is type-checked or tested: `verify` builds first, and `npm test` runs

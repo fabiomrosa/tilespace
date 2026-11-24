@@ -28,7 +28,8 @@ owner to confirm.
 - **Status:** waiting (X1.4) | next | done (2026-11-02)
 - **Goal:** one sentence: what someone can do afterwards.
 - **Depends on:** slice ids and decisions (DEC-nn).
-- **In scope:** the behaviours, as a short list.
+- **In scope:** the behaviours, as a short list; an observer that writes into what it observes
+  lists its guard against the loop.
 - **Out of scope:** what a reader might expect but this slice does not do.
 - **Contract:** operations (method path → status, body, specific error codes) and schemas; client
   slices list the operations they consume. "None" when there is no contract.
