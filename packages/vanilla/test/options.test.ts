@@ -55,6 +55,12 @@ describe("createTilespace options", () => {
       "gap must be a finite number of pixels ≥ 0, got NaN",
     ],
     [
+      "a transition that is not a function or false",
+      [null],
+      { transition: true as unknown as false },
+      "transition must be a function or false, got true",
+    ],
+    [
       "a Grid of 0 columns",
       [null],
       { columns: 0 },
