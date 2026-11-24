@@ -18,6 +18,7 @@ reference. Any "no" is fixed before the pull request (or explicitly listed as a 
 - [ ] Nothing beyond what the entry asks (YAGNI): no unused abstraction, configuration or parameter.
 - [ ] Every change serves the current slice entry; nothing from "Out of scope"; extras moved to
       PLAN "Later".
+- [ ] What a DEC or the PLAN states still holds, or the diff updates it with the owner's ok.
 
 ## Layout and naming (CONVENTIONS)
 - [ ] Each file has one role, named by its suffix, in the place CONVENTIONS gives it.
@@ -37,11 +38,15 @@ reference. Any "no" is fixed before the pull request (or explicitly listed as a 
       back everything it wrote.
 - [ ] No layout read after a style write in the same frame.
 - [ ] Every listener added is removed by `destroy()`.
+- [ ] After a move by key, wheel or Drag, focus is where the user can keep going (inside the Stage).
+- [ ] An option that changes a resting state is tested with each Transition: the default, a custom
+      one, `false` and reduced motion.
 
 ## Public API
 - [ ] Changes to a package's `src/index.ts` are listed in the pull request, additive or breaking.
-- [ ] A user callback (a Score, a Packer, an event handler) gets copies, never the
-      library's own objects it could change.
+- [ ] A user callback (a Score, a Packer, a Transition, an event handler) gets copies, never the
+      library's own objects it could change, in the library's real coordinates, never an internal
+      transform; its return value is checked before the library keeps it.
 
 ## Security and privacy
 - [ ] No secrets in the code, the demo or the logs; no `innerHTML` with user values.
@@ -52,7 +57,8 @@ reference. Any "no" is fixed before the pull request (or explicitly listed as a 
       new traps, `docs/ARCHITECTURE.md` if what it describes changed.
 
 ## Tests
-- [ ] Every acceptance criterion has a test that was seen red (test-first, or the rule broken once).
+- [ ] Every acceptance criterion has a planted bug: the code broken once, its test seen red, and the
+      bug listed under "Seen red" in the pull request.
 - [ ] Each test exercises what runs, not a declaration the runtime may ignore (break the code once if
       unsure).
 - [ ] A mistake this review keeps finding is proposed as a check in the retro.
