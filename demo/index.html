@@ -17,8 +17,11 @@
       .frame.inset { padding: 0 64px; }
       .frame.inset.vertical { padding: 64px 0; }
       /* Bleed: the frame spans the screen, and the Stage keeps a 1040 px site's width, centred. */
+      /* -16px: out to the screen's edges, past the body's padding. Under 1040 px there's no margin. */
       .frame.bleed { margin: 0 -16px; }
       .frame.bleed .stage { max-width: 1040px; margin: 0 auto; }
+      /* Vertically the neighbours come from above and below: the Stage leaves room there instead. */
+      .frame.bleed.vertical .stage { max-width: none; max-height: calc(100% - 160px); align-self: center; height: 100%; margin: 0 16px; }
       .stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; overflow: hidden; background: hsl(var(--hue) 55% 78%); }
       .stage > div:nth-child(4n + 1) { --hue: 210; }
       .stage > div:nth-child(4n + 2) { --hue: 150; }

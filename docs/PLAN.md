@@ -605,11 +605,13 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Depends on:** T2.14b.
 - **In scope:** the demo's Peek becomes off / inset (the frame makes room inside the site's width,
   so the Stage shrinks) / bleed (the frame spans the screen and the Stage keeps a 1040 px site's
-  width, so the neighbours fill the margins). The library is unchanged: both are the page's CSS.
+  width, so the neighbours fill the margins; on a vertical axis it leaves room above and below).
+  The library is unchanged: both are the page's CSS. The demo's `minCellWidth` also caps the rows,
+  so a tall Stage still has several Spaces.
 - **Contract:** none.
 - **Acceptance criteria:** 1. In Chromium at 1440 px, with bleed the Stage is 1040 px wide, the
   frame spans the screen, and the next Space starts a `spaceGap` past the Stage.
-- **Files:** ~5: the demo, `e2e/peek.e2e.ts`, PLAN, STATE.
+- **Files:** ~6: the demo, `e2e/peek.e2e.ts`, `e2e/input.e2e.ts`, PLAN, STATE.
 
 ## Later
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
