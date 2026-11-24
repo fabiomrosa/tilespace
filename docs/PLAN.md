@@ -346,7 +346,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Request flow" 2.
 
 ### T2.6 · The demo page in a real browser
-- **Status:** waiting (T2.5)
+- **Status:** done (2026-11-23)
 - **Goal:** the owner sees the engine on a real page, midway through M2.
 - **Depends on:** T2.5.
 - **In scope:**
@@ -460,9 +460,6 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 ## Later
 - A guard for a derived Grid on a content-height Stage (GOTCHAS "DOM"), e.g. ignoring a resize the
   engine's own writes caused; T2.4 only documents that the Stage needs a height.
-- T2.1's `destroy()` is checked only in headless Chrome for the `style=""` cleanup and for the
-  user's longhands (`row-gap`, `grid-column-start`) surviving it: happy-dom drops an empty attribute
-  and doesn't expand shorthands (GOTCHAS "DOM"). The first Playwright flow (T2.6) can assert both.
 - T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the
   best filling, so it is invisible at the public seam until `nodeBudget` exists. Proposal for T1.6:
   a budget that finds the optimum only with the Shape deduplication.

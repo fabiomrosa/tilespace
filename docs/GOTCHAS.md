@@ -36,6 +36,10 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
 - `--dump-dom` with `--virtual-time-budget` renders no frame: `requestAnimationFrame` and
   `ResizeObserver` never fire there. For anything that needs a frame, run Chrome in real time with
   `--remote-debugging-port`, wait, and read the page with `Runtime.evaluate`.
+- Playwright's `reuseExistingServer` tests whatever already answers on the port: another project's
+  Vite on 5174 once made a red run red for the wrong reason. The config never reuses a server, and
+  `--strictPort` fails loudly if the port is taken.
+- The repository has no `@types/node`, so `process` doesn't type-check in `playwright.config.ts`.
 
 ## DOM
 - happy-dom drops an element's `style` attribute when its last property is removed; Chrome keeps
@@ -45,7 +49,9 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   only a real browser can check.
 - Chrome expands an inline shorthand: with only `row-gap` set, `getPropertyValue("gap")` is `""`, and
   `removeProperty("gap")` then removes the user's `row-gap`. happy-dom doesn't expand shorthands, so
-  a unit test can't see this; the engine writes longhands only.
+  a unit test can't see this; the engine writes longhands only. Chrome may serialize a restored inline
+  style differently from the page's source, so compare it through the same serializer
+  (`e2e/mount.e2e.ts`).
 - A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
   in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.
 - Under Vitest, an error thrown in a happy-dom `MutationObserver` callback escapes as an uncaught
