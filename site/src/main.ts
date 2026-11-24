@@ -1,4 +1,3 @@
-import { mountHero } from "./demos/hero.ts";
 import { setUpMenu } from "./menu.ts";
 import { setUpTheme } from "./theme.ts";
 
@@ -20,5 +19,3 @@ copy.addEventListener("click", async () => {
     // No clipboard (an insecure page, a denied permission): the line stays there to select.
   }
 });
-
-mountHero(byId("wall"), byId("wall-prev"), byId("wall-next"), byId("wall-count"));

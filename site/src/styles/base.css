@@ -4,11 +4,6 @@
 *::after {
   box-sizing: border-box;
 }
-/* The hero wall bleeds past the screen's edge: both clip, or the page would scroll (GOTCHAS). */
-html,
-body {
-  overflow-x: clip;
-}
 body {
   margin: 0;
   background: var(--bg);
