@@ -26,4 +26,10 @@ copy.addEventListener("click", async () => {
   }
 });
 
-mountHero(byId("wall"), byId("wall-prev"), byId("wall-next"), byId("wall-count"));
+mountHero(
+  byId("wall"),
+  byId("wall-prev"),
+  byId("wall-next"),
+  byId("wall-count"),
+  byId("wall-pager"),
+);

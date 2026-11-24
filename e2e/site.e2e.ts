@@ -156,6 +156,12 @@ test.describe("the hero wall", () => {
       });
     });
     expect(seen).toBe(true);
+    // The bleed is clipped by the screen: the page itself never scrolls sideways.
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+      ),
+    ).toBe(true);
 
     await page.getByRole("button", { name: "Next Space" }).click();
     await expect(counter).toHaveText(`Space 2 of ${spaces}`);
@@ -164,14 +170,29 @@ test.describe("the hero wall", () => {
     await expect(counter).toHaveText(`Space 3 of ${spaces}`);
   });
 
-  test("mounts the phone's 4-column Grid when the screen narrows", async ({ page }) => {
+  test("mounts the phone's 4-column Grid when the screen narrows, keeping the visitor's place", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");
     expect(await columns(page)).toBe(10);
+    await page.getByRole("button", { name: "Next Space" }).click();
+    let mounts = 0;
+    await page.exposeFunction("mounted", (records: number) => {
+      mounts += records;
+    });
+    await wall(page).evaluate((el) =>
+      new MutationObserver((records) =>
+        (window as unknown as { mounted: (n: number) => void }).mounted(records.length),
+      ).observe(el, { attributeFilter: ["role"] }),
+    );
 
     await page.setViewportSize({ width: 390, height: 844 });
 
     await expect.poll(() => columns(page)).toBe(4);
+    // One remount (role removed, then written back), though two breakpoints were crossed.
+    expect(mounts).toBe(2);
+    await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);
   });
 
   test.describe("with JavaScript off", () => {
@@ -182,6 +203,8 @@ test.describe("the hero wall", () => {
       await page.goto("./");
 
       await expect(page.locator("#wall > div").first()).toBeVisible();
+      // No dead controls: the pager needs the script.
+      await expect(page.getByRole("button", { name: "Next Space" })).toBeHidden();
       // A grid of cells at the wall's phone height, not a column of stacked tiles.
       const [display, height] = await page
         .locator("#wall")

@@ -139,6 +139,10 @@
   padding-top: 20px;
   font-size: 14px;
 }
+.wall-bar .narrow,
+.pager[hidden] {
+  display: none;
+}
 .pager {
   display: flex;
   align-items: center;
@@ -209,10 +213,10 @@
     grid-auto-rows: calc((100% - 24px) / 4);
     gap: 8px;
   }
-  .wall-bar > p {
+  .wall-bar .wide {
     display: none;
   }
-  .wall-bar {
-    justify-content: center;
+  .wall-bar .narrow {
+    display: block;
   }
 }
