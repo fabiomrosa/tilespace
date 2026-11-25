@@ -132,7 +132,7 @@ None.
 - **2026-11-25, T3.19:** the demo's card effects: cascade, 3-D cascade and pop, written as user
   code on `change` that animates the card inside each Tile, from the move's side.
 - **2026-11-25, the owner:** a favicon before the playground (T3.20); the hero's cards cascade
-  again as the site's code (T3.21); the playground gets a Cards select (T3.9b).
+  again as the site's code (T3.21); the playground gets a Cards select (T3.9b, now T3.9c).
 - **2026-11-25, T3.20:** the site's favicon is the logo mark (`site/public/favicon.svg`), with a
   180 px `apple-touch-icon.png` drawn from it, both under `/tilespace/`.
 - **2026-11-25, T3.21:** the hero's cards cascade again, as the site's code on `change`
@@ -146,4 +146,8 @@ None.
 - **2026-11-25, T3.22 (the playground's tabs):** a tablist (APG tabs, automatic activation, Home
   and End) mounts Showcase, Gallery (generated SVG photos, the default the owner left) or Dashboard
   (real inputs that keep their values through a move); hidden with JavaScript off.
-- **Next:** T3.9b.
+- **2026-11-25, T3.9b (the playground's control bar):** axis and peek (off, inset, bleed) as
+  segmented buttons, the Transition select (slide, a custom fade, none), the gap and space gap
+  sliders with their readouts, loop; each change mounts the example again where the visitor is.
+  On a phone, an Options button shows the same controls. The Cards select is T3.9c (split).
+- **Next:** T3.9c.

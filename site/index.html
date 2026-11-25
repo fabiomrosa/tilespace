@@ -158,13 +158,35 @@
             </div>
           </div>
           <div class="playground-bar">
-            <p id="playground-note" class="muted">Mixed shapes in seven colours: each tile shows its place in the HTML and, once mounted, the span it got.</p>
+            <button id="playground-options" class="button-small options-toggle" type="button" aria-expanded="false" aria-controls="playground-controls" hidden>Options</button>
+            <div id="playground-controls" class="controls" hidden>
+              <!-- biome-ignore lint/a11y/useSemanticElements: a fieldset's legend can't sit inline in a flex row -->
+              <div class="segmented" role="group" aria-label="Axis">
+                <span aria-hidden="true">Axis</span>
+                <button type="button" data-value="horizontal" aria-pressed="true">Horizontal</button>
+                <button type="button" data-value="vertical" aria-pressed="false">Vertical</button>
+              </div>
+              <label>Transition
+                <select id="pg-transition"><option value="slide">Slide</option><option value="fade">Fade</option><option value="none">None</option></select>
+              </label>
+              <!-- biome-ignore lint/a11y/useSemanticElements: a fieldset's legend can't sit inline in a flex row -->
+              <div class="segmented" role="group" aria-label="Peek">
+                <span aria-hidden="true">Peek</span>
+                <button type="button" data-value="off" aria-pressed="true">Off</button>
+                <button type="button" data-value="inset" aria-pressed="false">Inset</button>
+                <button type="button" data-value="bleed" aria-pressed="false">Bleed</button>
+              </div>
+              <div class="slider"><label for="pg-gap">Gap</label> <input id="pg-gap" type="range" min="0" max="24" step="2" value="12" /> <span id="pg-gap-value">12 px</span></div>
+              <div class="slider"><label for="pg-space-gap">Space gap</label> <input id="pg-space-gap" type="range" min="0" max="64" step="4" value="12" /> <span id="pg-space-gap-value">12 px</span></div>
+              <label><input id="pg-loop" type="checkbox" /> Loop</label>
+            </div>
             <div id="playground-pager" class="pager" hidden>
               <button id="playground-prev" class="round" type="button" aria-label="Previous Space in the playground">←</button>
               <p id="playground-count" class="count" aria-live="polite"></p>
               <button id="playground-next" class="round" type="button" aria-label="Next Space in the playground">→</button>
             </div>
           </div>
+          <p id="playground-note" class="muted playground-note">Mixed shapes in seven colours: each tile shows its place in the HTML and, once mounted, the span it got.</p>
         </div>
       </section>
     </main>

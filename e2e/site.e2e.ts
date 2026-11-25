@@ -421,6 +421,114 @@ test.describe("the playground", () => {
     await expect(stage(page).getByLabel("Notes")).toHaveValue("buy milk");
   });
 
+  test("changes the mounted Tilespace from each control of the bar", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    const next = page.getByRole("button", { name: "Next Space in the playground" });
+    const counter = page.locator("#playground-count");
+    const settled = () => page.waitForFunction(() => document.getAnimations().length === 0);
+    /** The first keyframes' `translate` and `opacity` of what moves now. */
+    const moving = () =>
+      page.evaluate(() =>
+        document.getAnimations().map((a) => {
+          const [first] = (a.effect as KeyframeEffect).getKeyframes();
+          return { translate: first?.translate, opacity: first?.opacity };
+        }),
+      );
+
+    // Axis: the slide goes vertical.
+    await page
+      .getByRole("group", { name: "Axis" })
+      .getByRole("button", { name: "Vertical" })
+      .click();
+    await expect(page.getByRole("button", { name: "Vertical" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await next.click();
+    // Something moves along y, and nothing along x.
+    const vertical = await moving();
+    expect(vertical.some((m) => /^0px -?[1-9]/.test(String(m.translate)))).toBe(true);
+    expect(vertical.some((m) => /^-?[1-9]\d*px 0px$/.test(String(m.translate)))).toBe(false);
+    await settled();
+    await page.getByRole("button", { name: "Horizontal" }).click();
+
+    // Transition: a fade (back to Space 1), then none (on to Space 2).
+    const prev = page.getByRole("button", { name: "Previous Space in the playground" });
+    await settled();
+    await page.getByLabel("Transition").selectOption("fade");
+    await settled();
+    await prev.click();
+    expect((await moving()).every((m) => m.opacity !== undefined && !m.translate)).toBe(true);
+    await settled();
+    await page.getByLabel("Transition").selectOption("none");
+    await next.click();
+    await expect(counter).toHaveText(/^Space 2 of /);
+    expect(await moving()).toEqual([]);
+    await page.getByLabel("Transition").selectOption("slide");
+
+    /** Moves a slider, as a drag of its thumb would. */
+    const slide = (label: string, value: string) =>
+      page.getByLabel(label, { exact: true }).evaluate((el, v) => {
+        (el as HTMLInputElement).value = v;
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      }, value);
+
+    // Gap and space gap, with their readouts.
+    await slide("Gap", "20");
+    await expect(stage(page)).toHaveCSS("column-gap", "20px");
+    await expect(page.locator("#pg-gap-value")).toHaveText("20 px");
+
+    // Peek: the neighbours rest a Stage width plus the space gap away.
+    await page.getByRole("group", { name: "Peek" }).getByRole("button", { name: "Inset" }).click();
+    await expect(page.locator(".playground-frame")).toHaveCSS("padding-left", "64px");
+    await slide("Space gap", "40");
+    await expect(page.locator("#pg-space-gap-value")).toHaveText("40 px");
+    // The remount goes back to the visitor's Space with a slide: once it rests.
+    await settled();
+    const rest = await stage(page).evaluate((el) => {
+      const peeking = Array.from(el.children as HTMLCollectionOf<HTMLElement>).find(
+        (t) => t.hasAttribute("inert") && t.style.translate,
+      );
+      return [Math.abs(Number.parseFloat(peeking?.style.translate ?? "")), el.clientWidth + 40];
+    });
+    expect(rest[0]).toBe(rest[1]);
+    await page.getByRole("group", { name: "Peek" }).getByRole("button", { name: "Bleed" }).click();
+    await expect(page.locator(".playground-frame")).toHaveCSS("overflow-x", "visible");
+
+    // Loop: back from the first Space to the last.
+    await prev.click();
+    await expect(counter).toHaveText(/^Space 1 of /);
+    await settled();
+    await page.getByLabel("Loop").check();
+    await prev.click();
+    const total = (await counter.textContent())?.split(" of ")[1];
+    await expect(counter).toHaveText(`Space ${total} of ${total}`);
+  });
+
+  test("reveals the same controls behind Options on a phone, and moves a Space on a swipe", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("./");
+    const options = page.getByRole("button", { name: "Options" });
+    await expect(page.getByLabel("Transition")).toBeHidden();
+
+    await options.click();
+    await expect(options).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByLabel("Transition")).toBeVisible();
+    await expect(page.getByLabel("Loop")).toBeVisible();
+
+    const box = (await stage(page).boundingBox()) as { x: number; y: number; width: number };
+    const y = box.y + 30;
+    await page.mouse.move(box.x + box.width - 20, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + 20, y, { steps: 10 });
+    await page.mouse.up();
+    await expect(page.locator("#playground-count")).toHaveText(/^Space 2 of /);
+  });
+
   test("mounts the phone's 4x5 Grid when the screen narrows", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");

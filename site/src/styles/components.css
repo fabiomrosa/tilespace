@@ -354,13 +354,114 @@
 .playground-bar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
   gap: var(--s-4);
   padding-top: 20px;
   font-size: 14px;
 }
+.playground-bar .pager {
+  margin-left: auto;
+}
+.playground-note {
+  margin-top: var(--s-3);
+  font-size: 14px;
+}
+/* The bar's options (HANDOFF row 3); they wrap to a second row below about 1100 px. */
+.controls {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.controls .slider > input {
+  width: 64px;
+}
+.controls[hidden],
+.options-toggle {
+  display: none;
+}
+.controls > label,
+.slider,
+.segmented {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.segmented button {
+  min-height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  background: var(--bg);
+  color: var(--muted);
+  font: 500 13px / 1 var(--font-ui);
+}
+.segmented [aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+.slider > span {
+  min-width: 3em;
+  font: 13px / 1 var(--font-mono);
+}
+/* Peek, as the page chooses to show the neighbours: room inside the frame, or past it, clipped by
+   the section. */
+.playground {
+  overflow: clip;
+}
+.playground-frame[data-peek="inset"] {
+  padding-inline: 64px;
+}
+/* Vertically there is no room past the frame (the bar is right below): Bleed makes room inside. */
+.playground-frame:is([data-peek="inset"], [data-peek="bleed"])[data-axis="vertical"] {
+  overflow: clip;
+  padding: 64px var(--s-4);
+}
+.playground-frame[data-peek="bleed"] {
+  overflow: visible;
+}
 @media (max-width: 639px) {
+  /* The bar: prev, the counter and next, and an Options button that shows the same controls. */
+  .options-toggle:not([hidden]) {
+    display: inline-flex;
+    align-items: center;
+  }
+  .controls:not(.open) {
+    display: none;
+  }
+  .controls {
+    order: 1;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .controls > label,
+  .slider,
+  .segmented {
+    min-height: 44px;
+  }
+  /* The name on the left, its control on the right. */
+  .segmented > span,
+  .slider > label {
+    margin-right: auto;
+  }
+  .controls .slider > input {
+    width: 140px;
+  }
+  .controls select {
+    min-height: 44px;
+    margin-left: auto;
+  }
+  .segmented button {
+    min-height: 44px;
+  }
+  .playground-frame[data-peek="inset"] {
+    padding-inline: 24px;
+  }
+  .playground-frame:is([data-peek="inset"], [data-peek="bleed"])[data-axis="vertical"] {
+    padding: 24px var(--s-2);
+  }
   .tabs {
     width: 100%;
   }
