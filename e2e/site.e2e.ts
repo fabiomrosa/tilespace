@@ -446,17 +446,24 @@ test.describe("the playground", () => {
       "true",
     );
     await next.click();
-    expect((await moving()).some((m) => String(m.translate).startsWith("0px "))).toBe(true);
+    // Something moves along y, and nothing along x.
+    const vertical = await moving();
+    expect(vertical.some((m) => /^0px -?[1-9]/.test(String(m.translate)))).toBe(true);
+    expect(vertical.some((m) => /^-?[1-9]\d*px 0px$/.test(String(m.translate)))).toBe(false);
     await settled();
     await page.getByRole("button", { name: "Horizontal" }).click();
 
-    // Transition: a fade, then none.
+    // Transition: a fade (back to Space 1), then none (on to Space 2).
+    const prev = page.getByRole("button", { name: "Previous Space in the playground" });
+    await settled();
     await page.getByLabel("Transition").selectOption("fade");
-    await next.click();
+    await settled();
+    await prev.click();
     expect((await moving()).every((m) => m.opacity !== undefined && !m.translate)).toBe(true);
     await settled();
     await page.getByLabel("Transition").selectOption("none");
     await next.click();
+    await expect(counter).toHaveText(/^Space 2 of /);
     expect(await moving()).toEqual([]);
     await page.getByLabel("Transition").selectOption("slide");
 
@@ -475,6 +482,7 @@ test.describe("the playground", () => {
 
     // Peek: the neighbours rest a Stage width plus the space gap away.
     await page.getByRole("group", { name: "Peek" }).getByRole("button", { name: "Inset" }).click();
+    await expect(page.locator(".playground-frame")).toHaveCSS("padding-left", "64px");
     await slide("Space gap", "40");
     await expect(page.locator("#pg-space-gap-value")).toHaveText("40 px");
     // The remount goes back to the visitor's Space with a slide: once it rests.
@@ -490,7 +498,6 @@ test.describe("the playground", () => {
     await expect(page.locator(".playground-frame")).toHaveCSS("overflow-x", "visible");
 
     // Loop: back from the first Space to the last.
-    const prev = page.getByRole("button", { name: "Previous Space in the playground" });
     await prev.click();
     await expect(counter).toHaveText(/^Space 1 of /);
     await settled();

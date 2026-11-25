@@ -132,7 +132,7 @@ None.
 - **2026-11-25, T3.19:** the demo's card effects: cascade, 3-D cascade and pop, written as user
   code on `change` that animates the card inside each Tile, from the move's side.
 - **2026-11-25, the owner:** a favicon before the playground (T3.20); the hero's cards cascade
-  again as the site's code (T3.21); the playground gets a Cards select (T3.9b).
+  again as the site's code (T3.21); the playground gets a Cards select (T3.9b, now T3.9c).
 - **2026-11-25, T3.20:** the site's favicon is the logo mark (`site/public/favicon.svg`), with a
   180 px `apple-touch-icon.png` drawn from it, both under `/tilespace/`.
 - **2026-11-25, T3.21:** the hero's cards cascade again, as the site's code on `change`

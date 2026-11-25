@@ -408,10 +408,15 @@
 /* Peek, as the page chooses to show the neighbours: room inside the frame, or past it, clipped by
    the section. */
 .playground {
-  overflow-x: clip;
+  overflow: clip;
 }
 .playground-frame[data-peek="inset"] {
   padding-inline: 64px;
+}
+/* Vertically there is no room past the frame (the bar is right below): Bleed makes room inside. */
+.playground-frame:is([data-peek="inset"], [data-peek="bleed"])[data-axis="vertical"] {
+  overflow: clip;
+  padding: 64px var(--s-4);
 }
 .playground-frame[data-peek="bleed"] {
   overflow: visible;
@@ -453,6 +458,9 @@
   }
   .playground-frame[data-peek="inset"] {
     padding-inline: 24px;
+  }
+  .playground-frame:is([data-peek="inset"], [data-peek="bleed"])[data-axis="vertical"] {
+    padding: 24px var(--s-2);
   }
   .tabs {
     width: 100%;

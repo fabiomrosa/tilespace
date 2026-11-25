@@ -65,6 +65,12 @@ export function mountPlayground(root: HTMLElement) {
     const layout = LAYOUTS[queries.findIndex((q) => q.matches)] as (typeof LAYOUTS)[number];
     const { columns, rows } = layout;
     frame.dataset.peek = options.peek;
+    frame.dataset.axis = options.axis;
+    // Until the visitor moves it, the Gap slider shows the breakpoint's gap.
+    if (options.gap === undefined) {
+      gap.value = String(layout.gap);
+      field("pg-gap-value").textContent = `${layout.gap} px`;
+    }
     const chosen = TRANSITIONS[transition.value];
     tilespace = createTilespace(stage, {
       columns,

@@ -1175,6 +1175,9 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   It costs ~32% per Space at 12x8 with 1x1 Tiles (1.7 → 2.3 ms at the default budget).
 - The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`;
   leave a press to a Tile's handler or slider, and a touch to a Tile's scroller (as the wheel does).
+- `goTo(space)` with no Transition (or `createTilespace`'s first Space as an option): a page that
+  mounts a Stage again where the visitor was (the site's playground on each option, its hero on a
+  breakpoint) replays a slide from Space 1 (T3.9b review).
 - A guard for a derived Grid on a content-height Stage (GOTCHAS "DOM"), e.g. ignoring a resize the
   engine's own writes caused; T2.4 only documents that the Stage needs a height.
 - T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the
