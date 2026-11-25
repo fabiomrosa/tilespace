@@ -711,7 +711,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Goal:** a developer mounts a Tilespace from `@tilespace/vanilla`'s README alone.
 - **Depends on:** T3.2, T3.4a.
 - **In scope:** `packages/vanilla/README.md`: install, a first Stage, every option and event,
-  `data-ts-shape`, a custom Transition, `peek` and clipping, ARIA, `label` and the announcing
+  `data-ts-shape`, a custom Transition, `peek` and clipping, the wrapper recipe (DEC-06), ARIA, `label` and the announcing
   recipe, what the library writes, `destroy()`; the root README points to it.
 - **Out of scope:** a docs site; the lab write-up (T3.5).
 - **Contract:** none.
@@ -908,10 +908,31 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `README.md`, ARCHITECTURE, PRODUCT, shared README, PLAN, STATE.
 - **References:** ARCHITECTURE "Lessons from the 2017 wall".
 
+### T3.18 · The default Transition is the Space's slide
+- **Status:** next
+- **Goal:** the library moves only the Space; a card's own motion is the user's (the owner, DEC-10
+  amended 2026-11-25).
+- **Depends on:** DEC-10 (amended).
+- **In scope:** the default Transition slides the leaving, entering, `ahead` and `behind` Tiles as
+  one block in 500 ms at full opacity, with peek or not; the settle, its stagger, its 40 px and the
+  faint entering Tiles go; the reduced-motion cross-fade stays; the demo's Transition picker gets
+  "cascade", the old default as a custom Transition (`demo/cascade.ts`).
+- **Out of scope:** new Transitions in the library; the site's playground (T3.9).
+- **Contract:** none (the default's motion, not its signature).
+- **Acceptance criteria:**
+  1. Each moving Tile has one Animation of two keyframes on `translate`, ending at the same time,
+     with no `opacity`, with and without peek (seen red with the settle kept).
+  2. The Drag still scrubs and commits it (the existing Drag tests pass unchanged).
+  3. In Chromium, the demo's "cascade" plays the settle after the slide.
+- **Files:** ~9, ~250 lines: `default-transition.ts`, `test/transition.test.ts`,
+  `test/peek.test.ts`, `demo/cascade.ts`, `demo/main.ts`, `demo/index.html`, `e2e/demo.e2e.ts`,
+  ARCHITECTURE, PLAN, STATE.
+- **References:** DEC-10, T2.13, T2.13b, T2.13c.
+
 ### T3.9a · The site's playground: the examples
-- **Status:** waiting (T3.8c)
+- **Status:** waiting (T3.8c, T3.18)
 - **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
-- **Depends on:** T3.8c.
+- **Depends on:** T3.8c, T3.18.
 - **In scope:** the tablist (APG tabs: roving focus, `aria-selected`), the Showcase, Gallery and
   Dashboard factories in `demos/tiles.ts` (the Gallery's images as the owner decides), the framed
   Stage (8x4 at 480 px; 4x5 at 360 px on a phone, mounted again across breakpoints), prev/next and

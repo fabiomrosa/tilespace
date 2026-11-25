@@ -67,6 +67,9 @@ Transitions run as Web Animations on the Tiles (DEC-10) and leave nothing writte
 - **Consequences:** all Spaces share one CSS grid on the Stage: Tiles of different Spaces overlap in
   the same Cells, and only the Current space's Tiles are visible. The user animates inside a Tile,
   not the Tile's own `translate` and `opacity` during a Transition. No default theme.
+  A card that animates its own `translate` or `opacity`, or places itself in a grid, goes inside a
+  wrapper the user writes, which is then the Tile; the React and Angular adapters render that
+  wrapper as a Tile component (the owner, 2026-11-25).
 
 ## DEC-07 · A Tile's Shape is a list of Spans of any size, in order of preference — Accepted (owner, 2026-11-23)
 A Shape is one or more Spans `{ cols, rows }` of whole Cells. The engine reads it from the Tile's
@@ -114,21 +117,21 @@ better, preferring, among equal Holes and Span ranks, the filling that moves Til
 
 ## DEC-10 · Transitions are Web Animations on the Tiles, scrubbed by the Drag — Accepted (owner, 2026-11-23)
 Changing Space runs a Transition: a function `(context) → Animation[]` given the leaving and
-entering Tiles with their Placements, the direction and the Stage's size. The default moves in two
-phases (amended by the owner 2026-11-24): the Space slides along the axis as one block, the leaving
-Tiles out and the entering ones in, one Stage size plus the `spaceGap` apart (`gap` by default;
-the owner, 2026-11-24); then each entering Tile
-settles with a fade and a short slide,
-in its order within the Space along the fill's flow (CSS `translate` and `opacity`). The owner's
-pace (2026-11-24): a 500 ms slide, then each Tile settles in 450 ms from 40 px short, at most 80 ms
-apart and about 600 ms in all. `transition: false` swaps instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
+entering Tiles with their Placements, the direction and the Stage's size. The default is the
+Space's slide only (amended by the owner 2026-11-25): the Space slides along the axis as one block
+in 500 ms, the leaving Tiles out and the entering ones in, one Stage size plus the `spaceGap` apart
+(`gap` by default; the owner, 2026-11-24), with `peek` the neighbours beyond with them, at full
+opacity (CSS `translate`). What a card does beyond that is the user's: a custom Transition, or an
+animation inside the Tile. The two-phase cascade of 2026-11-24 (each entering Tile settling after
+the slide) is the demo's custom Transition example. `transition: false` swaps instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
 and their `currentTime` follows the pointer; on release they play forward (commit) or in reverse
 (cancel). No animation library.
 - **Why:** the 2017 wall needed TweenMax. Web Animations can be paused, scrubbed, reversed and
   cancelled, so the same Transition serves a button, a key and a finger, and a custom one gets the
   Drag for free. Animating `translate`, not `transform`, leaves the user's own transform alone.
 - **Consequences:** a custom Transition must return Animations that are not finished; the engine
-  owns their playback and cancels them on `destroy()`.
+  owns their playback and cancels them on `destroy()`. The library keeps no card effects to refine
+  (the owner, 2026-11-25: they widen the scope, and they are the user's taste).
 
 ## DEC-11 · Input: API, keyboard, wheel and pointer drag; a drag swallows only its own click — Accepted (owner, 2026-11-23)
 `next()`, `prev()` and `goTo(space)`; arrow keys and Page Up/Down when focus is inside the Stage;

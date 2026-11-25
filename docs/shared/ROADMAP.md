@@ -49,7 +49,7 @@ no v1 without the site (the owner). The owner pushes the release tag (T3.6).
 
 | Repository | Slices |
 |---|---|
-| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.7a the site's pipeline to GitHub Pages, T3.7b its tokens, theme and header, T3.7c its phone menu and footer, T3.8a its hero text, T3.8b its hero wall, T3.8c both ways, T3.9a its playground's examples, T3.9b its control bar, T3.10 its first section, T3.11a its quick start, T3.11b its lab section, T3.15 its packages and their pages, T3.16 its install tabs, T3.17 its links and origin, T3.12 its accessibility and motion checks, T3.6 the first publish |
+| `tilespace` | T3.1 hidden Spaces are inert, T3.2 the Stage is a labelled carousel region, T3.3 the packages are publishable, T3.4a the README of `core`, T3.4b the README of `vanilla`, T3.5 the lab write-up, T3.7a the site's pipeline to GitHub Pages, T3.7b its tokens, theme and header, T3.7c its phone menu and footer, T3.8a its hero text, T3.8b its hero wall, T3.8c both ways, T3.13 the neighbours move with the slide, T3.14 the 2017 wall as a reference, T3.18 the default Transition is the Space's slide, T3.9a its playground's examples, T3.9b its control bar, T3.10 its first section, T3.11a its quick start, T3.11b its lab section, T3.15 its packages and their pages, T3.16 its install tabs, T3.17 its links and origin, T3.12 its accessibility and motion checks, T3.6 the first publish |
 
 ## Prerequisites (only the owner can do these)
 - **P1** · The GitHub repository `tilespace`, `main` pushed, labels and squash settings
@@ -63,10 +63,11 @@ no v1 without the site (the owner). The owner pushes the release tag (T3.6).
   T3.7a.
 
 ## Later milestones (split when they start)
-- **M4 · React adapter.** **M5 · Angular adapter.**
+- **M4 · React adapter** (a Tile component renders each child's wrapper, DEC-06). **M5 · Angular
+  adapter.**
 
 ## Recommended order (one session at a time)
-M0, M1 and M2 (done), then T3.1 → T3.2 → T3.7a → T3.7b → T3.7c → T3.8a → T3.8b → T3.8c → T3.13 → T3.14 → T3.9a → T3.9b → T3.10 → T3.3 → T3.4a → T3.4b → T3.5 → T3.11a → T3.11b → T3.15 → T3.16 → T3.17 → T3.12 → T3.6 (the owner tags v1.0.0), then
+M0, M1 and M2 (done), then T3.1 → T3.2 → T3.7a → T3.7b → T3.7c → T3.8a → T3.8b → T3.8c → T3.13 → T3.14 → T3.18 → T3.9a → T3.9b → T3.10 → T3.3 → T3.4a → T3.4b → T3.5 → T3.11a → T3.11b → T3.15 → T3.16 → T3.17 → T3.12 → T3.6 (the owner tags v1.0.0), then
 "close M3" and "plan M4".
 
 ## Open decisions (see DECISIONS.md)
