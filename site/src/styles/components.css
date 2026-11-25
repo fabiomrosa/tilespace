@@ -323,6 +323,15 @@
   color: var(--ink);
   font-family: var(--font-ui);
 }
+.playground-stage .row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.playground-stage .row input {
+  flex: 1;
+  min-width: 0;
+}
 .playground-stage .field {
   display: flex;
   flex-direction: column;
@@ -364,6 +373,17 @@
   }
   .playground-stage {
     height: 360px;
+  }
+  /* About 66 px a row: a field's label goes beside it, and every control is a 44 px target. */
+  .playground-stage > div > .card {
+    padding: 8px;
+  }
+  .playground-stage .field:has(input) {
+    flex-direction: row;
+    align-items: center;
+  }
+  .playground-stage :is(input:not([type="checkbox"]), button, label:has([type="checkbox"])) {
+    min-height: 44px;
   }
   .playground-stage:not([role]) {
     grid-template-columns: repeat(4, minmax(0, 1fr));

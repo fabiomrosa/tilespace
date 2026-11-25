@@ -71,6 +71,9 @@ Node 26 and npm 11 locally (pnpm is installed too, but the workspace uses npm). 
   a test defines it on the event.
 - An `<img>` in a Tile starts the browser's native drag on a mouse press, which cancels the Drag
   (`pointercancel`): the demo's gallery sets `draggable = false` on its images.
+- The Drag takes any press on the Stage: past 10 px it captures the pointer, so a slider or a text
+  selection in a Tile loses it. The site's dashboard stops `pointerdown` on its fields and slider
+  (the library's own fix is in PLAN "Later").
 - A derived Grid on a content-height Stage feeds back (rows set the height, the height the rows):
   in Chrome it collapsed to one row or grew a row per frame. Give such a Stage a height.
 - Under Vitest, an error thrown in a happy-dom `MutationObserver` callback escapes as an uncaught

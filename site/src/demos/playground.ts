@@ -29,7 +29,7 @@ export function mountPlayground(root: HTMLElement) {
   const stage = root.querySelector<HTMLElement>("#playground-stage") as HTMLElement;
   const count = root.querySelector<HTMLElement>("#playground-count") as HTMLElement;
   const note = root.querySelector<HTMLElement>("#playground-note") as HTMLElement;
-  const panel = root.querySelector<HTMLElement>('[role="tabpanel"]') as HTMLElement;
+  const panel = root.querySelector<HTMLElement>("#playground-panel") as HTMLElement;
   const tablist = root.querySelector<HTMLElement>('[role="tablist"]') as HTMLElement;
   const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
   const queries = LAYOUTS.map((layout) => matchMedia(layout.query));
@@ -57,6 +57,8 @@ export function mountPlayground(root: HTMLElement) {
   };
   /** Selects a tab (roving `tabindex`) and mounts its example from the first Space. */
   const select = (tab: HTMLButtonElement) => {
+    // The example already shown keeps what the visitor typed and where they are.
+    if (tilespace && tab.getAttribute("aria-selected") === "true") return;
     for (const other of tabs) {
       other.setAttribute("aria-selected", String(other === tab));
       other.tabIndex = other === tab ? 0 : -1;
@@ -96,5 +98,6 @@ export function mountPlayground(root: HTMLElement) {
   select(tabs[0] as HTMLButtonElement);
   // The tabs and the pager work only with the script: without it, they stay hidden (index.html).
   tablist.hidden = false;
+  panel.setAttribute("role", "tabpanel");
   (root.querySelector("#playground-pager") as HTMLElement).hidden = false;
 }

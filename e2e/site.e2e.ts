@@ -395,6 +395,32 @@ test.describe("the playground", () => {
     await expect(stage(page).getByLabel("Notes")).toHaveValue("buy milk");
   });
 
+  test("leaves a press on a dashboard field or slider to it, and keeps it on a reselected tab", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    await page.getByRole("tab", { name: "Dashboard" }).click();
+    const slider = stage(page).getByRole("slider");
+    const box = (await slider.boundingBox()) as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+    const y = box.y + box.height / 2;
+    await page.mouse.move(box.x + 4, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width - 4, y, { steps: 10 });
+    await page.mouse.up();
+
+    await expect(slider).toHaveValue("100");
+    await expect(page.locator("#playground-count")).toHaveText(/^Space 1 of /);
+    await stage(page).getByLabel("Notes").fill("buy milk");
+    await page.getByRole("tab", { name: "Dashboard" }).click();
+    await expect(stage(page).getByLabel("Notes")).toHaveValue("buy milk");
+  });
+
   test("mounts the phone's 4x5 Grid when the screen narrows", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");
@@ -417,6 +443,7 @@ test.describe("the playground", () => {
 
       await expect(page.locator("#playground-stage > div").first()).toBeVisible();
       await expect(page.getByRole("tab", { name: "Gallery" })).toBeHidden();
+      await expect(page.getByRole("tabpanel")).toHaveCount(0);
       await expect(page.getByRole("button", { name: "Next Space in the playground" })).toBeHidden();
       const [scroll, client] = await page.evaluate(() => [
         document.documentElement.scrollWidth,
