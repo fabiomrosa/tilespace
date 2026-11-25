@@ -165,4 +165,7 @@ None.
   once.
 - **2026-11-25, T3.10 (the site's first section):** "Bring your own tiles", static: the Headless,
   Flexible spans and Every input cards from the handoff, three in a row and one column on a phone.
-- **Next:** T3.3.
+- **2026-11-25, the owner (the site's structure):** the home tells the story in this order: hero,
+  01 The idea, 02 Quick start, 03 Packages (with the install tabs), 04 The lab, 05 Where it comes
+  from, footer; the playground moves to its own page (T3.25), Cards on Cascade from the start.
+- **Next:** T3.25, then T3.3.
