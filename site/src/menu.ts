@@ -6,7 +6,7 @@ export function setUpMenu(button: HTMLButtonElement, nav: HTMLElement): void {
   };
   button.addEventListener("click", () => open(button.getAttribute("aria-expanded") !== "true"));
   nav.addEventListener("click", (event) => {
-    // A link jumps to its section, and the next Tab goes on from there: the focus stays with it.
+    // A link opens its page or jumps to its section, and the focus goes on from there.
     if ((event.target as Element).closest("a")) open(false);
   });
   document.addEventListener("keydown", (event) => {

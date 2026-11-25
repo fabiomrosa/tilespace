@@ -673,7 +673,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-06, DEC-14, the WAI-ARIA APG carousel pattern.
 
 ### T3.25 · The playground on its own page
-- **Status:** next
+- **Status:** done (2026-11-25)
 - **Goal:** the home tells the story and the playground has a page of its own (the owner,
   2026-11-25: it weighed too much on the home).
 - **Depends on:** T3.9c, T3.10.
@@ -1141,6 +1141,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Acceptance criteria:**
   1. The printed snippet and the run one are the same string (a test compares them).
   2. The result's counter shows the packed count and follows a move.
+  3. On a phone, the menu's "Quick start" link closes the menu and lands on the section (the
+     menu test lost its same-page link when the playground moved, T3.25 review).
 - **Files:** ~6, ~250 lines: `index.html`, `demos/quickstart.ts`, `components.css`,
   `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** `docs/site/HANDOFF.md` row 4.

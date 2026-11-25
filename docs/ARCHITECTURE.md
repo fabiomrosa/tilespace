@@ -37,7 +37,7 @@ Exact versions are pinned in the root `package.json` (the same toolchain as `../
 | `packages/core` | The Grid, Shapes and Spans, the Packer and its Score, the Packing. No DOM. | nothing |
 | `packages/vanilla` (M2) | `createTilespace(stage, options)`: adopts the Stage's children, reads their Shapes, derives the Grid from the Stage's size, packs, writes Placements, runs Transitions, handles input | `core` |
 | `playground/` (T1.x) | A local page that draws Packings and exercises the Packer by hand; not a package, never published | `core` (source) |
-| `site/` (M3) | The project's site on GitHub Pages, from the owner's design handoff (`docs/site/`); private, never published | `vanilla` (build), `demo/card-effects.ts` (source: the playground's card effects) |
+| `site/` (M3) | The project's site on GitHub Pages, from the owner's design handoff (`docs/site/`): the home (`index.html`) and the playground (`playground.html`); private, never published | `vanilla` (build), `demo/card-effects.ts` (source: the playground's card effects) |
 | `demo/` (M2) | The demo page: a showcase, a gallery and a dashboard (`examples.ts`) with every input, Transition and axis, card effects as user code on `change` (`card-effects.ts`, each Tile holding a `.card`), and the page the e2e flows drive; not a package | `vanilla` (source) |
 | `packages/react` (M4) | `<Tilespace>` and a hook over the engine | `core`, `vanilla` |
 | `packages/angular` (M5) | A component with `<ng-content>` over the engine | `core`, `vanilla` |

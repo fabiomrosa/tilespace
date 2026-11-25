@@ -19,9 +19,17 @@ test("serves the site's build under the Pages base path", async ({ page }) => {
   );
 });
 
-test("links the logo mark as its icons, under the base path", async ({ page, request }) => {
-  await page.goto("./");
+test("links the logo mark as its icons, under the base path, on both pages", async ({
+  page,
+  request,
+}) => {
+  for (const path of ["./", "./playground.html"]) {
+    await page.goto(path);
+    await checkIcons(page, request);
+  }
+});
 
+const checkIcons = async (page: Page, request: import("@playwright/test").APIRequestContext) => {
   for (const rel of ["icon", "apple-touch-icon"]) {
     const href = await page
       .locator(`link[rel="${rel}"]`)
@@ -32,6 +40,16 @@ test("links the logo mark as its icons, under the base path", async ({ page, req
     // `vite preview` answers any path with the page: the icon must be an image.
     expect(response.headers()["content-type"]).toMatch(/^image\//);
   }
+};
+
+test("carries the same header and footer links on both pages", async ({ page }) => {
+  const links = async (path: string) => {
+    await page.goto(path);
+    return page
+      .locator("header a, footer a")
+      .evaluateAll((els) => els.map((el) => el.textContent?.trim()));
+  };
+  expect(await links("./playground.html")).toEqual(await links("./"));
 });
 
 /** The page's background, from the tokens: light #F6F6F3, dark #0F1115. */
@@ -152,30 +170,30 @@ test("opens the same links in a menu sheet on a phone, next in the Tab order", a
   await menu.click();
   await links.first().click();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
-  // The jump holds: the Playground's heading in view, and the next Tab goes on from there.
-  await expect(page.getByRole("heading", { name: "Playground" })).toBeInViewport();
-  await page.keyboard.press("Tab");
-  await expect(page.getByRole("tab", { name: "Showcase" })).toBeFocused();
+  // The Playground has its own page now.
+  await expect(page).toHaveURL(/\/tilespace\/playground\.html$/);
 });
 
 test("gives every control a 44 px target on a phone, and shows each code line whole", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 800 });
-  await page.goto("./");
-  await page.getByRole("button", { name: "Menu" }).click();
+  for (const path of ["./", "./playground.html"]) {
+    await page.goto(path);
+    await page.getByRole("button", { name: "Menu" }).click();
 
-  const controls = page.locator("header a, header button, main a, main button, footer a");
-  for (const control of await controls.all()) {
-    if (!(await control.isVisible())) continue;
-    const box = await control.boundingBox();
-    expect(
-      Math.min(box?.width ?? 0, box?.height ?? 0),
-      (await control.textContent()) ?? "",
-    ).toBeGreaterThanOrEqual(44);
-  }
-  for (const code of await page.locator("main code").all()) {
-    expect(await code.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    const controls = page.locator("header a, header button, main a, main button, footer a");
+    for (const control of await controls.all()) {
+      if (!(await control.isVisible())) continue;
+      const box = await control.boundingBox();
+      expect(
+        Math.min(box?.width ?? 0, box?.height ?? 0),
+        `${path}: ${(await control.textContent()) ?? ""}`,
+      ).toBeGreaterThanOrEqual(44);
+    }
+    for (const code of await page.locator("main code").all()) {
+      expect(await code.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    }
   }
 });
 
@@ -388,21 +406,60 @@ test.describe("the hero wall", () => {
 });
 
 test.describe("the playground", () => {
+  test("has a page of its own under the base path, with the cards cascading from the start", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./playground.html");
+    const scripts = await page
+      .locator("script[src]")
+      .evaluateAll((els) => els.map((el) => new URL((el as HTMLScriptElement).src).pathname));
+    for (const path of scripts) expect(path).toMatch(/^\/tilespace\//);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Playground");
+    await expect(page.getByLabel("Cards")).toHaveValue("cascade");
+
+    await page.getByRole("button", { name: "Next Space in the playground" }).click();
+
+    const cards = await page.evaluate(
+      () =>
+        document
+          .getAnimations()
+          .filter((a) => (a.effect as KeyframeEffect).target?.classList.contains("card")).length,
+    );
+    expect(cards).toBeGreaterThan(0);
+  });
+
+  test("is opened from the home's header and hero, and is no longer on the home", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    await expect(page.locator("#playground-stage")).toHaveCount(0);
+
+    await page
+      .getByRole("navigation", { name: "Main" })
+      .getByRole("link", { name: "Playground" })
+      .click();
+    await expect(page).toHaveURL(/\/tilespace\/playground\.html$/);
+    await page.goto("./");
+    await page.getByRole("link", { name: "Open the playground" }).click();
+    await expect(page).toHaveURL(/\/tilespace\/playground\.html$/);
+    await expect(page.getByRole("region", { name: /^Playground: / })).toBeVisible();
+  });
+
   const stage = (page: Page) => page.getByRole("region", { name: /^Playground: / });
   const columns = (page: Page) =>
     stage(page).evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
 
   test("mounts the Showcase in the frame, and moves with its own pager", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     const counter = page.locator("#playground-count");
 
     expect(await columns(page)).toBe(8);
     await expect(counter).toHaveText(/^Space 1 of [2-9]/);
     await page.getByRole("button", { name: "Next Space in the playground" }).click();
     await expect(counter).toHaveText(/^Space 2 of /);
-    // The hero's counter stays where it was.
-    await expect(page.locator("#wall-count")).toHaveText(/^Space 1 of /);
     await page.getByRole("button", { name: "Previous Space in the playground" }).click();
     await expect(counter).toHaveText(/^Space 1 of /);
   });
@@ -411,7 +468,7 @@ test.describe("the playground", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     const tab = (name: string) => page.getByRole("tab", { name });
     await expect(tab("Showcase")).toHaveAttribute("aria-selected", "true");
 
@@ -437,7 +494,7 @@ test.describe("the playground", () => {
 
   test("keeps a dashboard value through a move away and back", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     await page.getByRole("tab", { name: "Dashboard" }).click();
     await stage(page).getByLabel("Notes").fill("buy milk");
     const counter = page.locator("#playground-count");
@@ -457,7 +514,7 @@ test.describe("the playground", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     await page.getByRole("tab", { name: "Dashboard" }).click();
     const slider = stage(page).getByRole("slider");
     const box = (await slider.boundingBox()) as {
@@ -481,7 +538,9 @@ test.describe("the playground", () => {
 
   test("changes the mounted Tilespace from each control of the bar", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
+    // Only the library's motion here: the cards' own effect is off.
+    await page.getByLabel("Cards").selectOption("none");
     const next = page.getByRole("button", { name: "Next Space in the playground" });
     const counter = page.locator("#playground-count");
     const settled = () => page.waitForFunction(() => document.getAnimations().length === 0);
@@ -569,7 +628,7 @@ test.describe("the playground", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     const options = page.getByRole("button", { name: "Options" });
     await expect(page.getByLabel("Transition")).toBeHidden();
 
@@ -609,7 +668,7 @@ test.describe("the playground", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     const cards = page.getByLabel("Cards");
     const next = page.getByRole("button", { name: "Next Space in the playground" });
     const prev = page.getByRole("button", { name: "Previous Space in the playground" });
@@ -653,7 +712,7 @@ test.describe("the playground", () => {
 
   test("plays no Cards option after a Drag, its cards already in view", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     await page.getByLabel("Cards").selectOption("cascade");
     await stage(page).scrollIntoViewIfNeeded();
     const box = (await stage(page).boundingBox()) as { x: number; y: number; width: number };
@@ -670,7 +729,7 @@ test.describe("the playground", () => {
 
   test("mounts again on the visitor's Space at once when an option changes", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
     const counter = page.locator("#playground-count");
     await page.getByRole("button", { name: "Next Space in the playground" }).click();
     await expect(counter).toHaveText(/^Space 2 of /);
@@ -684,7 +743,7 @@ test.describe("the playground", () => {
 
   test("mounts the phone's 4x5 Grid when the screen narrows", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("./");
+    await page.goto("./playground.html");
 
     await page.setViewportSize({ width: 390, height: 844 });
 
@@ -700,7 +759,7 @@ test.describe("the playground", () => {
 
     test("shows fallback tiles, and no tabs or pager to press", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto("./");
+      await page.goto("./playground.html");
 
       await expect(page.locator("#playground-stage > div").first()).toBeVisible();
       await expect(page.getByRole("tab", { name: "Gallery" })).toBeHidden();

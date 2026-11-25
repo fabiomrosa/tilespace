@@ -3,16 +3,17 @@ import { mountPlayground } from "./demos/playground.ts";
 import { setUpMenu } from "./menu.ts";
 import { setUpTheme } from "./theme.ts";
 
-const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+const byId = <T extends HTMLElement | null>(id: string) => document.getElementById(id) as T;
 
 setUpTheme(byId<HTMLButtonElement>("theme-toggle"));
 setUpMenu(byId<HTMLButtonElement>("menu-button"), byId("main-nav"));
 
 // The install line, copied as the page shows it; the button and a status say so for a moment.
-const copy = byId<HTMLButtonElement>("copy");
-const copied = byId("copied");
+// Only the home has the install line, the wall and no playground; main.ts mounts what is there.
+const copy = byId<HTMLButtonElement | null>("copy");
+const copied = byId<HTMLElement>("copied");
 let reset: ReturnType<typeof setTimeout> | undefined;
-copy.addEventListener("click", async () => {
+copy?.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText("npm install @tilespace/vanilla");
     copy.textContent = copied.textContent = "Copied";
@@ -27,12 +28,13 @@ copy.addEventListener("click", async () => {
   }
 });
 
-mountHero(
-  byId("wall"),
-  byId("wall-prev"),
-  byId("wall-next"),
-  byId("wall-count"),
-  byId("wall-pager"),
-);
-
-mountPlayground(byId("playground"));
+if (byId<HTMLElement | null>("wall")) {
+  mountHero(
+    byId("wall"),
+    byId("wall-prev"),
+    byId("wall-next"),
+    byId("wall-count"),
+    byId("wall-pager"),
+  );
+}
+if (byId<HTMLElement | null>("playground")) mountPlayground(byId("playground"));
