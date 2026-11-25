@@ -711,7 +711,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Goal:** a developer mounts a Tilespace from `@tilespace/vanilla`'s README alone.
 - **Depends on:** T3.2, T3.4a.
 - **In scope:** `packages/vanilla/README.md`: install, a first Stage, every option and event,
-  `data-ts-shape`, a custom Transition, `peek` and clipping, ARIA, `label` and the announcing
+  `data-ts-shape`, a custom Transition, `peek` and clipping, the wrapper recipe (DEC-06), ARIA, `label` and the announcing
   recipe, what the library writes, `destroy()`; the root README points to it.
 - **Out of scope:** a docs site; the lab write-up (T3.5).
 - **Contract:** none.
@@ -908,10 +908,52 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `README.md`, ARCHITECTURE, PRODUCT, shared README, PLAN, STATE.
 - **References:** ARCHITECTURE "Lessons from the 2017 wall".
 
+### T3.18 · The default Transition is the Space's slide
+- **Status:** next
+- **Goal:** the library moves only the Space, and tells the user from which side a move came, for
+  the cards' own motion (the owner, DEC-10 amended 2026-11-25).
+- **Depends on:** DEC-10 (amended).
+- **In scope:** the default Transition slides the leaving, entering, `ahead` and `behind` Tiles as
+  one block in 500 ms at full opacity, with peek or not; the settle, its stagger, its 40 px and the
+  faint entering Tiles go; the reduced-motion cross-fade stays; `change` gets `direction` (1 or -1;
+  on a repack that moved the Current space, the sign of the change).
+- **Out of scope:** card effects (T3.19); new Transitions in the library.
+- **Contract:** `TilespaceEvents["change"]` gets `direction: 1 | -1` (additive).
+- **Acceptance criteria:**
+  1. Each moving Tile has one Animation of two keyframes on `translate`, ending together, with no
+     `opacity`, with and without peek (seen red with the settle kept).
+  2. `change` says `direction` 1 for `next()` and -1 for `prev()`, at the loop's wrap too, and for a
+     committed Drag each way (seen red with it fixed at 1).
+  3. The Drag still scrubs and commits the slide (the Drag tests pass unchanged).
+- **Files:** ~8, ~250 lines: `default-transition.ts`, `create-tilespace.ts`,
+  `test/transition.test.ts`, `test/peek.test.ts`, `test/events.test.ts` (or the nearest), the demo's
+  Transition picker (the old cascade option goes), ARCHITECTURE, PLAN, STATE.
+- **References:** DEC-10, T2.13, T2.13b, T2.13c.
+
+### T3.19 · The demo's card effects
+- **Status:** waiting (T3.18)
+- **Goal:** a developer sees three card effects written as user code on `change` and copies one
+  (the owner: "quero variações").
+- **Depends on:** T3.18.
+- **In scope:** `demo/card-effects.ts`: cascade (each card slides in from the move's side, one after
+  another, last first going back), 3-D cascade (each card turns in on Y from the move's side, with
+  perspective), pop (each card grows from 0.6 with a fade, from the Space's centre outward); a
+  picker in the demo (none and the three); each animates an element inside the Tile, never the
+  Tile's `translate` or `opacity`; reduced motion turns them off.
+- **Out of scope:** the site's playground (T3.9); effects in the library.
+- **Contract:** none (consumes `change`'s `direction`).
+- **Acceptance criteria:**
+  1. In Chromium, each effect animates the cards of the new Space after `next()`, from the right,
+     and after `prev()` from the left (seen red with the direction ignored).
+  2. No effect writes or animates a Tile's own `translate` or `opacity`.
+- **Files:** ~6, ~250 lines: `demo/card-effects.ts`, `demo/main.ts`, `demo/index.html`,
+  `e2e/demo.e2e.ts`, PLAN, STATE.
+- **References:** DEC-06, DEC-10.
+
 ### T3.9a · The site's playground: the examples
-- **Status:** waiting (T3.8c)
+- **Status:** waiting (T3.8c, T3.19)
 - **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
-- **Depends on:** T3.8c.
+- **Depends on:** T3.8c, T3.19.
 - **In scope:** the tablist (APG tabs: roving focus, `aria-selected`), the Showcase, Gallery and
   Dashboard factories in `demos/tiles.ts` (the Gallery's images as the owner decides), the framed
   Stage (8x4 at 480 px; 4x5 at 360 px on a phone, mounted again across breakpoints), prev/next and
