@@ -70,7 +70,7 @@ describe("the Drag", () => {
 
     expect(tilespace.current).toBe(1);
     expect(changes).toEqual([1]);
-    // The leaving slide was over at 60% of the Drag; the entering Tile's settle plays on.
+    // Released at 60% of the slide: the rest plays on.
     expect(tiles[1]?.getAnimations()[0]?.playState).toBe("running");
     await finish(tiles);
     expect(visible(tiles)).toEqual([1]);
@@ -101,6 +101,17 @@ describe("the Drag", () => {
     pointer(stage, "pointerup", 180, 1030);
 
     expect(tilespace.current).toBe(0);
+  });
+
+  it("says from which side a committed Drag came, each way", () => {
+    const { stage, tilespace } = mount();
+    const directions: number[] = [];
+    tilespace.on("change", ({ direction }) => directions.push(direction));
+
+    drag(stage, [280, 240], 10);
+    drag(stage, [320, 360], 10);
+
+    expect(directions).toEqual([1, -1]);
   });
 
   it("lets a click below the threshold reach the Tile, and stops the one after a Drag", async () => {

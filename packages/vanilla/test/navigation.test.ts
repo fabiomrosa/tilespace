@@ -29,6 +29,22 @@ const shown = (tiles: HTMLElement[]) =>
   );
 
 describe("navigation", () => {
+  it("says from which side each move came: 1 from the next Space, -1 from the previous", () => {
+    const { tilespace } = mount({ loop: true, transition: false });
+    const directions: number[] = [];
+    tilespace.on("change", ({ direction }) => directions.push(direction));
+
+    tilespace.next();
+    tilespace.prev();
+    // The loop's wrap: back from Space 0 to the last, then on from the last to Space 0.
+    tilespace.prev();
+    tilespace.next();
+    tilespace.goTo(2);
+    tilespace.goTo(1);
+
+    expect(directions).toEqual([1, -1, -1, 1, 1, -1]);
+  });
+
   it("moves one Space with next and prev and stops at the ends", async () => {
     const { tilespace, changes, tiles } = mount();
 

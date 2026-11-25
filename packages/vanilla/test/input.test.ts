@@ -95,7 +95,7 @@ describe("axis", () => {
     expect(stage.outerHTML).toBe(before);
   });
 
-  it("slides the default Transition along a vertical axis, settling by row", () => {
+  it("slides the default Transition along a vertical axis", () => {
     const stage = document.createElement("div");
     for (let i = 0; i < 4; i++) stage.append(document.createElement("div"));
     Object.defineProperty(stage, "clientHeight", { value: 300 });
@@ -107,10 +107,9 @@ describe("axis", () => {
     const effect = (i: number) => tiles[i]?.getAnimations()[0]?.effect as KeyframeEffect;
     expect(effect(0).getKeyframes().at(-1)?.translate).toBe("0px -300px");
     expect(effect(2).getKeyframes()[0]?.translate).toBe("0px 300px");
-    // In from the bottom, landing 40 px low, then settling in the Space's order: top first.
-    expect(effect(2).getKeyframes()[1]?.translate).toBe("0px 40px");
-    const end = (i: number) => Number(effect(i).getComputedTiming().endTime);
-    expect(end(3)).toBeGreaterThan(end(2));
+    // In from the bottom, the whole Space as one block.
+    expect(effect(2).getKeyframes()[1]?.translate).toBe("0px 0px");
+    expect(effect(3).getKeyframes()[0]?.translate).toBe("0px 300px");
   });
 });
 

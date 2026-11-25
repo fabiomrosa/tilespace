@@ -67,8 +67,12 @@ export type TilespaceOptions = PackOptions & {
 
 /** The events a Tilespace emits, with what each listener receives. */
 export type TilespaceEvents = {
-  /** The Current space changed. */
-  change: { current: number };
+  /**
+   * The Current space changed. `direction`: 1 when it came from the next Space (its cards come in
+   * from the right, or from below), -1 from the previous one, at the loop's wrap too; on a repack,
+   * the sign of the change.
+   */
+  change: { current: number; direction: 1 | -1 };
   /** The Tiles were packed again (a new Grid, or children added or removed): the number of Spaces. */
   pack: { spaces: number };
 };
@@ -212,6 +216,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     animations: Animation[];
     space: number;
     to: number;
+    direction: 1 | -1;
     focus?: HTMLOrSVGElement;
     error?: unknown;
   };
@@ -297,7 +302,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
         }
       });
     }
-    const run: Run = { animations: [], space: current, to };
+    const run: Run = { animations: [], space: current, to, direction };
     if (focus && "focus" in focus) run.focus = focus as Element & HTMLOrSVGElement;
     running = run;
     try {
@@ -355,7 +360,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
         () => running === run && settle(),
       );
     }
-    if (commit) events.emit("change", { current });
+    if (commit) events.emit("change", { current, direction: run.direction });
     if ("error" in run) throw run.error;
   };
   const move = (space: number, direction: 1 | -1) => {
@@ -378,7 +383,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     place();
     show(current);
     events.emit("pack", { spaces: packing.spaces.length });
-    if (current !== before) events.emit("change", { current });
+    if (current !== before)
+      events.emit("change", { current, direction: current > before ? 1 : -1 });
   };
   const resized = () => {
     // Read before any write: the neighbours rest one Stage size plus the `spaceGap` away.
@@ -418,7 +424,7 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     const run = begin(to, direction);
     if ("error" in run) end(run, false);
     for (const animation of run.animations) animation.pause();
-    // The Drag scrubs the whole timeline (DEC-10): with the default, the slide, then the settle.
+    // The Drag scrubs the whole timeline (DEC-10): the longest Animation's end.
     const length = Math.max(
       0,
       ...run.animations.map((a) => Number(a.effect?.getComputedTiming().endTime ?? 0)),
