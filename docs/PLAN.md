@@ -672,6 +672,26 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   (new), `test/options.test.ts`, `e2e/aria.e2e.ts` (new), the demo, ARCHITECTURE, PLAN, STATE.
 - **References:** DEC-06, DEC-14, the WAI-ARIA APG carousel pattern.
 
+### T3.25 · The playground on its own page
+- **Status:** next
+- **Goal:** the home tells the story and the playground has a page of its own (the owner,
+  2026-11-25: it weighed too much on the home).
+- **Depends on:** T3.9c, T3.10.
+- **In scope:** `playground.html` (a second Vite page under `/tilespace/`, with the same header,
+  footer and theme) holding the playground as it is; the Cards select starts on Cascade; the
+  Showcase gets enough Tiles that no Space looks empty; the header's "Playground" link and a new
+  "Open the playground" button in the hero lead there; the home loses the section.
+- **Out of scope:** the home's later sections (T3.11a, T3.15–T3.17, T3.11b).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. The build serves both pages under `/tilespace/`, and each page's assets are under it.
+  2. In Chromium the playground page mounts the Showcase with the Cards select on Cascade, and
+     a move cascades its cards; the home has no playground.
+  3. The header's link and the hero's button open the playground page.
+- **Files:** ~9, ~250 lines: `index.html`, `playground.html`, `vite.config.ts`, `src/main.ts`,
+  `demos/playground.ts`, `demos/tiles.ts`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` row 3 (moved to its own page), DEC-16.
+
 ### T3.3 · The packages are publishable
 - **Status:** waiting (T3.10)
 - **Goal:** `npm pack` gives two tarballs a fresh project installs and imports, with types.
@@ -1110,7 +1130,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` row 2.
 
 ### T3.11a · The site's quick start
-- **Status:** waiting (T3.10)
+- **Status:** waiting (T3.10, T3.25)
 - **Goal:** the code shown is the code run.
 - **Depends on:** T3.10.
 - **In scope:** one snippet source (the real API: `peek: true` with the page's CSS, DEC-16) that
@@ -1147,7 +1167,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 ### T3.15 · The site's packages: a section and a page each
 - **Status:** waiting (T3.11b, T3.4b)
 - **Goal:** a visitor sees what each package is and reads its page, as on list-picker's site (the
-  owner, 2026-11-25).
+  owner, 2026-11-25). The home's order (the owner): hero, idea, quick start, packages and install,
+  the lab, where it comes from.
 - **Depends on:** T3.11b, T3.4b (the READMEs the pages follow).
 - **In scope:** a "Packages" section: `@tilespace/core` (the packing, no DOM) and
   `@tilespace/vanilla` (the DOM engine), each linking its page, and React and Angular as "coming
