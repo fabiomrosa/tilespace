@@ -1057,6 +1057,46 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   shared module, `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** DEC-10, `demo/card-effects.ts`, `site/src/demos/card-cascade.ts`.
 
+### T3.23 · The Drag leaves a press to a form control or a scroller
+- **Status:** next
+- **Goal:** a slider, a text field or a scroller in a Tile keeps its own gesture (the owner, after
+  T3.22 had to stop `pointerdown` on the site's dashboard).
+- **Depends on:** none.
+- **In scope:** a press that starts on an `input` (but a checkbox, a radio or a button), a
+  `textarea`, a `select`, an editable element, or inside an element between it and the Stage that
+  scrolls along the axis (as the wheel already does), shadow trees included, never becomes a Drag;
+  the site's dashboard drops its own `stopPropagation`; README-facing doc in ARCHITECTURE.
+- **Out of scope:** a user option to list more such elements (later, if asked).
+- **Contract:** none (behaviour; DEC-11's Drag, refined).
+- **Acceptance criteria:**
+  1. A press on a range input, a text input, a textarea, a select or an editable element, moved
+     past the threshold, moves no Space and starts no Transition (unit tests, seen red).
+  2. A press inside a Tile's scroller along the axis is the scroller's while it can scroll that
+     way; a press on a checkbox, a button or plain content still drags.
+  3. In Chromium, the site's dashboard slider drags to 100 with no `stopPropagation` of its own.
+- **Files:** ~7, ~200 lines: `drag.ts`, `wheel.ts` (the shared scroller check), `test/drag.test.ts`,
+  `site/src/demos/tiles.ts`, GOTCHAS, ARCHITECTURE, PLAN, STATE.
+- **References:** DEC-11, PLAN "Later" (the Drag, T2.10 review), GOTCHAS "DOM".
+
+### T3.24 · Mount at a chosen Space
+- **Status:** waiting (T3.23)
+- **Goal:** a page that mounts a Stage again where the visitor was shows that Space at once, with
+  no slide from Space 1 (the owner, after the T3.9b review).
+- **Depends on:** T3.23 (order only).
+- **In scope:** a `start` option (a Space index, 0 by default): the Tilespace mounts with that
+  Space current, clamped to the last one, with no Transition and no `change`; validated like the
+  other options; the site's hero and playground use it instead of `goTo` after a remount.
+- **Out of scope:** an instant `goTo` (not needed once a remount can start anywhere).
+- **Contract:** `TilespaceOptions.start?: number` (additive).
+- **Acceptance criteria:**
+  1. `createTilespace(stage, { start: 2 })` shows Space 2 with no Animation and no `change`; a
+     `start` past the last Space shows the last one; a negative or non-integer one throws a
+     `tilespace:` error (unit tests, seen red).
+  2. In Chromium, changing a playground option on Space 2 shows Space 2 with no Animation.
+- **Files:** ~8, ~180 lines: `create-tilespace.ts`, `validate-options.ts`, `test/options.test.ts`,
+  `test/navigation.test.ts`, `site/src/demos/{hero,playground}.ts`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** DEC-11, PLAN "Later" (`goTo` with no Transition).
+
 ### T3.10 · The site's first section
 - **Status:** waiting (T3.9b)
 - **Goal:** "Bring your own tiles" explains the idea.
@@ -1173,11 +1213,8 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.
   It costs ~32% per Space at 12x8 with 1x1 Tiles (1.7 → 2.3 ms at the default budget).
-- The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`;
-  leave a press to a Tile's handler or slider, and a touch to a Tile's scroller (as the wheel does).
-- `goTo(space)` with no Transition (or `createTilespace`'s first Space as an option): a page that
-  mounts a Stage again where the visitor was (the site's playground on each option, its hero on a
-  breakpoint) replays a slide from Space 1 (T3.9b review).
+- The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`
+  (form controls and scrollers: T3.23).
 - A guard for a derived Grid on a content-height Stage (GOTCHAS "DOM"), e.g. ignoring a resize the
   engine's own writes caused; T2.4 only documents that the Stage needs a height.
 - T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the
