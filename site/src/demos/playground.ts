@@ -1,7 +1,10 @@
 import { createTilespace, type Tilespace, type TilespaceOptions } from "@tilespace/vanilla";
+import { cardEffects } from "../../../demo/card-effects.ts";
 import { liveCounter } from "../ui/live-counter.ts";
+import { trackPress } from "../ui/pressed.ts";
 import { segmented } from "../ui/segmented.ts";
 import { labelSpans } from "../ui/span-labels.ts";
+import { cascade } from "./card-cascade.ts";
 import { dashboard, gallery, showcase } from "./tiles.ts";
 
 /** The framed Stage's Grid per breakpoint (HANDOFF row 3): 8x4, and 4x5 on a phone. */
@@ -55,6 +58,8 @@ export function mountPlayground(root: HTMLElement) {
   const gap = field<HTMLInputElement>("pg-gap");
   const spaceGap = field<HTMLInputElement>("pg-space-gap");
   const loop = field<HTMLInputElement>("pg-loop");
+  const cards = field<HTMLSelectElement>("pg-cards");
+  const pressed = trackPress(stage);
   /** The options the bar sets; the gap is the breakpoint's until the visitor moves its slider. */
   const options = { axis: "horizontal", peek: "off", gap: undefined as number | undefined };
 
@@ -89,6 +94,7 @@ export function mountPlayground(root: HTMLElement) {
     const spaces = new Set(Array.from(stage.children, (t) => t.getAttribute("data-ts-space"))).size;
     tilespace.goTo(Math.min(place, spaces - 1));
     liveCounter(tilespace, stage, count);
+    tilespace.on("change", ({ direction }) => playCards(direction));
   };
   /** Selects a tab (roving `tabindex`) and mounts its example from the first Space. */
   const select = (tab: HTMLButtonElement) => {
@@ -137,6 +143,7 @@ export function mountPlayground(root: HTMLElement) {
       root.querySelector(`[aria-label="${name[0]?.toUpperCase()}${name.slice(1)}"]`) as HTMLElement,
       (value) => {
         options[name] = value;
+        allowCards();
         remount();
       },
     );
@@ -155,6 +162,29 @@ export function mountPlayground(root: HTMLElement) {
     });
   }
   for (const control of [transition, loop]) control.addEventListener("change", remount);
+  /**
+   * The cards' own motion, the site's code on `change` (DEC-10): the demo's effects, which start
+   * hidden; peeking, the new cards are in view already, so only the site's cascade, which never
+   * fades, plays (the owner, T3.9c). None after a Drag, or with reduced motion.
+   */
+  const playCards = (direction: 1 | -1) => {
+    if (cards.value === "none" || pressed()) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const axis = options.axis as "horizontal" | "vertical";
+    const current = Array.from(
+      stage.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card"),
+    );
+    if (options.peek !== "off") cascade(current, direction, axis, Number(spaceGap.value));
+    else cardEffects[cards.value]?.(current, direction, axis);
+  };
+  /** Peeking, the effects that start hidden would blink the cards in view: they wait for Off. */
+  const allowCards = () => {
+    for (const option of cards.options) {
+      option.disabled =
+        options.peek !== "off" && option.value !== "none" && option.value !== "cascade";
+    }
+    if (cards.selectedOptions[0]?.disabled) cards.value = "cascade";
+  };
   const toggle = field<HTMLButtonElement>("playground-options");
   toggle.addEventListener("click", () => {
     const open = toggle.getAttribute("aria-expanded") !== "true";

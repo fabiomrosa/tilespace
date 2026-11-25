@@ -150,4 +150,8 @@ None.
   segmented buttons, the Transition select (slide, a custom fade, none), the gap and space gap
   sliders with their readouts, loop; each change mounts the example again where the visitor is.
   On a phone, an Options button shows the same controls. The Cards select is T3.9c (split).
-- **Next:** T3.9c.
+- **2026-11-25, T3.9c (the playground's Cards select):** none, cascade, 3-D cascade, pop: the
+  demo's effects (`demo/card-effects.ts`, one source) as the site's code on `change`; peeking,
+  only the site's cascade, which never fades (3-D and pop wait for Peek Off); none after a Drag or
+  with reduced motion. The site's cascade follows the axis.
+- **Next:** T3.10.

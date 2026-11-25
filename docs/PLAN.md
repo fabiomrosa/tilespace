@@ -1040,7 +1040,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` row 3.
 
 ### T3.9c · The site's playground: the Cards select
-- **Status:** waiting (T3.9b)
+- **Status:** done (2026-11-25)
 - **Goal:** a visitor sees the cards' own motion is the user's, and picks one.
 - **Depends on:** T3.9b.
 - **In scope:** a Cards select in the bar (none, cascade, 3-D cascade, pop), as the site's code on

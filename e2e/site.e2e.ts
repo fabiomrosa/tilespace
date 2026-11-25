@@ -529,6 +529,74 @@ test.describe("the playground", () => {
     await expect(page.locator("#playground-count")).toHaveText(/^Space 2 of /);
   });
 
+  /** The playground's cards animating now: in the new Space, their first frames' properties. */
+  const cardMotions = (page: Page) =>
+    page.evaluate(() =>
+      document.getAnimations().flatMap((a) => {
+        const effect = a.effect as KeyframeEffect;
+        const target = effect.target as HTMLElement;
+        if (!target.closest("#playground-stage") || !target.classList.contains("card")) return [];
+        const frames = effect.getKeyframes();
+        return [
+          {
+            current: (target.parentElement as HTMLElement).hasAttribute("data-ts-current"),
+            fades: frames.some((k) => k.opacity !== undefined),
+            transforms: frames.map((k) => String(k.transform ?? "")),
+          },
+        ];
+      }),
+    );
+
+  test("plays each Cards option on the new Space's cards, the cascade without a fade when peeking", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    const cards = page.getByLabel("Cards");
+    const next = page.getByRole("button", { name: "Next Space in the playground" });
+    const prev = page.getByRole("button", { name: "Previous Space in the playground" });
+    const settled = () => page.waitForFunction(() => document.getAnimations().length === 0);
+
+    for (const effect of ["cascade", "3d", "pop"]) {
+      await cards.selectOption(effect);
+      for (const button of [next, prev]) {
+        await button.click();
+        const moving = await cardMotions(page);
+        expect(moving.length).toBeGreaterThan(0);
+        expect(moving.every((m) => m.current && m.fades)).toBe(true);
+        await settled();
+      }
+    }
+
+    // Peeking, the new cards are in view already: the site's cascade, no fade, from the move's side.
+    await page.getByRole("group", { name: "Peek" }).getByRole("button", { name: "Inset" }).click();
+    await settled();
+    await expect(cards.locator('option[value="3d"]')).toBeDisabled();
+    await cards.selectOption("cascade");
+    await next.click();
+    const peeking = await cardMotions(page);
+    expect(peeking.length).toBeGreaterThan(0);
+    expect(peeking.some((m) => m.fades)).toBe(false);
+    expect(peeking.every((m) => m.transforms.includes("translateX(12px)"))).toBe(true);
+  });
+
+  test("plays no Cards option after a Drag, its cards already in view", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    await page.getByLabel("Cards").selectOption("cascade");
+    await stage(page).scrollIntoViewIfNeeded();
+    const box = (await stage(page).boundingBox()) as { x: number; y: number; width: number };
+    const y = box.y + 60;
+    await page.mouse.move(box.x + box.width - 40, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2, y, { steps: 8 });
+    await page.mouse.move(box.x + 40, y, { steps: 8 });
+    await page.mouse.up();
+
+    await expect(page.locator("#playground-count")).toHaveText(/^Space 2 of /);
+    expect(await cardMotions(page)).toEqual([]);
+  });
+
   test("mounts the phone's 4x5 Grid when the screen narrows", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");

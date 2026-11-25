@@ -1,5 +1,6 @@
 import { createTilespace, type Tilespace } from "@tilespace/vanilla";
 import { liveCounter } from "../ui/live-counter.ts";
+import { trackPress } from "../ui/pressed.ts";
 import { labelSpans } from "../ui/span-labels.ts";
 import { cascade } from "./card-cascade.ts";
 
@@ -20,16 +21,7 @@ export function mountHero(
 ) {
   let tilespace: Tilespace | undefined;
   let shown = -1;
-  /** A pointer is down on the wall: a move now is a Drag's, its cards already where they land. */
-  let pressed = false;
-  wall.addEventListener("pointerdown", (event) => {
-    // As the Drag does: only a primary press drags (a right-click's menu eats its pointerup).
-    pressed = event.isPrimary && event.button === 0;
-  });
-  // After the Drag's own release, which commits it.
-  for (const type of ["pointerup", "pointercancel", "contextmenu"]) {
-    addEventListener(type, () => setTimeout(() => (pressed = false)));
-  }
+  const pressed = trackPress(wall);
   const queries = LAYOUTS.map((layout) => matchMedia(layout.query));
   const mount = () => {
     // The last layout's query is "all": one always matches. A resize across two breakpoints fires
@@ -53,9 +45,9 @@ export function mountHero(
     labelSpans(wall);
     tilespace.on("pack", () => labelSpans(wall));
     tilespace.on("change", ({ direction }) => {
-      if (pressed || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (pressed() || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const cards = wall.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card");
-      cascade(Array.from(cards), direction, spaceGap);
+      cascade(Array.from(cards), direction, "horizontal", spaceGap);
     });
     // The visitor's place, as near as the new Grid has one.
     const spaces = new Set(Array.from(wall.children, (t) => t.getAttribute("data-ts-space"))).size;
