@@ -154,4 +154,6 @@ None.
   demo's effects (`demo/card-effects.ts`, one source) as the site's code on `change`; peeking,
   only the site's cascade, which never fades (3-D and pop wait for Peek Off); none after a Drag or
   with reduced motion. The site's cascade follows the axis.
-- **Next:** T3.10.
+- **2026-11-25, the owner:** two library fixes before the publish: the Drag leaves a press on a
+  form control or a scroller alone (T3.23), and a `start` option mounts at a chosen Space (T3.24).
+- **Next:** T3.23, T3.24, then T3.10.
