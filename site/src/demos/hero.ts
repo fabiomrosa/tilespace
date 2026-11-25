@@ -58,7 +58,8 @@ export function mountHero(
       cascade(Array.from(cards), direction, spaceGap);
     });
     // The visitor's place, as near as the new Grid has one.
-    tilespace.goTo(place);
+    const spaces = new Set(Array.from(wall.children, (t) => t.getAttribute("data-ts-space"))).size;
+    tilespace.goTo(Math.min(place, spaces - 1));
     liveCounter(tilespace, wall, count);
   };
   for (const query of queries) query.addEventListener("change", mount);

@@ -253,11 +253,6 @@
   padding-top: var(--s-14);
 }
 .playground-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: end;
-  gap: var(--s-4);
   margin-bottom: var(--s-6);
 }
 .playground-frame {

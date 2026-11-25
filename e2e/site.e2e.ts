@@ -94,7 +94,10 @@ test("opens the same links in a menu sheet on a phone, next in the Tab order", a
   await menu.click();
   await links.first().click();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
-  await expect(menu).toBeFocused();
+  // The jump holds: the Playground's heading in view, and the next Tab goes on from there.
+  await expect(page.getByRole("heading", { name: "Playground" })).toBeInViewport();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("region", { name: /^Playground: / })).toBeFocused();
 });
 
 test("gives every control a 44 px target on a phone, and shows each code line whole", async ({

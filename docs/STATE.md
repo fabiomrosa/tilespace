@@ -141,6 +141,6 @@ None.
 - **2026-11-25, T3.9a (the site's playground: the framed Showcase):** the Showcase in a framed
   Stage, 8x4 and 4x5 on a phone, with prev, next and its own live counter; static tiles with
   JavaScript off. Split at 542 lines: the tabs, the Gallery and the Dashboard are T3.22
-  (`backup/T3.9a-full`). The menu's links now jump to a section, so the menu gives the focus back
-  after the jump.
+  (`backup/T3.9a-full`). The menu's links now jump to a real section: the menu closes and the focus
+  goes on from there.
 - **Next:** T3.22.

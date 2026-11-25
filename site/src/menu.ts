@@ -6,11 +6,8 @@ export function setUpMenu(button: HTMLButtonElement, nav: HTMLElement): void {
   };
   button.addEventListener("click", () => open(button.getAttribute("aria-expanded") !== "true"));
   nav.addEventListener("click", (event) => {
-    if ((event.target as Element).closest("a")) {
-      open(false);
-      // After the jump to the link's section, which takes the focus along: no scroll back up.
-      setTimeout(() => button.focus({ preventScroll: true }));
-    }
+    // A link jumps to its section, and the next Tab goes on from there: the focus stays with it.
+    if ((event.target as Element).closest("a")) open(false);
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && button.getAttribute("aria-expanded") === "true") {

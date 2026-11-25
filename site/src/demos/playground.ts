@@ -19,7 +19,7 @@ export function mountPlayground(root: HTMLElement) {
   const queries = LAYOUTS.map((layout) => matchMedia(layout.query));
   let tilespace: Tilespace | undefined;
 
-  /** Mounts the Tilespace on the Stage's Tiles as they are, at `place` if it still exists. */
+  /** Mounts the Tilespace on the Stage's Tiles as they are, at `place` or the last Space. */
   const mount = (place: number) => {
     tilespace?.destroy();
     // The last query is "all": one always matches.
@@ -33,7 +33,9 @@ export function mountPlayground(root: HTMLElement) {
     });
     labelSpans(stage);
     tilespace.on("pack", () => labelSpans(stage));
-    tilespace.goTo(place);
+    // The visitor's place, as near as the new Grid has one.
+    const spaces = new Set(Array.from(stage.children, (t) => t.getAttribute("data-ts-space"))).size;
+    tilespace.goTo(Math.min(place, spaces - 1));
     liveCounter(tilespace, stage, count);
   };
 
@@ -45,7 +47,5 @@ export function mountPlayground(root: HTMLElement) {
   stage.replaceChildren(...showcase());
   mount(0);
   // The pager works only with the script: without it, it stays hidden (index.html).
-  for (const hidden of root.querySelectorAll<HTMLElement>("[data-needs-script]")) {
-    hidden.hidden = false;
-  }
+  (root.querySelector("#playground-pager") as HTMLElement).hidden = false;
 }
