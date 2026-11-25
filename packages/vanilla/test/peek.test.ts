@@ -68,6 +68,19 @@ describe("peek", () => {
     expect(look(tiles)[1]).toBe("peek 0px 310px");
   });
 
+  it("puts the neighbours of the start Space beside it, wrapping with loop", () => {
+    const { tiles } = mount({ loop: true, start: 4 });
+
+    // Space 4 is the last: Space 0 after it, Space 3 before it.
+    expect(look(tiles)).toEqual([
+      "peek 410px 0px",
+      "hidden",
+      "hidden",
+      "peek -410px 0px",
+      "current",
+    ]);
+  });
+
   it("puts everything back on destroy", () => {
     const { stage, before, tilespace } = mount();
     tilespace.next();

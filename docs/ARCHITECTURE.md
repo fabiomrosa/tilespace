@@ -178,7 +178,8 @@ Each package is created by the first slice that needs it.
 Mount and one Drag through the engine (M2):
 1. `createTilespace(stage, options)`: read each child's Shape (DEC-07), measure the Stage, derive
    the Grid (`columns`/`rows`, or from `minCellWidth`, the Cell aspect and the gap), `pack`, write
-   the Stage's grid and each Tile's Placement (DEC-06), show Space 0.
+   the Stage's grid and each Tile's Placement (DEC-06), show Space `start` (0 by default, clamped
+   to the last), with no Transition and no `change`.
 2. A `ResizeObserver` on the Stage re-derives the Grid; a changed Grid repacks, and the Current
    space becomes the one holding the Tile that was first on screen. A `MutationObserver` on the
    Stage's child list repacks when Tiles are added or removed.
@@ -198,10 +199,10 @@ Spaces); the user persists.
 ## Configuration
 Options passed to `createTilespace` or the adapter: the Grid (`columns`, `rows`, or `minCellWidth`
 and `cellAspect`), `gap`, `spaceGap`, `shape`, `order`, `nodeBudget`, `holes`, `packer`, `score`,
-`transition`, `axis`, `loop`, `peek`. No environment. An invalid option (a missing Stage, a Span of 0, a negative gap) throws an
+`transition`, `axis`, `loop`, `peek`, `label`, `start`. No environment. An invalid option (a missing Stage, a Span of 0, a negative gap) throws an
 `Error` with a plain message at mount, never fails silently. Every check runs before the first
 write, so an invalid mount leaves the Stage untouched: the engine checks the Stage, the gaps, the
-`transition`, the `axis`, `peek` and each `data-ts-shape` (`validate-options.ts`, `read-shape.ts`), and `core` checks the Grid and the
+`transition`, the `axis`, `peek`, the `label`, the `start` and each `data-ts-shape` (`validate-options.ts`, `read-shape.ts`), and `core` checks the Grid and the
 Packer's options.
 
 ## Security

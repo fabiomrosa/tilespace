@@ -99,7 +99,8 @@ export type Tilespace = {
 
 /**
  * Mounts a Tilespace over the Stage's children, as they are (DEC-06): packs their Shapes into the
- * Grid, places each Tile with CSS grid, and shows Space 0. A derived Grid follows the Stage's size,
+ * Grid, places each Tile with CSS grid, and shows Space `start` (0 by default, clamped to the
+ * last). A derived Grid follows the Stage's size,
  * and added or removed children repack.
  */
 export function createTilespace(stage: HTMLElement, options: TilespaceOptions): Tilespace {
