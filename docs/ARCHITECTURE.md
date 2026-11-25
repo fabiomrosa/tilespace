@@ -99,10 +99,11 @@ Each package is created by the first slice that needs it.
   resize), and a `ResizeObserver` follows the Stage on a fixed Grid too. The default
   slide always travels a Stage size plus the `spaceGap`, so the next Space comes from where it rests; with
   `peek` it keeps full opacity, since those Tiles were in view. While a Transition runs, the
-  entering Space sits in the Stage (the Transition moves it from there) and any other neighbour
-  hides. First version: the neighbours are visual only; the Space beyond the entering one appears
-  at the Transition's end; with `loop` and two Spaces, the other Space always rests after, so a
-  `prev` brings it in from the other side.
+  entering Space sits in the Stage (the Transition moves it from there). The Space beyond it
+  (`ahead`) rests where it will be a neighbour and the one behind the leaving Space (`behind`)
+  where it was; the default slides them with the block, from two Stage sizes away and on out, so
+  nothing pops at the edges. Any other Space hides. With `loop` and two Spaces, the other Space
+  always rests after, so a `prev` brings it in from the other side.
 - The Tiles outside the Current space are `inert` as well as hidden: a child that sets its own
   `visibility: visible` would otherwise show and take the focus. A move makes the leaving Tiles
   `inert` when it begins, so only the entering ones can be reached; a cancelled one shows them

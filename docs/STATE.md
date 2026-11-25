@@ -115,4 +115,6 @@ None.
 - **2026-11-25, T3.8c:** the hero's wall bleeds both ways with `loop` (the owner), centred and
   narrower than the screen at every width. On Space 1 the left strip is the last Space's empty end,
   which the owner accepted.
-- **Next:** T3.9a.
+- **2026-11-25, T3.13:** with `peek`, the Space beyond the entering one and the one behind the
+  leaving one slide with the block (`TransitionContext.ahead`, `.behind`): no flick at the edges.
+- **Next:** T3.14 (the 2017 wall as a reference), then T3.9a.
