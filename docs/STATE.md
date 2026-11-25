@@ -34,9 +34,8 @@ Tile's Placement (DEC-06), and makes the Stage a carousel region named by `label
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
 `validatePacking`. `next()`, `prev()`
 and `goTo(space)` change the Current space (`loop` wraps at the ends), `current` reads it, and
-`on('change', fn)` hears each move. Each move runs the default Transition, with Web Animations
-(`translate`, `opacity`): the Space slides as one block, then its Tiles settle in their order
-within it; at its end only the new Space shows and nothing stays written. A new move, a repack or `destroy()`
+`on('change', fn)` hears each move, with its `direction`. Each move runs the default Transition, with Web Animations
+(`translate`): the Space slides as one block; at its end only the new Space shows and nothing stays written. A new move, a repack or `destroy()`
 during a Transition ends it at once. With `prefers-reduced-motion` it is a short cross-fade.
 The `transition` option replaces it with a function of a `TransitionContext` (exported) that
 returns Animations; `false` swaps at once, and so does a function that returns none, returns
@@ -126,4 +125,6 @@ None.
   of its place (40 px otherwise), so the last column no longer covers the Space resting beyond.
 - **2026-11-25, the owner:** the library moves only the Space; card effects are the user's (DEC-10
   amended), and a card that animates or places itself goes in a wrapper (DEC-06).
-- **Next:** T3.18, T3.19, then T3.9a.
+- **2026-11-25, T3.18:** the default Transition is the Space's slide only (no settle, no fade), and
+  `change` says the move's `direction` for the cards' own motion.
+- **Next:** T3.19, then T3.9a.

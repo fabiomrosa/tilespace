@@ -16,7 +16,7 @@ const mount = (shapes: string[]) => {
   const tilespace = createTilespace(stage, { columns: 2, rows: 1 });
   const events: string[] = [];
   tilespace.on("pack", ({ spaces }) => events.push(`pack ${spaces}`));
-  tilespace.on("change", ({ current }) => events.push(`change ${current}`));
+  tilespace.on("change", ({ current, direction }) => events.push(`change ${current} ${direction}`));
   return { stage, tilespace, events };
 };
 
@@ -71,7 +71,7 @@ describe("repacking on added and removed Tiles", () => {
     await flush();
 
     // The third Tile was alone in Space 2; with the first Tile gone it is in Space 1.
-    expect(events).toEqual(["pack 3", "change 1"]);
+    expect(events).toEqual(["pack 3", "change 1 -1"]);
     expect(tilespace.current).toBe(1);
   });
 

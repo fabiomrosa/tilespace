@@ -909,7 +909,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** ARCHITECTURE "Lessons from the 2017 wall".
 
 ### T3.18 · The default Transition is the Space's slide
-- **Status:** next
+- **Status:** done (2026-11-25)
 - **Goal:** the library moves only the Space, and tells the user from which side a move came, for
   the cards' own motion (the owner, DEC-10 amended 2026-11-25).
 - **Depends on:** DEC-10 (amended).

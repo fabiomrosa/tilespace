@@ -109,14 +109,17 @@ describe("peek", () => {
   });
 
   it("keeps the peeking Tiles at full opacity through the slide, so nothing flashes", () => {
-    const { tilespace, tiles } = mount({}, false);
+    const { tilespace, tiles } = mount({ loop: true }, false);
 
     tilespace.next();
 
-    const frames = (i: number) =>
-      (tiles[i]?.getAnimations()[0]?.effect as KeyframeEffect | undefined)?.getKeyframes() ?? [];
-    expect(frames(1).map((f) => f.opacity)).toEqual(["1", "1", "1", "1"]);
-    expect(frames(0).map((f) => f.opacity)).toEqual(["1", "1"]);
+    // Every moving Tile, the neighbours beyond included: one slide, no opacity, ending together.
+    const effects = tiles.flatMap((t) => t.getAnimations()).map((a) => a.effect as KeyframeEffect);
+    expect(effects).toHaveLength(4);
+    for (const effect of effects) {
+      expect(effect.getKeyframes().map((f) => f.opacity)).toEqual([undefined, undefined]);
+      expect(effect.getComputedTiming().endTime).toBe(500);
+    }
   });
 
   it("brings the entering Space into the Stage and keeps the one behind at rest while it moves", () => {
@@ -213,25 +216,6 @@ describe("peek", () => {
 
     const effect = tiles[1]?.getAnimations()[0]?.effect as KeyframeEffect | undefined;
     expect(effect?.getKeyframes()[0]?.translate).toBe("450px 0px");
-  });
-
-  it("lands the entering Tiles short of their place by no more than the spaceGap, both ways", () => {
-    /** Where entering Tile `i` waits for its settle, from the second keyframe. */
-    const landed = (tiles: HTMLElement[], i: number) =>
-      (tiles[i]?.getAnimations()[0]?.effect as KeyframeEffect | undefined)?.getKeyframes()[1]
-        ?.translate;
-    for (const [spaceGap, short] of [
-      [16, 16],
-      [50, 40],
-    ] as const) {
-      const { tilespace, tiles } = mount({ spaceGap, loop: true }, false);
-      tilespace.next();
-      // The Space beyond rests a spaceGap away: landing further would cover it.
-      expect(landed(tiles, 1)).toBe(`${short}px 0px`);
-      tilespace.prev();
-      expect(landed(tiles, 0)).toBe(`-${short}px 0px`);
-      tilespace.destroy();
-    }
   });
 
   it("keeps the spaceGap when it measures the Stage again, on a move and on a resize", () => {

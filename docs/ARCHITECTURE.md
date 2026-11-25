@@ -84,13 +84,13 @@ Each package is created by the first slice that needs it.
   (showing a Space puts back the user's own `visibility`), and `destroy()` puts back all of them,
   with their priority. It writes longhands only (`grid-column-start`, `row-gap`, `overflow-x`…):
   undoing a shorthand would wipe the longhands the user had set.
-- `next`, `prev` and `goTo` set the Current space, move `data-ts-current` and emit `change` at
-  once, then run the Transition (DEC-10). The default (`default-transition.ts`) uses Web Animations
-  on `translate` and `opacity`, in two phases: the Space slides 500 ms along the axis as one block
-  (the leaving Tiles out, the entering ones in from the Stage's size away, faint, landing 40 px
-  short); then each entering Tile settles in 450 ms (the 40 px and the fade), in its order within
-  the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about 600 ms in all.
-  One Animation per Tile. With `prefers-reduced-motion` it is a 150 ms cross-fade in place.
+- `next`, `prev` and `goTo` set the Current space, move `data-ts-current` and emit `change` (with
+  the move's `direction`, for the cards' own motion) at once, then run the Transition (DEC-10).
+  The default (`default-transition.ts`) is the Space's slide: Web Animations on `translate`, 500 ms
+  along the axis as one block, the leaving Tiles out and the entering ones in from a Stage size
+  plus the `spaceGap` away, at full opacity. One Animation per Tile. A card's own motion is the
+  user's, inside the Tile, started on `change`. With `prefers-reduced-motion` it is a 150 ms
+  cross-fade in place.
 - `peek` (T2.14): the Stage overflows (`overflow: visible`), and the Spaces just before and after
   the Current one (wrapping with `loop`) rest one Stage size plus the `spaceGap` (`gap` by
   default) away along the axis, in
@@ -143,15 +143,14 @@ Each package is created by the first slice that needs it.
   scroll the page.
 - `drag.ts`: a press on the Stage becomes a Drag 10 px along the axis (across it first, it is the
   page's). The Drag captures the pointer and scrubs the paused Transition to the neighbouring Space
-  by the distance over the Stage's size, over the whole timeline (with the default, the first part
-  of a Drag slides the Space and the rest settles the Tiles). Released past half or on a flick (0.5 px/ms over 100 ms)
+  by the distance over the Stage's size, over the whole timeline. Released past half or on a flick (0.5 px/ms over 100 ms)
   it commits; otherwise it plays back. Its click is stopped in the capture phase; a click below the
   threshold reaches the Tile. It clears the text selection it would make. A move, a repack or
   `destroy()` drops a Drag. The Stage gets `touch-action: pan-y pinch-zoom` (`pan-x` if vertical).
 - In the engine, a move is `begin` (both Spaces showing, the Transition built) then `end`, which
   commits (the Current space, `data-ts-current` and `change`) or cancels, playing it back. A Transition runs inside `begin`, so it still
   sees the old `current` and `data-ts-current`.
-- `axis` also turns the default slide and its stagger vertical. `destroy()` removes the key, wheel
+- `axis` also turns the default slide vertical. `destroy()` removes the key, wheel
   and pointer listeners and the gesture's timer.
 - A move reads the Stage's size before its own writes; a move made from a `pack` or `change`
   listener, after the engine's writes in the same task, forces a layout. Events go through
@@ -214,7 +213,7 @@ None for the library: it is headless (DEC-06). The demo's look lives in the demo
 What it got right and returns here:
 - A Tile declares its size in Cells (`data-type="2x1"`), and the Grid repeats page after page.
 - One page on screen at a time, `prev`/`next`, and the Tiles entering staggered
-  (`delay: (i % 4) / 10 + i / 50`), which inspires the default Transition.
+  (`delay: (i % 4) / 10 + i / 50`), which inspires the demo's card effects (T3.19).
 What does not return: greedy first-fit with no backtracking (an early choice leaves Holes it never
 fixes), its bugs (`cc > columns` let a Tile at the last column wrap into the next row; the `break`
 when nothing fits left only the row; the page size fixed at 32 Cells; `hasNextPage` inverted),
