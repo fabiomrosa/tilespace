@@ -135,4 +135,7 @@ None.
   again as the site's code (T3.21); the playground gets a Cards select (T3.9b).
 - **2026-11-25, T3.20:** the site's favicon is the logo mark (`site/public/favicon.svg`), with a
   180 px `apple-touch-icon.png` drawn from it, both under `/tilespace/`.
-- **Next:** T3.21, then T3.9a.
+- **2026-11-25, T3.21:** the hero's cards cascade again, as the site's code on `change`
+  (`site/src/demos/card-cascade.ts`): each card, inside its Tile, falls up to the space gap behind
+  during the slide and settles column by column from the move's side; never after a Drag.
+- **Next:** T3.9a.

@@ -205,6 +205,76 @@ test.describe("the hero wall", () => {
     await expect(counter).toHaveText(`Space 3 of ${spaces}`);
   });
 
+  /** Each card animating in the wall: its Tile's column, its second keyframe and its end. */
+  const cards = (page: Page) =>
+    page.evaluate(() =>
+      document.getAnimations().flatMap((a) => {
+        const effect = a.effect as KeyframeEffect;
+        const target = effect.target as HTMLElement;
+        if (!target.classList.contains("card")) return [];
+        const tile = target.parentElement as HTMLElement;
+        return [
+          {
+            current: tile.hasAttribute("data-ts-current"),
+            col: Number(tile.style.gridColumnStart),
+            landed: String(effect.getKeyframes()[1]?.transform),
+            props: effect.getKeyframes().flatMap((k) => Object.keys(k)),
+            end: Number(effect.getComputedTiming().endTime),
+          },
+        ];
+      }),
+    );
+
+  test("cascades the new Space's cards from the side they come, column by column", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+
+    for (const [name, side] of [
+      ["Next Space", 1],
+      ["Previous Space", -1],
+    ] as const) {
+      await page.getByRole("button", { name }).click();
+      const moving = await cards(page);
+      expect(moving.length).toBeGreaterThan(0);
+      expect(moving.every((m) => m.current)).toBe(true);
+      // Peeking cards are in view already: they land a space gap (32 px) short, never fade.
+      for (const m of moving) expect(m.landed).toBe(`translateX(${side * 32}px)`);
+      expect(moving.some((m) => m.props.includes("opacity"))).toBe(false);
+      const cols = moving.toSorted((a, b) => a.end - b.end).map((m) => m.col);
+      const read = cols.toSorted((a, b) => a - b);
+      expect(cols).toEqual(side === 1 ? read : read.reverse());
+      await page.waitForFunction(() => document.getAnimations().length === 0);
+    }
+  });
+
+  test("cascades nothing when the visitor prefers reduced motion", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+
+    await page.getByRole("button", { name: "Next Space" }).click();
+
+    await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);
+    expect(await cards(page)).toEqual([]);
+  });
+
+  test("cascades nothing after a Drag, its cards already in view", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    const box = (await wall(page).boundingBox()) as { x: number; y: number; width: number };
+    const y = box.y + 60;
+    await page.mouse.move(box.x + box.width - 40, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2, y, { steps: 8 });
+    await page.mouse.move(box.x + 40, y, { steps: 8 });
+    await page.mouse.up();
+
+    await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);
+    expect(await cards(page)).toEqual([]);
+  });
+
   test("mounts the phone's 4-column Grid when the screen narrows, keeping the visitor's place", async ({
     page,
   }) => {

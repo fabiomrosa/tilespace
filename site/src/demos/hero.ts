@@ -1,5 +1,6 @@
 import { createTilespace, type Tilespace } from "@tilespace/vanilla";
 import { liveCounter } from "../ui/live-counter.ts";
+import { cascade } from "./card-cascade.ts";
 
 /** The wall's Grid and gaps per breakpoint (HANDOFF row 1): desktop, tablet, phone. */
 const LAYOUTS = [
@@ -18,6 +19,23 @@ export function mountHero(
 ) {
   let tilespace: Tilespace | undefined;
   let shown = -1;
+  /** A pointer is down on the wall: a move now is a Drag's, its cards already where they land. */
+  let pressed = false;
+  wall.addEventListener("pointerdown", (event) => {
+    // As the Drag does: only a primary press drags (a right-click's menu eats its pointerup).
+    pressed = event.isPrimary && event.button === 0;
+  });
+  // After the Drag's own release, which commits it.
+  for (const type of ["pointerup", "pointercancel", "contextmenu"]) {
+    addEventListener(type, () => setTimeout(() => (pressed = false)));
+  }
+  /** Each card shows its Tile's Span, which the library chooses and writes. */
+  const label = () => {
+    for (const tile of wall.children as HTMLCollectionOf<HTMLElement>) {
+      const card = tile.firstElementChild as HTMLElement | null;
+      if (card) card.dataset.span = tile.dataset.tsSpan ?? "";
+    }
+  };
   const queries = LAYOUTS.map((layout) => matchMedia(layout.query));
   const mount = () => {
     // The last layout's query is "all": one always matches. A resize across two breakpoints fires
@@ -37,6 +55,13 @@ export function mountHero(
       // A neighbour on both sides from the first Space on.
       loop: true,
       label: "Live tile wall. Drag, scroll or use arrow keys.",
+    });
+    label();
+    tilespace.on("pack", label);
+    tilespace.on("change", ({ direction }) => {
+      if (pressed || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const cards = wall.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card");
+      cascade(Array.from(cards), direction, spaceGap);
     });
     // The visitor's place, as near as the new Grid has one.
     tilespace.goTo(place);
