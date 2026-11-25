@@ -249,6 +249,17 @@ test.describe("the hero wall", () => {
     }
   });
 
+  test("cascades nothing when the visitor prefers reduced motion", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+
+    await page.getByRole("button", { name: "Next Space" }).click();
+
+    await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);
+    expect(await cards(page)).toEqual([]);
+  });
+
   test("cascades nothing after a Drag, its cards already in view", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");

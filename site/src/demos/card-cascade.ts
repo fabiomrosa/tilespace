@@ -26,6 +26,8 @@ export function cascade(cards: HTMLElement[], direction: 1 | -1, behind: number)
   if (direction === -1) order.reverse();
   const landed = { transform: `translateX(${direction * behind}px)` };
   for (const [i, card] of order.entries()) {
+    // A quick move back and forth: the newer cascade replaces the one still running.
+    for (const animation of card.getAnimations()) animation.cancel();
     const start = SLIDE + i * STEP;
     const total = start + SETTLE;
     card.animate(
