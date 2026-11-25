@@ -81,7 +81,7 @@ export const dashboard = () => {
   });
   const field = (label: string, control: HTMLElement) =>
     el("label", { className: "field" }, label, control);
-  const tiles = [
+  return [
     tile("3x2 2x2", field("Notes", el<HTMLTextAreaElement>("textarea", { rows: 3 }))),
     tile("2x1", el("div", { className: "row" }, el("span", {}, "Counter"), count, add)),
     tile("2x1", field("Name", el<HTMLInputElement>("input", { type: "text" }))),
@@ -108,9 +108,4 @@ export const dashboard = () => {
     tile("2x1", field("Reminder", el<HTMLInputElement>("input", { type: "text" }))),
     tile("1x1", el("label", {}, el<HTMLInputElement>("input", { type: "checkbox" }), " Wi-Fi")),
   ];
-  // A press on a field or the slider is theirs: the Stage's Drag would take the pointer past 10 px.
-  for (const control of tiles.flatMap((t) => Array.from(t.querySelectorAll("input, textarea")))) {
-    control.addEventListener("pointerdown", (event) => event.stopPropagation());
-  }
-  return tiles;
 };

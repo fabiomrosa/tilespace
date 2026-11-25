@@ -184,4 +184,62 @@ describe("the Drag", () => {
     expect(clicks).toEqual([2]);
     expect(tiles.flatMap((t) => t.getAnimations())).toEqual([]);
   });
+
+  it("leaves a press on a form control or an editable element to it", () => {
+    const controls = [
+      Object.assign(document.createElement("input"), { type: "range" }),
+      Object.assign(document.createElement("input"), { type: "text" }),
+      document.createElement("textarea"),
+      document.createElement("select"),
+      Object.assign(document.createElement("div"), { contentEditable: "true" }),
+    ];
+    for (const control of controls) {
+      const { tilespace, tiles } = mount();
+      tiles[0]?.append(control);
+
+      drag(control, [250, 100], 10);
+
+      expect(tilespace.current).toBe(0);
+      expect(tiles.flatMap((t) => t.getAnimations())).toEqual([]);
+      tilespace.destroy();
+      document.body.replaceChildren();
+    }
+  });
+
+  it("still drags from a checkbox, a button or plain content", () => {
+    for (const make of [
+      () => Object.assign(document.createElement("input"), { type: "checkbox" }),
+      () => document.createElement("button"),
+      () => document.createElement("span"),
+    ]) {
+      const { tilespace, tiles } = mount();
+      const target = make();
+      tiles[0]?.append(target);
+
+      drag(target, [250, 100], 10);
+
+      expect(tilespace.current).toBe(1);
+      tilespace.destroy();
+      document.body.replaceChildren();
+    }
+  });
+
+  it("leaves a press in a scroller along the axis to it while it can scroll that way", () => {
+    const { tilespace, tiles } = mount();
+    const scroller = document.createElement("div");
+    scroller.style.overflowX = "auto";
+    let left = 0;
+    Object.defineProperty(scroller, "scrollLeft", { get: () => left });
+    Object.defineProperty(scroller, "scrollWidth", { value: 800 });
+    Object.defineProperty(scroller, "clientWidth", { value: 400 });
+    tiles[0]?.append(scroller);
+
+    // Dragging left scrolls it on, while it has room.
+    drag(scroller, [250, 100], 10);
+    expect(tilespace.current).toBe(0);
+
+    left = 400;
+    drag(scroller, [250, 100], 10);
+    expect(tilespace.current).toBe(1);
+  });
 });

@@ -1,4 +1,5 @@
 import type { Axis } from "./default-transition.ts";
+import { scrolls } from "./wheel.ts";
 
 /** A Drag's hold on its Transition: `seek` from 0 to 1, then `release`, committing or not. */
 export type Grip = { seek(progress: number): void; release(commit: boolean): void };
@@ -7,13 +8,29 @@ export type Grip = { seek(progress: number): void; release(commit: boolean): voi
 const THRESHOLD = 10;
 /** The speed, in CSS pixels per millisecond over the last 100 ms, that commits a short Drag. */
 const FLICK = 0.5;
+/** The inputs a press on which is still a Drag: they take a click, not a gesture. */
+const CLICKED = /^(checkbox|radio|button|submit|reset|image|color|file)$/;
+
+/** Whether an element on the way from the target to the Stage keeps its own pointer gestures. */
+function owns(stage: HTMLElement, path: EventTarget[]) {
+  for (const node of path) {
+    if (node === stage) return false;
+    if (!(node instanceof HTMLElement)) continue;
+    if (node instanceof HTMLInputElement) return !CLICKED.test(node.type);
+    if (node instanceof HTMLTextAreaElement || node instanceof HTMLSelectElement) return true;
+    if (node.isContentEditable) return true;
+  }
+  return false;
+}
 
 /**
  * Turns a pointer dragged along the axis over the Stage into a Drag (DEC-11): past the threshold
  * it grabs the Transition towards the neighbouring Space and scrubs it with the distance (the
  * Stage's size is the whole Transition); on release it commits past half the distance or on a
  * flick, otherwise it cancels. The click after a Drag is stopped; one below the threshold reaches
- * the Tile. A press that goes across the axis first is left alone. Returns the remover.
+ * the Tile. A press that goes across the axis first is left alone, and so is one on a form control,
+ * an editable element, or in a scroller that can still scroll that way (as the wheel). Returns the
+ * remover.
  */
 export function listenDrag(
   stage: HTMLElement,
@@ -21,7 +38,7 @@ export function listenDrag(
   grab: (direction: 1 | -1) => Grip | undefined,
 ) {
   const horizontal = axis === "horizontal";
-  let press: { id: number; x: number; y: number } | undefined;
+  let press: { id: number; x: number; y: number; path: EventTarget[] } | undefined;
   let drag:
     | { grip?: Grip; direction: 1 | -1; size: number; samples: [number, number][] }
     | undefined;
@@ -36,7 +53,9 @@ export function listenDrag(
 
   const onDown = (event: PointerEvent) => {
     if (!event.isPrimary || event.button > 0) return;
-    press = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    const path = event.composedPath();
+    if (owns(stage, path)) return;
+    press = { id: event.pointerId, x: event.clientX, y: event.clientY, path };
     dragged = false;
   };
   const onMove = (event: PointerEvent) => {
@@ -48,6 +67,11 @@ export function listenDrag(
         return;
       }
       if (Math.abs(distance) < THRESHOLD) return;
+      // Dragging left scrolls a scroller on (a positive delta): while it can, the gesture is its.
+      if (scrolls(stage, press.path, !horizontal, -distance)) {
+        press = undefined;
+        return;
+      }
       // Dragging left (or up) pulls the next Space in.
       const direction = distance < 0 ? 1 : -1;
       const size = horizontal ? stage.clientWidth : stage.clientHeight;

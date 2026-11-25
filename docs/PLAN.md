@@ -1058,7 +1058,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-10, `demo/card-effects.ts`, `site/src/demos/card-cascade.ts`.
 
 ### T3.23 · The Drag leaves a press to a form control or a scroller
-- **Status:** next
+- **Status:** done (2026-11-25)
 - **Goal:** a slider, a text field or a scroller in a Tile keeps its own gesture (the owner, after
   T3.22 had to stop `pointerdown` on the site's dashboard).
 - **Depends on:** none.

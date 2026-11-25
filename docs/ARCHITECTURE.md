@@ -142,7 +142,9 @@ Each package is created by the first slice that needs it.
   scroll sequence's first event be cancelled, so a gesture that starts mid-sequence may also
   scroll the page.
 - `drag.ts`: a press on the Stage becomes a Drag 10 px along the axis (across it first, it is the
-  page's). The Drag captures the pointer and scrubs the paused Transition to the neighbouring Space
+  page's). A press on a form control (an `input` but a checkbox, radio or button-like one, a
+  `textarea`, a `select`), an editable element, or in a scroller that can still scroll that way
+  (the wheel's check, `scrolls` in `wheel.ts`) is theirs, shadow trees included. The Drag captures the pointer and scrubs the paused Transition to the neighbouring Space
   by the distance over the Stage's size, over the whole timeline. Released past half or on a flick (0.5 px/ms over 100 ms)
   it commits; otherwise it plays back. Its click is stopped in the capture phase; a click below the
   threshold reaches the Tile. It clears the text selection it would make. A move, a repack or
