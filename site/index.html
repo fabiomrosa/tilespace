@@ -160,6 +160,7 @@
           <div class="playground-bar">
             <button id="playground-options" class="button-small options-toggle" type="button" aria-expanded="false" aria-controls="playground-controls" hidden>Options</button>
             <div id="playground-controls" class="controls" hidden>
+              <!-- biome-ignore lint/a11y/useSemanticElements: a fieldset's legend can't sit inline in a flex row -->
               <div class="segmented" role="group" aria-label="Axis">
                 <span aria-hidden="true">Axis</span>
                 <button type="button" data-value="horizontal" aria-pressed="true">Horizontal</button>
@@ -168,6 +169,7 @@
               <label>Transition
                 <select id="pg-transition"><option value="slide">Slide</option><option value="fade">Fade</option><option value="none">None</option></select>
               </label>
+              <!-- biome-ignore lint/a11y/useSemanticElements: a fieldset's legend can't sit inline in a flex row -->
               <div class="segmented" role="group" aria-label="Peek">
                 <span aria-hidden="true">Peek</span>
                 <button type="button" data-value="off" aria-pressed="true">Off</button>
