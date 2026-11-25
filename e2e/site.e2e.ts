@@ -94,7 +94,10 @@ test("opens the same links in a menu sheet on a phone, next in the Tab order", a
   await menu.click();
   await links.first().click();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
-  await expect(menu).toBeFocused();
+  // The jump holds: the Playground's heading in view, and the next Tab goes on from there.
+  await expect(page.getByRole("heading", { name: "Playground" })).toBeInViewport();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("region", { name: /^Playground: / })).toBeFocused();
 });
 
 test("gives every control a 44 px target on a phone, and shows each code line whole", async ({
@@ -174,7 +177,7 @@ test.describe("the hero wall", () => {
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");
-    const counter = page.getByText(/^Space \d+ of \d+$/);
+    const counter = page.locator("#wall-count");
     await expect(counter).toHaveText(/^Space 1 of ([2-9]|\d\d)$/);
     const spaces = Number((await counter.textContent())?.split(" of ")[1]);
     // The count the packer made, as the Tiles show it.
@@ -191,7 +194,7 @@ test.describe("the hero wall", () => {
       ),
     ).toBe(true);
 
-    await page.getByRole("button", { name: "Next Space" }).click();
+    await page.getByRole("button", { name: "Next Space", exact: true }).click();
     await expect(counter).toHaveText(`Space 2 of ${spaces}`);
     // Both neighbours once the slide ends.
     await page.waitForFunction(() => document.getAnimations().length === 0);
@@ -235,7 +238,7 @@ test.describe("the hero wall", () => {
       ["Next Space", 1],
       ["Previous Space", -1],
     ] as const) {
-      await page.getByRole("button", { name }).click();
+      await page.getByRole("button", { name, exact: true }).click();
       const moving = await cards(page);
       expect(moving.length).toBeGreaterThan(0);
       expect(moving.every((m) => m.current)).toBe(true);
@@ -254,9 +257,9 @@ test.describe("the hero wall", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");
 
-    await page.getByRole("button", { name: "Next Space" }).click();
+    await page.getByRole("button", { name: "Next Space", exact: true }).click();
 
-    await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);
+    await expect(page.locator("#wall-count")).toHaveText(/^Space 2 of /);
     expect(await cards(page)).toEqual([]);
   });
 
@@ -271,7 +274,7 @@ test.describe("the hero wall", () => {
     await page.mouse.move(box.x + 40, y, { steps: 8 });
     await page.mouse.up();
 
-    await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);
+    await expect(page.locator("#wall-count")).toHaveText(/^Space 2 of /);
     expect(await cards(page)).toEqual([]);
   });
 
@@ -281,7 +284,7 @@ test.describe("the hero wall", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");
     expect(await columns(page)).toBe(10);
-    await page.getByRole("button", { name: "Next Space" }).click();
+    await page.getByRole("button", { name: "Next Space", exact: true }).click();
     let mounts = 0;
     await page.exposeFunction("mounted", (records: number) => {
       mounts += records;
@@ -299,7 +302,7 @@ test.describe("the hero wall", () => {
     expect(await bleeds(page, 1)).toEqual({ before: true, after: true });
     // One remount (role removed, then written back), though two breakpoints were crossed.
     expect(mounts).toBe(2);
-    await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);
+    await expect(page.locator("#wall-count")).toHaveText(/^Space 2 of /);
   });
 
   test.describe("with JavaScript off", () => {
@@ -311,12 +314,63 @@ test.describe("the hero wall", () => {
 
       await expect(page.locator("#wall > div").first()).toBeVisible();
       // No dead controls: the pager needs the script.
-      await expect(page.getByRole("button", { name: "Next Space" })).toBeHidden();
+      await expect(page.getByRole("button", { name: "Next Space", exact: true })).toBeHidden();
       // A grid of cells at the wall's phone height, not a column of stacked tiles.
       const [display, height] = await page
         .locator("#wall")
         .evaluate((el) => [getComputedStyle(el).display, el.getBoundingClientRect().height]);
       expect([display, height]).toEqual(["grid", 312]);
+      const [scroll, client] = await page.evaluate(() => [
+        document.documentElement.scrollWidth,
+        document.documentElement.clientWidth,
+      ]);
+      expect(scroll).toBeLessThanOrEqual(client);
+    });
+  });
+});
+
+test.describe("the playground", () => {
+  const stage = (page: Page) => page.getByRole("region", { name: /^Playground: / });
+  const columns = (page: Page) =>
+    stage(page).evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
+
+  test("mounts the Showcase in the frame, and moves with its own pager", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    const counter = page.locator("#playground-count");
+
+    expect(await columns(page)).toBe(8);
+    await expect(counter).toHaveText(/^Space 1 of [2-9]/);
+    await page.getByRole("button", { name: "Next Space in the playground" }).click();
+    await expect(counter).toHaveText(/^Space 2 of /);
+    // The hero's counter stays where it was.
+    await expect(page.locator("#wall-count")).toHaveText(/^Space 1 of /);
+    await page.getByRole("button", { name: "Previous Space in the playground" }).click();
+    await expect(counter).toHaveText(/^Space 1 of /);
+  });
+
+  test("mounts the phone's 4x5 Grid when the screen narrows", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    await expect.poll(() => columns(page)).toBe(4);
+    const rows = await stage(page).evaluate(
+      (el) => getComputedStyle(el).gridTemplateRows.split(" ").length,
+    );
+    expect(rows).toBe(5);
+  });
+
+  test.describe("with JavaScript off", () => {
+    test.use({ javaScriptEnabled: false });
+
+    test("shows fallback tiles, and no pager to press", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("./");
+
+      await expect(page.locator("#playground-stage > div").first()).toBeVisible();
+      await expect(page.getByRole("button", { name: "Next Space in the playground" })).toBeHidden();
       const [scroll, client] = await page.evaluate(() => [
         document.documentElement.scrollWidth,
         document.documentElement.clientWidth,

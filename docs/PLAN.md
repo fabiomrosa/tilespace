@@ -983,27 +983,47 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** DEC-10, `demo/card-effects.ts`.
 
-### T3.9a · The site's playground: the examples
-- **Status:** waiting (T3.8c, T3.21)
-- **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
+### T3.9a · The site's playground: the framed Showcase
+- **Status:** done (2026-11-25)
+- **Goal:** a visitor moves through the Showcase in a framed demo, on a desktop and a phone.
 - **Depends on:** T3.8c, T3.21.
-- **In scope:** the tablist (APG tabs: roving focus, `aria-selected`), the Showcase, Gallery and
-  Dashboard factories in `demos/tiles.ts` (the Gallery's images as the owner decides), the framed
-  Stage (8x4 at 480 px; 4x5 at 360 px on a phone, mounted again across breakpoints), prev/next and
-  the counter, a note per tab, fallback tiles with JavaScript off.
+- **In scope:** the section and its heading, the framed Stage (8x4 at 480 px; 4x5 at 360 px on a
+  phone, mounted again across breakpoints), the Showcase factory in `demos/tiles.ts` (a number and
+  the chosen Span on each card), prev/next and its own live counter, the note, fallback tiles with
+  JavaScript off. Split at 542 lines: the tabs, the Gallery and the Dashboard are T3.22.
+- **Out of scope:** the tabs and the other examples (T3.22); the control bar (T3.9b).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. In Chromium the Showcase mounts on 8 columns and its prev/next move it, with its own counter.
+  2. At 390 px the Grid is 4x5.
+  3. With JavaScript off, fallback tiles show and the pager stays hidden.
+- **Files:** ~11, ~350 lines: `index.html`, `main.ts`, `menu.ts`, `demos/playground.ts`,
+  `demos/tiles.ts`, `demos/hero.ts`, `ui/span-labels.ts`, `components.css`, `e2e/site.e2e.ts`,
+  PLAN, STATE.
+- **References:** `docs/site/HANDOFF.md` row 3 and "Playground tabs".
+
+### T3.22 · The site's playground: the tabs, the Gallery and the Dashboard
+- **Status:** waiting (T3.9a)
+- **Goal:** a visitor switches between Showcase, Gallery and Dashboard.
+- **Depends on:** T3.9a.
+- **In scope:** the tablist (APG tabs: roving focus, `aria-selected`, automatic activation), the
+  Gallery (generated SVG photos with several Shapes, the file name as caption, `alt`) and Dashboard
+  (textarea, text input, counter, slider, checkbox) factories, a note per tab; on a phone the tabs
+  are a full-width 3-up control. Most of it is on `backup/T3.9a-full`.
 - **Out of scope:** the control bar (T3.9b).
 - **Contract:** none.
 - **Acceptance criteria:**
   1. In Chromium, arrow keys move focus along the tabs and each tab mounts its example.
   2. A dashboard value survives a move away and back.
-- **Files:** ~7, ~300 lines: `index.html`, `demos/playground.ts`, `demos/tiles.ts`,
+  3. With JavaScript off, the tabs stay hidden.
+- **Files:** ~7, ~250 lines: `index.html`, `demos/playground.ts`, `demos/tiles.ts`,
   `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** `docs/site/HANDOFF.md` row 3 and "Playground tabs".
 
 ### T3.9b · The site's playground: the control bar
-- **Status:** waiting (T3.9a)
+- **Status:** waiting (T3.22)
 - **Goal:** a visitor tries every option on the examples.
-- **Depends on:** T3.9a.
+- **Depends on:** T3.22.
 - **In scope:** the bar wired to the options (axis and peek off / inset / bleed as segmented
   buttons with `aria-pressed`, Transition select, a Cards select (none, cascade, 3-D cascade, pop:
   the card effects as the site's code on `change`, the owner), gap and space gap sliders with a px

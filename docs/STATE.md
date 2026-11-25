@@ -138,4 +138,9 @@ None.
 - **2026-11-25, T3.21:** the hero's cards cascade again, as the site's code on `change`
   (`site/src/demos/card-cascade.ts`): each card, inside its Tile, falls up to the space gap behind
   during the slide and settles column by column from the move's side; never after a Drag.
-- **Next:** T3.9a.
+- **2026-11-25, T3.9a (the site's playground: the framed Showcase):** the Showcase in a framed
+  Stage, 8x4 and 4x5 on a phone, with prev, next and its own live counter; static tiles with
+  JavaScript off. Split at 542 lines: the tabs, the Gallery and the Dashboard are T3.22
+  (`backup/T3.9a-full`). The menu's links now jump to a real section: the menu closes and the focus
+  goes on from there.
+- **Next:** T3.22.

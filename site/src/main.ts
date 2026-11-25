@@ -1,4 +1,5 @@
 import { mountHero } from "./demos/hero.ts";
+import { mountPlayground } from "./demos/playground.ts";
 import { setUpMenu } from "./menu.ts";
 import { setUpTheme } from "./theme.ts";
 
@@ -33,3 +34,5 @@ mountHero(
   byId("wall-count"),
   byId("wall-pager"),
 );
+
+mountPlayground(byId("playground"));
