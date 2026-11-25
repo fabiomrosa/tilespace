@@ -178,8 +178,7 @@ test.describe("the hero wall", () => {
 
     await page.getByRole("button", { name: "Next Space" }).click();
     await expect(counter).toHaveText(`Space 2 of ${spaces}`);
-    // Both neighbours once the slide ends: the one beyond slides in with the block instead of
-    // appearing at the end.
+    // Both neighbours once the slide ends.
     await page.waitForFunction(() => document.getAnimations().length === 0);
     expect(await bleeds(page, 1)).toEqual({ before: true, after: true });
     // Narrower desktops too, before the container stops growing.

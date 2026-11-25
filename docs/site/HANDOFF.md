@@ -111,7 +111,7 @@ Each demo container has a fixed height, because the grid needs a sized box to pa
 
 The motion is the library's own. The site only chooses the defaults below, and every demo must stay usable with no motion at all.
 
-- **Default transition:** the Space slides as one block in about 420 ms with `cubic-bezier(.2,.8,.2,1)`, then each card settles in order: a fade plus an 8 px slide over 180 ms, 30 ms apart. These are starting values to tune against the engine.
+- **Default transition:** the Space slides as one block in about 420 ms with `cubic-bezier(.2,.8,.2,1)`, then each card settles in order: a fade plus an 8 px slide over 180 ms, 30 ms apart. These are starting values to tune against the engine. *Superseded by DEC-10 (amended 2026-11-25): the library's default is the slide only; the settle is one of the demo's card effects, run on `change`.*
 - **Drag** scrubs the animation 1:1 and snaps to the nearest Space on release. Wheel and arrow keys move one Space per step.
 - **Reduced motion:** with `prefers-reduced-motion: reduce`, use a 150 ms crossfade with no slide and no stagger. Drag still works. The hero wall never auto-advances.
 - **Real controls:** use `<button>` for every action, `role="tablist"`/`role="tab"` with `aria-selected` and arrow-key roving focus for the example tabs, `aria-pressed` on segmented buttons, `<label>` on every slider, select and checkbox, and an `aria-label` on icon-only buttons (theme, menu, prev, next).

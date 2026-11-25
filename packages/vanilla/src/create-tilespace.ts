@@ -68,9 +68,9 @@ export type TilespaceOptions = PackOptions & {
 /** The events a Tilespace emits, with what each listener receives. */
 export type TilespaceEvents = {
   /**
-   * The Current space changed. `direction`: 1 when it came from the next Space (its cards come in
-   * from the right, or from below), -1 from the previous one, at the loop's wrap too; on a repack,
-   * the sign of the change.
+   * The Current space changed. `direction`: 1 towards the next Space (its cards come in from the
+   * right, or from below), -1 towards the previous one, at the loop's wrap too; on a repack, the
+   * sign of the change.
    */
   change: { current: number; direction: 1 | -1 };
   /** The Tiles were packed again (a new Grid, or children added or removed): the number of Spaces. */
@@ -350,7 +350,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       for (const animation of run.animations) {
         const [at, stop] = [animation.currentTime, animation.effect?.getComputedTiming().endTime];
         if (!commit) animation.playbackRate = -1;
-        // Already where it heads (a scrubbed stagger): play() would rewind it and replay.
+        // Already where it heads (a custom Transition's shorter Animation, scrubbed past its end):
+        // play() would rewind it and replay.
         if (commit ? Number(at) >= Number(stop) : Number(at) <= 0) animation.finish();
         else animation.play();
       }

@@ -109,14 +109,17 @@ describe("peek", () => {
   });
 
   it("keeps the peeking Tiles at full opacity through the slide, so nothing flashes", () => {
-    const { tilespace, tiles } = mount({}, false);
+    const { tilespace, tiles } = mount({ loop: true }, false);
 
     tilespace.next();
 
-    const frames = (i: number) =>
-      (tiles[i]?.getAnimations()[0]?.effect as KeyframeEffect | undefined)?.getKeyframes() ?? [];
-    expect(frames(1).map((f) => f.opacity)).toEqual([undefined, undefined]);
-    expect(frames(0).map((f) => f.opacity)).toEqual([undefined, undefined]);
+    // Every moving Tile, the neighbours beyond included: one slide, no opacity, ending together.
+    const effects = tiles.flatMap((t) => t.getAnimations()).map((a) => a.effect as KeyframeEffect);
+    expect(effects).toHaveLength(4);
+    for (const effect of effects) {
+      expect(effect.getKeyframes().map((f) => f.opacity)).toEqual([undefined, undefined]);
+      expect(effect.getComputedTiming().endTime).toBe(500);
+    }
   });
 
   it("brings the entering Space into the Stage and keeps the one behind at rest while it moves", () => {

@@ -19,7 +19,10 @@ export type TransitionContext = {
    */
   ahead: { tile: Tile; placement: Placement }[];
   behind: { tile: Tile; placement: Placement }[];
-  /** 1 towards the next Space, -1 towards the previous one. */
+  /**
+   * 1 towards the next Space (its cards come in from the right, or from below), -1 towards the
+   * previous one, at the loop's wrap too.
+   */
   direction: 1 | -1;
   axis: Axis;
   grid: Grid;

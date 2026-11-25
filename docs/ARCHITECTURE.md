@@ -150,7 +150,7 @@ Each package is created by the first slice that needs it.
 - In the engine, a move is `begin` (both Spaces showing, the Transition built) then `end`, which
   commits (the Current space, `data-ts-current` and `change`) or cancels, playing it back. A Transition runs inside `begin`, so it still
   sees the old `current` and `data-ts-current`.
-- `axis` also turns the default slide and its stagger vertical. `destroy()` removes the key, wheel
+- `axis` also turns the default slide vertical. `destroy()` removes the key, wheel
   and pointer listeners and the gesture's timer.
 - A move reads the Stage's size before its own writes; a move made from a `pack` or `change`
   listener, after the engine's writes in the same task, forces a layout. Events go through
@@ -213,7 +213,7 @@ None for the library: it is headless (DEC-06). The demo's look lives in the demo
 What it got right and returns here:
 - A Tile declares its size in Cells (`data-type="2x1"`), and the Grid repeats page after page.
 - One page on screen at a time, `prev`/`next`, and the Tiles entering staggered
-  (`delay: (i % 4) / 10 + i / 50`), which inspires the default Transition.
+  (`delay: (i % 4) / 10 + i / 50`), which inspires the demo's card effects (T3.19).
 What does not return: greedy first-fit with no backtracking (an early choice leaves Holes it never
 fixes), its bugs (`cc > columns` let a Tile at the last column wrap into the next row; the `break`
 when nothing fits left only the row; the page size fixed at 32 Cells; `hasNextPage` inverted),
