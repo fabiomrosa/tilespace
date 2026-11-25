@@ -29,6 +29,28 @@ const shown = (tiles: HTMLElement[]) =>
   );
 
 describe("navigation", () => {
+  it("mounts at the start Space, with no Animation and no change; past the last, at the last", () => {
+    for (const [start, shown] of [
+      [2, 2],
+      [9, 3],
+    ] as const) {
+      const stage = document.createElement("div");
+      for (let i = 0; i < 4; i++) {
+        const tile = document.createElement("div");
+        tile.setAttribute("data-ts-shape", "2x2");
+        stage.append(tile);
+      }
+      const tilespace = createTilespace(stage, { columns: 2, rows: 2, start });
+      const tiles = Array.from(stage.children) as HTMLElement[];
+
+      expect(tilespace.current).toBe(shown);
+      expect(tiles[shown]?.hasAttribute("data-ts-current")).toBe(true);
+      expect(tiles.map((t) => t.hasAttribute("inert"))).toEqual(tiles.map((_, i) => i !== shown));
+      expect(tiles.flatMap((t) => t.getAnimations())).toEqual([]);
+      tilespace.destroy();
+    }
+  });
+
   it("says from which side each move came: 1 from the next Space, -1 from the previous", () => {
     const { tilespace } = mount({ loop: true, transition: false });
     const directions: number[] = [];

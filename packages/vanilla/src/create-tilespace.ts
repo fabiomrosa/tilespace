@@ -57,6 +57,11 @@ export type TilespaceOptions = PackOptions & {
   /** `next` from the last Space goes to the first, and `prev` from the first to the last. */
   loop?: boolean;
   /**
+   * The Space shown at mount (0 by default; past the last, the last), with no Transition and no
+   * `change`: a page that mounts the Stage again keeps the visitor where they were.
+   */
+  start?: number;
+  /**
    * Replaces the default Transition (DEC-10): it returns Animations that are not finished, and the
    * engine cancels them at their end. `false` swaps at once.
    */
@@ -94,7 +99,8 @@ export type Tilespace = {
 
 /**
  * Mounts a Tilespace over the Stage's children, as they are (DEC-06): packs their Shapes into the
- * Grid, places each Tile with CSS grid, and shows Space 0. A derived Grid follows the Stage's size,
+ * Grid, places each Tile with CSS grid, and shows Space `start` (0 by default, clamped to the
+ * last). A derived Grid follows the Stage's size,
  * and added or removed children repack.
  */
 export function createTilespace(stage: HTMLElement, options: TilespaceOptions): Tilespace {
@@ -112,12 +118,13 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
     axis = "horizontal",
     peek = false,
     label = "Tiles",
+    start = 0,
     ...packOptions
   } = options;
   const fit: GridFit | undefined =
     minCellWidth === undefined ? undefined : { minCellWidth, cellAspect, gap };
   // Every check runs before the first write, so an invalid mount leaves the Stage as it was.
-  validateOptions(stage, gap, fit, transition, axis, peek, spaceGap, label);
+  validateOptions(stage, gap, fit, transition, axis, peek, spaceGap, label, start);
   const log = createWriteLog();
   let tiles = Array.from(stage.children) as Tile[];
   const shapesOf = (children: Tile[]) =>
@@ -205,10 +212,10 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
   // The Drag takes the axis; the page keeps the other one, and pinch zoom.
   log.style(stage, "touch-action", `${axis === "horizontal" ? "pan-y" : "pan-x"} pinch-zoom`);
   place();
-  show(0);
+  let current = Math.max(0, Math.min(start, last()));
+  show(current);
 
   const events = createEmitter<TilespaceEvents>();
-  let current = 0;
   let destroyed = false;
   /** A Transition between two Spaces; `space` is the one shown when it is settled. */
   /** `focus`: the element focused in a leaving Tile, focused again if the move is cancelled. */

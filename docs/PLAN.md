@@ -1079,7 +1079,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-11, PLAN "Later" (the Drag, T2.10 review), GOTCHAS "DOM".
 
 ### T3.24 · Mount at a chosen Space
-- **Status:** waiting (T3.23)
+- **Status:** done (2026-11-25)
 - **Goal:** a page that mounts a Stage again where the visitor was shows that Space at once, with
   no slide from Space 1 (the owner, after the T3.9b review).
 - **Depends on:** T3.23 (order only).

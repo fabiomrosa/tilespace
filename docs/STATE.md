@@ -27,10 +27,10 @@ Tile holding its card), the axis and `loop` to choose. `npm run e2e` (in the gat
 Playwright: the rendered boxes match the Packing through `next` and a resize, and `destroy()`
 leaves the Stage as the page wrote it.
 `createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
-score, packer, loop, transition, axis, peek, spaceGap })`
+score, packer, loop, transition, axis, peek, spaceGap, label, start })`
 (`@tilespace/vanilla`) adopts the Stage's children as Tiles. It reads each Shape from
 `data-ts-shape`, the `shape` option or `1x1`, packs them, and writes the Stage's CSS grid and each
-Tile's Placement (DEC-06), and makes the Stage a carousel region named by `label` (DEC-14). Space 0 is shown and the other Spaces are
+Tile's Placement (DEC-06), and makes the Stage a carousel region named by `label` (DEC-14). Space 0 (or `start`, clamped to the last) is shown and the other Spaces are
 `visibility: hidden` and `inert`. `destroy()` puts back every style and attribute it wrote. A custom
 `packer(shapes, grid)` replaces `pack`: it gets copies, and its Packing is checked with
 `validatePacking`. `next()`, `prev()`
@@ -160,4 +160,7 @@ None.
 - **2026-11-25, T3.23:** the Drag leaves a press on a form control (not a checkbox, radio or
   button), an editable element or a scroller that can still scroll along the axis to it; the
   site's dashboard dropped its own `pointerdown` guard.
-- **Next:** T3.24, then T3.10.
+- **2026-11-25, T3.24:** a `start` option mounts at a chosen Space (clamped to the last), with no
+  Transition and no `change`; the site's hero and playground remount where the visitor was, at
+  once.
+- **Next:** T3.10.

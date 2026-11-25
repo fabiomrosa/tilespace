@@ -41,6 +41,8 @@ export function mountHero(
       // A neighbour on both sides from the first Space on.
       loop: true,
       label: "Live tile wall. Drag, scroll or use arrow keys.",
+      // The visitor's place, or the last Space if the new Grid has fewer, at once.
+      start: place,
     });
     labelSpans(wall);
     tilespace.on("pack", () => labelSpans(wall));
@@ -49,9 +51,6 @@ export function mountHero(
       const cards = wall.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card");
       cascade(Array.from(cards), direction, "horizontal", spaceGap);
     });
-    // The visitor's place, as near as the new Grid has one.
-    const spaces = new Set(Array.from(wall.children, (t) => t.getAttribute("data-ts-space"))).size;
-    tilespace.goTo(Math.min(place, spaces - 1));
     liveCounter(tilespace, wall, count);
   };
   for (const query of queries) query.addEventListener("change", mount);
