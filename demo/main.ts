@@ -31,6 +31,14 @@ buildDashboard(byId("dashboard"));
 let stage = byId("stage");
 let tilespace: Tilespace | undefined;
 let spaces = 0;
+/** A pointer is down on a Stage: a move now is a Drag's, its cards already in view. */
+let pressed = false;
+addEventListener("pointerdown", (event) => {
+  pressed = event.target instanceof Node && stage.contains(event.target);
+});
+// After the Drag's own release, which commits it.
+addEventListener("pointerup", () => setTimeout(() => (pressed = false)));
+addEventListener("pointercancel", () => setTimeout(() => (pressed = false)));
 
 /** A custom Transition: the Spaces cross-fade in place. */
 const fade: TilespaceOptions["transition"] = ({ leaving, entering }) => [
@@ -68,10 +76,12 @@ const mount = () => {
   });
   spaces = new Set(Array.from(stage.children, (t) => t.getAttribute("data-ts-space"))).size;
   tilespace.on("change", show);
-  // The cards' own motion, the user's: the Space's new cards, from the side the move came.
+  // The cards' own motion, the user's: the Space's new cards, from the side the move came. Not
+  // when they were already on screen: peeking, or pulled in by a Drag.
   tilespace.on("change", ({ direction }) => {
     const effect = cardEffects[cards.value];
-    if (!effect || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!effect || peek.value !== "off" || pressed) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const current = stage.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card");
     effect(Array.from(current), direction, axis.value as "horizontal" | "vertical");
   });

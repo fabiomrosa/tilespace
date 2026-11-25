@@ -56,6 +56,10 @@ const motions = (page: import("@playwright/test").Page) =>
           (k) => !["offset", "computedOffset", "easing", "composite"].includes(k),
         ),
         from: String(effect.getKeyframes()[0]?.transform ?? ""),
+        /** A card's Tile: in the new Space, and its first column; and the card's turn. */
+        current: target.parentElement?.hasAttribute("data-ts-current"),
+        col: Number(target.parentElement?.style.gridColumnStart),
+        delay: Number(effect.getTiming().delay),
       };
     }),
   );
@@ -77,6 +81,13 @@ test("plays each card effect inside the Tiles, from the side the cards come", as
       const moving = await motions(page);
       const cards = moving.filter((m) => m.card);
       expect(cards.length).toBeGreaterThan(0);
+      expect(cards.every((m) => m.current)).toBe(true);
+      if (effect === "cascade") {
+        // Column by column in their turns: from the left going on, from the right going back.
+        const cols = cards.toSorted((a, b) => a.delay - b.delay).map((m) => m.col);
+        const read = cols.toSorted((a, b) => a - b);
+        expect(cols).toEqual(way === 0 ? read : read.reverse());
+      }
       // The library's slide is the only motion on a Tile, and it is `translate` alone.
       for (const m of moving.filter((m) => m.tile)) expect(m.props).toEqual(["translate"]);
       if (effect !== "pop") {
@@ -85,4 +96,24 @@ test("plays each card effect inside the Tiles, from the side the cards come", as
       await settled(page);
     }
   }
+});
+
+test("plays no card effect after a Drag, whose cards are already in view", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 800 });
+  await page.goto("/");
+  await page.getByLabel("Cards").selectOption("cascade");
+  const box = (await page.locator("#stage").boundingBox()) as {
+    x: number;
+    y: number;
+    width: number;
+  };
+  const y = box.y + 40;
+  await page.mouse.move(box.x + box.width - 40, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2, y, { steps: 8 });
+  await page.mouse.move(box.x + 40, y, { steps: 8 });
+  await page.mouse.up();
+
+  await expect(page.locator("#space")).toHaveText(/^Space 2 of/);
+  expect((await motions(page)).filter((m) => m.card)).toEqual([]);
 });
