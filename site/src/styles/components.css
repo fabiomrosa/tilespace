@@ -508,10 +508,12 @@
 }
 .idea p {
   margin-top: var(--s-3);
-  line-height: 1.5;
+}
+/* A section's lead is a step below the hero's (HANDOFF "Type"). */
+.section .lead {
+  font-size: clamp(17px, 0.4vw + 15.5px, 20px);
 }
 .idea-visual {
-  box-sizing: border-box;
   height: 200px;
   padding: 28px;
   border: 1px solid var(--line);
@@ -549,6 +551,7 @@
   gap: 12px;
 }
 .shapes > span {
+  flex-shrink: 0;
   border-radius: 8px;
 }
 .shapes > :nth-child(1) {
@@ -604,6 +607,40 @@
 .chip.pink {
   background: var(--tile-pink);
 }
+/* Three narrow columns on a tablet: smaller chips and a tighter visual. */
+@media (max-width: 1023px) {
+  .idea-visual {
+    padding: 18px;
+  }
+  .inputs {
+    gap: 8px;
+  }
+  .inputs kbd,
+  .inputs .chip {
+    min-height: 30px;
+    padding: 0 9px;
+    font-size: 12px;
+  }
+  .headless .your-card,
+  .spans code {
+    font-size: 11px;
+  }
+  .shapes {
+    gap: 8px;
+  }
+  .shapes > :nth-child(1) {
+    width: 44px;
+    height: 44px;
+  }
+  .shapes > :nth-child(2) {
+    width: 44px;
+    height: 20px;
+  }
+  .shapes > :nth-child(3) {
+    width: 20px;
+    height: 20px;
+  }
+}
 @media (max-width: 639px) {
   .ideas {
     grid-template-columns: 1fr;
@@ -611,18 +648,5 @@
   }
   .idea-visual {
     height: 132px;
-    padding: 18px;
-  }
-  .shapes > :nth-child(1) {
-    width: 52px;
-    height: 52px;
-  }
-  .shapes > :nth-child(2) {
-    width: 52px;
-    height: 24px;
-  }
-  .shapes > :nth-child(3) {
-    width: 24px;
-    height: 24px;
   }
 }

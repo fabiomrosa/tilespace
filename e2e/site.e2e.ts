@@ -74,15 +74,40 @@ test("lays out the idea's three cards in a row, and in a column on a phone, insi
   page,
 }) => {
   const idea = page.getByRole("region", { name: "Bring your own tiles" });
-  /** Each card's box, and the screen's width. */
+  /** Each card's box, the screen's width, and what sticks out of a visual's content box. */
   const cards = () =>
     idea.locator(".idea").evaluateAll((els) => ({
       boxes: els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect),
       width: document.documentElement.clientWidth,
+      // Their overflow is clipped, so a cut chip or shape never moves the card's edges.
+      cut: els.flatMap((el) => {
+        const visual = el.querySelector(".idea-visual") as HTMLElement;
+        const style = getComputedStyle(visual);
+        const box = visual.getBoundingClientRect();
+        const [top, left] = [
+          box.top + Number.parseFloat(style.paddingTop),
+          box.left + Number.parseFloat(style.paddingLeft),
+        ];
+        const [bottom, right] = [
+          box.bottom - Number.parseFloat(style.paddingBottom),
+          box.right - Number.parseFloat(style.paddingRight),
+        ];
+        return Array.from(visual.querySelectorAll("span, kbd, code")).flatMap((child) => {
+          const b = child.getBoundingClientRect();
+          return b.top < top - 0.5 ||
+            b.left < left - 0.5 ||
+            b.bottom > bottom + 0.5 ||
+            b.right > right + 0.5
+            ? [child.textContent || child.className || child.tagName]
+            : [];
+        });
+      }),
     }));
   for (const [width, row] of [
     [1440, true],
+    [1024, true],
     [768, true],
+    [640, true],
     [390, false],
     [360, false],
   ] as const) {
@@ -93,8 +118,9 @@ test("lays out the idea's three cards in a row, and in a column on a phone, insi
       "Flexible spans",
       "Every input",
     ]);
-    const { boxes, width: client } = await cards();
+    const { boxes, width: client, cut } = await cards();
     expect(boxes).toHaveLength(3);
+    expect(cut, `at ${width} px`).toEqual([]);
     for (const box of boxes) expect(box.right, `at ${width} px`).toBeLessThanOrEqual(client);
     const [a, b] = boxes as [DOMRect, DOMRect];
     if (row) expect([b.top, b.left > a.left]).toEqual([a.top, true]);
