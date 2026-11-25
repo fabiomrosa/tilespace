@@ -13,18 +13,27 @@ const STEP = 60;
 const EASING = "cubic-bezier(0.2, 0, 0, 1)";
 
 /** Each card of the new Space falls `behind` px back from `direction`'s side, then settles. */
-export function cascade(cards: HTMLElement[], direction: 1 | -1, behind: number) {
+export function cascade(
+  cards: HTMLElement[],
+  direction: 1 | -1,
+  axis: "horizontal" | "vertical",
+  behind: number,
+) {
   const place = (card: HTMLElement) => {
     const tile = card.parentElement as HTMLElement;
     return [Number(tile.style.gridColumnStart), Number(tile.style.gridRowStart)] as const;
   };
-  // Column by column, top to bottom; going back, the other end first.
+  // Column by column on a horizontal axis, row by row on a vertical one; going back, the other end
+  // first.
+  const [main, cross] = axis === "horizontal" ? ([0, 1] as const) : ([1, 0] as const);
   const order = cards
     .map((card) => ({ card, at: place(card) }))
-    .sort((a, b) => a.at[0] - b.at[0] || a.at[1] - b.at[1])
+    .sort((a, b) => a.at[main] - b.at[main] || a.at[cross] - b.at[cross])
     .map(({ card }) => card);
   if (direction === -1) order.reverse();
-  const landed = { transform: `translateX(${direction * behind}px)` };
+  const landed = {
+    transform: `${axis === "horizontal" ? "translateX" : "translateY"}(${direction * behind}px)`,
+  };
   for (const [i, card] of order.entries()) {
     // A quick move back and forth: the newer cascade replaces the one still running.
     for (const animation of card.getAnimations()) animation.cancel();
