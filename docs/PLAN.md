@@ -951,7 +951,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-06, DEC-10.
 
 ### T3.20 · The site's favicon
-- **Status:** next
+- **Status:** done (2026-11-25)
 - **Goal:** the site's tab and home-screen icon is the logo mark (the owner).
 - **Depends on:** none.
 - **In scope:** `site/public/favicon.svg`, the header's logo mark (the 2x2 coral, the blue and the

@@ -19,6 +19,21 @@ test("serves the site's build under the Pages base path", async ({ page }) => {
   );
 });
 
+test("links the logo mark as its icons, under the base path", async ({ page, request }) => {
+  await page.goto("./");
+
+  for (const rel of ["icon", "apple-touch-icon"]) {
+    const href = await page
+      .locator(`link[rel="${rel}"]`)
+      .evaluate((el) => (el as HTMLLinkElement).href);
+    expect(new URL(href).pathname).toMatch(/^\/tilespace\//);
+    const response = await request.get(href);
+    expect(response.ok()).toBe(true);
+    // `vite preview` answers any path with the page: the icon must be an image.
+    expect(response.headers()["content-type"]).toMatch(/^image\//);
+  }
+});
+
 /** The page's background, from the tokens: light #F6F6F3, dark #0F1115. */
 const background = (page: Page) =>
   page.evaluate(() => getComputedStyle(document.body).backgroundColor);

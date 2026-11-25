@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+  <title>tilespace</title>
+  <!-- The header's logo mark (layout.css .logo-mark): a 2x2 Tile and two 1x1 Tiles, 2 px apart. -->
+  <rect x="0" y="5" width="18" height="18" rx="2" fill="#ff8a65" />
+  <rect x="20" y="5" width="8" height="8" rx="2" fill="#6b8cff" />
+  <rect x="20" y="15" width="8" height="8" rx="2" fill="#ffc24b" />
+</svg>
