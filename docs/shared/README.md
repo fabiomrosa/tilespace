@@ -1,6 +1,6 @@
 # tilespace
 
-A headless TypeScript library that packs the user's own elements, as Tiles of any span, into the pages of a grid and moves between those pages like desktop workspaces. An open-source lab rewriting a 2017 jQuery/TweenMax tile wall (`../surface/chosen.surface.js`); no business model.
+A headless TypeScript library that packs the user's own elements, as Tiles of any span, into the pages of a grid and moves between those pages like desktop workspaces. An open-source lab rewriting a 2017 jQuery/TweenMax tile wall (`reference/surface.js`); no business model.
 
 These docs are shared by the whole project. It is a single repository (`tilespace`, the hub), so
 there is no `CONTRACT.md`: the packages inside it talk through their TypeScript public APIs.

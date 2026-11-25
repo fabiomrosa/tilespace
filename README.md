@@ -16,7 +16,8 @@
 A headless library that packs your own elements, as tiles of any span, into the pages of a grid,
 filling every page but the last, and moves between pages like desktop workspaces, with transitions
 you can replace. You bring the content of every tile; it brings the grid, the packing and the
-motion. Vanilla TypeScript first, then React and Angular. A lab rewriting a 2017 jQuery tile wall.
+motion. Vanilla TypeScript first, then React and Angular. A lab rewriting a 2017 jQuery tile wall
+([`reference/surface.js`](reference/surface.js)).
 
 Agents: start with `AGENTS.md`.
 
