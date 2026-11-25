@@ -210,7 +210,7 @@ None. GitHub for the code and CI; npm for publishing (from M3).
 ## Design references
 None for the library: it is headless (DEC-06). The demo's look lives in the demo only.
 
-## Lessons from the 2017 wall (`../surface/chosen.surface.js`)
+## Lessons from the 2017 wall (`reference/surface.js`)
 What it got right and returns here:
 - A Tile declares its size in Cells (`data-type="2x1"`), and the Grid repeats page after page.
 - One page on screen at a time, `prev`/`next`, and the Tiles entering staggered

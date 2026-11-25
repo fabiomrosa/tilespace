@@ -889,6 +889,25 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `test/custom-transition.test.ts`, `e2e/site.e2e.ts`, ARCHITECTURE, PLAN, STATE.
 - **References:** DEC-06, DEC-10, the T3.8b review.
 
+### T3.14 · The 2017 wall as a reference
+- **Status:** done (2026-11-25)
+- **Goal:** the repository shows where the idea came from (the owner, as list-picker links its
+  2017 repository).
+- **Depends on:** none.
+- **In scope:** `reference/surface.js`, the 2017 file with its layout fixed by Biome's formatter,
+  its comments kept, and the client's and agency's names replaced by generic ones (the owner);
+  frozen, excluded from the size check and from Biome; a README beside it; the docs that pointed
+  to the file outside the repository point to it.
+- **Out of scope:** changing its code.
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. `reference/surface.js` differs from the original only in layout and those names: with the
+     names put back, Biome's formatter on the original gives the file.
+  2. `npm run verify` passes with it in the repository.
+- **Files:** 9: `reference/{surface.js,README.md}`, `.agents/protected.json`, `biome.json`,
+  `README.md`, ARCHITECTURE, PRODUCT, shared README, PLAN, STATE.
+- **References:** ARCHITECTURE "Lessons from the 2017 wall".
+
 ### T3.9a · The site's playground: the examples
 - **Status:** waiting (T3.8c)
 - **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.

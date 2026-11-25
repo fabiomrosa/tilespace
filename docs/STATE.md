@@ -117,4 +117,6 @@ None.
   which the owner accepted.
 - **2026-11-25, T3.13:** with `peek`, the Space beyond the entering one and the one behind the
   leaving one slide with the block (`TransitionContext.ahead`, `.behind`): no flick at the edges.
+- **2026-11-25, T3.14:** the 2017 wall is in the repository as `reference/surface.js`, its layout
+  formatted, its code and comments as they were.
 - **Next:** T3.9a.

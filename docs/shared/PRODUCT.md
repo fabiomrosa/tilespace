@@ -7,7 +7,7 @@ A headless, framework-agnostic library that packs the user's own elements, as Ti
 into the Spaces (pages) of a grid, and moves between those Spaces like desktop workspaces: one Space
 on screen at a time, the next one mounting with a transition. The library ships the grid, the
 packing, the Tile containers and the motion; the content and look of every Tile belong to the user.
-A lab: it rewrites a 2017 jQuery/TweenMax tile wall (`../surface/chosen.surface.js`) and tests one
+A lab: it rewrites a 2017 jQuery/TweenMax tile wall (`reference/surface.js`) and tests one
 idea, that a bounded depth-first search fills the Spaces better than the old greedy first-fit, fast
 enough to repack on every resize.
 

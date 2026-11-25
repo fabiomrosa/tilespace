@@ -1,7 +1,17 @@
 {
   "_doc": "Read by .claude/hooks/guard-edits.py (Claude Code, before the edit) and by scripts/check-frozen.py and scripts/check-pr-size.py (CI, any agent). Globs are relative to the repository root, except readonly_anywhere, which matches absolute paths; in size_excluded, a glob without a '/' matches the file name in any folder. Lockfiles are already excluded from the size check. Examples: generated {\"glob\": \"openapi/api.json\", \"how\": \"run make spec\"}; frozen_when_released {\"glob\": \"db/migration/V*.sql\", \"why\": \"released migrations are never edited; add a new one\"}; readonly_anywhere {\"glob\": \"*/other-repo/src/generated/*\", \"why\": \"another repo's generated code\"}; size_excluded {\"glob\": \"*/fixtures/*\", \"why\": \"sample data, reviewed by its test\"}. Generated files never count toward the size either.",
   "generated": [],
-  "frozen_when_released": [],
+  "frozen_when_released": [
+    {
+      "glob": "reference/surface.js",
+      "why": "the 2017 wall, kept as it was apart from its layout; it is a record, not code to change"
+    }
+  ],
   "readonly_anywhere": [],
-  "size_excluded": []
+  "size_excluded": [
+    {
+      "glob": "reference/surface.js",
+      "why": "the 2017 wall, added once as a reference; its README is the reviewable part"
+    }
+  ]
 }
