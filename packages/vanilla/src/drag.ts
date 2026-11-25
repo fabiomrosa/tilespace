@@ -54,6 +54,8 @@ export function listenDrag(
   const onDown = (event: PointerEvent) => {
     if (!event.isPrimary || event.button > 0) return;
     const path = event.composedPath();
+    // A new press ends any older one (released outside the Stage, unseen), even a control's.
+    press = undefined;
     if (owns(stage, path)) return;
     press = { id: event.pointerId, x: event.clientX, y: event.clientY, path };
     dragged = false;

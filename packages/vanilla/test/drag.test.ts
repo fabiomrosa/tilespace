@@ -241,5 +241,33 @@ describe("the Drag", () => {
     left = 400;
     drag(scroller, [250, 100], 10);
     expect(tilespace.current).toBe(1);
+    // Back at its start, dragging right (towards the start) is the Drag's again.
+    left = 0;
+    drag(scroller, [350, 500], 10);
+    expect(tilespace.current).toBe(0);
+  });
+
+  it("finds a control inside an open shadow tree", () => {
+    const { tilespace, tiles } = mount();
+    const host = document.createElement("div");
+    const slider = Object.assign(document.createElement("input"), { type: "range" });
+    host.attachShadow({ mode: "open" }).append(slider);
+    tiles[0]?.append(host);
+
+    drag(slider, [250, 100], 10);
+
+    expect(tilespace.current).toBe(0);
+  });
+
+  it("forgets an older press, released unseen, when a control is pressed", () => {
+    const { stage, tilespace, tiles } = mount();
+    const slider = Object.assign(document.createElement("input"), { type: "range" });
+    tiles[0]?.append(slider);
+    // A press released outside the Stage: no pointerup reaches it.
+    pointer(stage, "pointerdown", 300, 0);
+
+    drag(slider, [250, 100], 10);
+
+    expect(tilespace.current).toBe(0);
   });
 });
