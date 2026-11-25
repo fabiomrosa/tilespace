@@ -122,4 +122,6 @@ None.
 - **2026-11-25, plan the home's sections:** like list-picker's home (the owner): the lab with its
   table (T3.11b), the packages with a page each (T3.15), install tabs (T3.16), links and the
   origin (T3.17).
+- **2026-11-25, hotfix of T3.13:** with `peek`, an entering Tile lands at most the `spaceGap` short
+  of its place (40 px otherwise), so the last column no longer covers the Space resting beyond.
 - **Next:** T3.9a.

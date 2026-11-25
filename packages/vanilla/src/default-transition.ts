@@ -36,7 +36,10 @@ export type TransitionContext = {
 const SLIDE = 500;
 /** Each entering Tile's settle after the slide: a fade and a short slide. */
 const SETTLE = 450;
-/** How far a Tile lands short of its place before it settles, in CSS pixels. */
+/**
+ * How far a Tile lands short of its place before it settles, in CSS pixels; with `peek`, at most the
+ * space gap, so it never covers the Space resting beyond.
+ */
 const SHORT = 40;
 /** At most this long between two Tiles' settles, and about this long for them all. */
 const STAGGER = 80;
@@ -72,6 +75,7 @@ export function defaultTransition(context: TransitionContext): Animation[] {
   const size = (horizontal ? width : height) + spaceGap;
   // Peeking Tiles are already in full view: they stay so, and nothing flashes.
   const faint = peek ? 1 : GHOST;
+  const short = peek ? Math.min(SHORT, spaceGap) : SHORT;
   const step = Math.min(STAGGER, CASCADE / Math.max(1, entering.length - 1));
   // The neighbours beyond move with the block: one in from further away, one on out.
   const along =
@@ -100,7 +104,7 @@ export function defaultTransition(context: TransitionContext): Animation[] {
       const turn = direction === 1 ? i : entering.length - 1 - i;
       const start = SLIDE + turn * step;
       const total = start + SETTLE;
-      const landed = { translate: at(direction * SHORT), opacity: faint };
+      const landed = { translate: at(direction * short), opacity: faint };
       return tile.animate(
         [
           { offset: 0, translate: at(direction * size), opacity: faint, easing: EASING },
