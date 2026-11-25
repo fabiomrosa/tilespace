@@ -130,6 +130,27 @@ test("copies the install line", async ({ page, context }) => {
 
 test.describe("the hero wall", () => {
   const wall = (page: Page) => page.getByRole("region", { name: /^Live tile wall/ });
+  /** Whether a Tile of the Space before and after the current one shows past each side. */
+  const bleeds = (page: Page, current: number) =>
+    wall(page).evaluate((el, k) => {
+      const { left, right } = el.getBoundingClientRect();
+      // The neighbours are `inert`, out of hit-testing too: positions, and no clip on the way up
+      // (boxes ignore a clip, and only the screen's edge may cut them).
+      // `html` and `body` clip at the screen on purpose; anything else that clips would cut it.
+      let clipped = false;
+      for (let up: Element | null = el; up && up !== document.body; up = up.parentElement) {
+        const style = getComputedStyle(up);
+        clipped ||= style.clipPath !== "none" || (up !== el && style.overflowX !== "visible");
+      }
+      const boxes = (space: number) =>
+        Array.from(el.children)
+          .filter((t) => t.getAttribute("data-ts-space") === String(space))
+          .map((t) => t.getBoundingClientRect());
+      return {
+        before: !clipped && boxes(k - 1).some((b) => b.right < left && b.right > 0),
+        after: !clipped && boxes(k + 1).some((b) => b.left > right && b.left < innerWidth),
+      };
+    }, current);
   const columns = (page: Page) =>
     wall(page).evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
 
@@ -147,15 +168,7 @@ test.describe("the hero wall", () => {
     );
     expect(spaces).toBe(packed);
 
-    const seen = await wall(page).evaluate((el) => {
-      const right = el.getBoundingClientRect().right;
-      const next = Array.from(el.children).filter((t) => t.getAttribute("data-ts-space") === "1");
-      return next.some((t) => {
-        const box = t.getBoundingClientRect();
-        return box.left > right && box.left < innerWidth;
-      });
-    });
-    expect(seen).toBe(true);
+    expect(await bleeds(page, 0)).toMatchObject({ after: true });
     // The bleed is clipped by the screen: the page itself never scrolls sideways.
     expect(
       await page.evaluate(
@@ -165,6 +178,13 @@ test.describe("the hero wall", () => {
 
     await page.getByRole("button", { name: "Next Space" }).click();
     await expect(counter).toHaveText(`Space 2 of ${spaces}`);
+    // Both neighbours, once the move has settled (the engine brings them back at its end).
+    await page.waitForFunction(() => document.getAnimations().length === 0);
+    expect(await bleeds(page, 1)).toEqual({ before: true, after: true });
+    // Narrower desktops too, before the container stops growing.
+    await page.setViewportSize({ width: 1100, height: 900 });
+    await expect.poll(() => bleeds(page, 1)).toEqual({ before: true, after: true });
+    await page.setViewportSize({ width: 1440, height: 900 });
     await wall(page).focus();
     await page.keyboard.press("ArrowRight");
     await expect(counter).toHaveText(`Space 3 of ${spaces}`);
@@ -190,6 +210,8 @@ test.describe("the hero wall", () => {
     await page.setViewportSize({ width: 390, height: 844 });
 
     await expect.poll(() => columns(page)).toBe(4);
+    await page.waitForFunction(() => document.getAnimations().length === 0);
+    expect(await bleeds(page, 1)).toEqual({ before: true, after: true });
     // One remount (role removed, then written back), though two breakpoints were crossed.
     expect(mounts).toBe(2);
     await expect(page.getByText(/^Space \d+ of \d+$/)).toHaveText(/^Space 2 of /);

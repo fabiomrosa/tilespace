@@ -853,10 +853,28 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `components.css`, `base.css`, `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** `docs/site/HANDOFF.md` row 1, "Motion and accessibility", DEC-14.
 
-### T3.9a · The site's playground: the examples
-- **Status:** waiting (T3.8b)
-- **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
+### T3.8c · The hero wall bleeds both ways
+- **Status:** done (2026-11-24)
+- **Goal:** the hero's wall shows a neighbour past both sides, as the owner asked after T3.8b.
 - **Depends on:** T3.8b.
+- **In scope:** no clip on the left; `loop`, so Prev from Space 1 wraps; the Stage centred and at
+  most the screen less 88 px a side on a desktop, and centred on a tablet and a phone, so both
+  neighbours show at every width. On Space 1 the left strip shows the last Space's empty end (its
+  Holes gather at the end of the flow): accepted by the owner, 2026-11-25.
+- **Out of scope:** the engine's empty bleed during a move (PLAN "Later").
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. In Chromium at 1440 and 1100 px on Space 2, Tiles of Space 1 show left of the Stage and of
+     Space 3 right of it, with nothing clipping them but the screen, and the page doesn't scroll
+     sideways.
+- **Files:** 7, ~90 lines: `components.css`, `demos/hero.ts`, `index.html`, `e2e/site.e2e.ts`, PLAN,
+  ROADMAP, STATE.
+- **References:** `docs/site/HANDOFF.md` row 1 (which bled one side only).
+
+### T3.9a · The site's playground: the examples
+- **Status:** waiting (T3.8c)
+- **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
+- **Depends on:** T3.8c.
 - **In scope:** the tablist (APG tabs: roving focus, `aria-selected`), the Showcase, Gallery and
   Dashboard factories in `demos/tiles.ts` (the Gallery's images as the owner decides), the framed
   Stage (8x4 at 480 px; 4x5 at 360 px on a phone, mounted again across breakpoints), prev/next and

@@ -8,7 +8,7 @@ const LAYOUTS = [
   { query: "all", columns: 4, rows: 4, gap: 8, spaceGap: 16 },
 ];
 
-/** The hero's wall: it peeks at the next Space and is mounted again when the breakpoint changes. */
+/** The hero's wall: it peeks at both neighbours and is mounted again when the breakpoint changes. */
 export function mountHero(
   wall: HTMLElement,
   prev: HTMLElement,
@@ -34,6 +34,8 @@ export function mountHero(
       gap,
       spaceGap,
       peek: true,
+      // A neighbour on both sides from the first Space on.
+      loop: true,
       label: "Live tile wall. Drag, scroll or use arrow keys.",
     });
     // The visitor's place, as near as the new Grid has one.

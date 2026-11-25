@@ -82,14 +82,17 @@
   color: var(--ink);
 }
 
-/* The wall: the Stage keeps the container's width and the next Space bleeds past the screen's
-   right edge. The frame clips the left at the container, so the previous Space stays hidden. */
+/* The wall: the Stage keeps the container's width, and the Spaces before and after bleed past it
+   to the screen's edges (the owner). The page clips them (base.css). */
 .wall-frame {
   margin-top: var(--s-14);
-  clip-path: inset(-8px -100vw -8px 0);
 }
+/* Never wider than the screen less 88 px a side, centred: a neighbour always shows past each edge,
+   from 1024 px up to where the container stops growing. */
 .wall {
   height: 436px;
+  width: min(100%, calc(100vw - 176px));
+  margin-inline: auto;
 }
 .wall > div {
   display: flex;
@@ -167,9 +170,11 @@
   .hero-actions {
     grid-column: 1 / -1;
   }
+  /* Narrower than the container and centred, so both neighbours show. */
   .wall {
     height: 400px;
     width: calc(100% - 64px);
+    margin-inline: auto;
   }
   .wall:not([role]) {
     grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -203,10 +208,10 @@
   .wall-frame {
     margin-top: var(--s-8);
   }
-  /* A 320 px Space on a 390 px screen: about 38 px of the next one shows. */
+  /* A 314 px Space on a 390 px screen: about 22 px of each neighbour shows. */
   .wall {
     height: 312px;
-    width: calc(100% - 38px);
+    width: calc(100% - 44px);
   }
   .wall:not([role]) {
     grid-template-columns: repeat(4, minmax(0, 1fr));

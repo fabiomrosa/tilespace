@@ -112,4 +112,7 @@ None.
   edge, and the Grid follows the breakpoint (10x4, 8x4, 4x4; mounted again on a change). Its
   "Space n of N" is a live region fed by `change` and `pack`. With JavaScript off the tiles fill a
   plain clipped grid.
+- **2026-11-25, T3.8c:** the hero's wall bleeds both ways with `loop` (the owner), centred and
+  narrower than the screen at every width. On Space 1 the left strip is the last Space's empty end,
+  which the owner accepted.
 - **Next:** T3.9a.
