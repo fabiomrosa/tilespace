@@ -163,4 +163,6 @@ None.
 - **2026-11-25, T3.24:** a `start` option mounts at a chosen Space (clamped to the last), with no
   Transition and no `change`; the site's hero and playground remount where the visitor was, at
   once.
-- **Next:** T3.10.
+- **2026-11-25, T3.10 (the site's first section):** "Bring your own tiles", static: the Headless,
+  Flexible spans and Every input cards from the handoff, three in a row and one column on a phone.
+- **Next:** T3.3.

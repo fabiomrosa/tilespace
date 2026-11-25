@@ -1098,7 +1098,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-11, PLAN "Later" (`goTo` with no Transition).
 
 ### T3.10 · The site's first section
-- **Status:** waiting (T3.9b)
+- **Status:** done (2026-11-25)
 - **Goal:** "Bring your own tiles" explains the idea.
 - **Depends on:** T3.9b.
 - **In scope:** the section's static markup and visuals (three columns; one on a phone).
