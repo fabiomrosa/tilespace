@@ -34,6 +34,8 @@ export function mountHero(
       gap,
       spaceGap,
       peek: true,
+      // A neighbour on both sides from the first Space on.
+      loop: true,
       label: "Live tile wall. Drag, scroll or use arrow keys.",
     });
     // The visitor's place, as near as the new Grid has one.
