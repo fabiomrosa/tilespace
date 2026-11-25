@@ -87,8 +87,12 @@
 .wall-frame {
   margin-top: var(--s-14);
 }
+/* Never wider than the screen less 88 px a side, centred: a neighbour always shows past each edge,
+   from 1024 px up to where the container stops growing. */
 .wall {
   height: 436px;
+  width: min(100%, calc(100vw - 176px));
+  margin-inline: auto;
 }
 .wall > div {
   display: flex;

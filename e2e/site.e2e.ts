@@ -136,9 +136,11 @@ test.describe("the hero wall", () => {
       const { left, right } = el.getBoundingClientRect();
       // The neighbours are `inert`, out of hit-testing too: positions, and no clip on the way up
       // (boxes ignore a clip, and only the screen's edge may cut them).
+      // `html` and `body` clip at the screen on purpose; anything else that clips would cut it.
       let clipped = false;
-      for (let up = el.parentElement; up; up = up.parentElement) {
-        clipped ||= getComputedStyle(up).clipPath !== "none";
+      for (let up: Element | null = el; up && up !== document.body; up = up.parentElement) {
+        const style = getComputedStyle(up);
+        clipped ||= style.clipPath !== "none" || (up !== el && style.overflowX !== "visible");
       }
       const boxes = (space: number) =>
         Array.from(el.children)
@@ -179,6 +181,10 @@ test.describe("the hero wall", () => {
     // Both neighbours, once the move has settled (the engine brings them back at its end).
     await page.waitForFunction(() => document.getAnimations().length === 0);
     expect(await bleeds(page, 1)).toEqual({ before: true, after: true });
+    // Narrower desktops too, before the container stops growing.
+    await page.setViewportSize({ width: 1100, height: 900 });
+    await expect.poll(() => bleeds(page, 1)).toEqual({ before: true, after: true });
+    await page.setViewportSize({ width: 1440, height: 900 });
     await wall(page).focus();
     await page.keyboard.press("ArrowRight");
     await expect(counter).toHaveText(`Space 3 of ${spaces}`);
