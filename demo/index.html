@@ -26,7 +26,9 @@
       .frame.centred .stage { max-width: 1040px; margin: 0 auto; }
       /* Vertically the neighbours come from above and below: the Stage leaves room there instead. */
       .frame.centred.vertical .stage { max-width: none; max-height: calc(100% - 160px); align-self: center; height: 100%; margin: 0 16px; }
-      .stage > div { border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; overflow: hidden; background: hsl(var(--hue) 55% 78%); }
+      /* The Tile is bare; its card fills it, and the card effects animate the card (DEC-06). */
+      .stage > div > .card { box-sizing: border-box; height: 100%; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; overflow: hidden; background: hsl(var(--hue) 55% 78%); }
+      .stage > div { position: relative; }
       .stage > div:nth-child(4n + 1) { --hue: 210; }
       .stage > div:nth-child(4n + 2) { --hue: 150; }
       .stage > div:nth-child(4n + 3) { --hue: 35; }
@@ -34,9 +36,9 @@
       /* The Tile's place in the HTML, to read the fill order (left to right, row by row) on screen. */
       #stage { counter-reset: tile; }
       #stage > div { counter-increment: tile; }
-      #stage > div::before { content: counter(tile); font-size: 12px; font-weight: 600; }
-      #stage > div::after { content: attr(data-ts-span); font-size: 12px; opacity: 0.6; }
-      #gallery > div { padding: 0; position: relative; }
+      #stage .card::before { content: counter(tile); font-size: 12px; font-weight: 600; }
+      #stage > div::after { content: attr(data-ts-span); font-size: 12px; opacity: 0.6; position: absolute; right: 10px; bottom: 10px; pointer-events: none; }
+      #gallery .card { padding: 0; position: relative; }
       #gallery img { width: 100%; height: 100%; object-fit: cover; }
       #gallery span { position: absolute; left: 10px; bottom: 8px; color: #fff; }
       #gap, #space-gap { width: 4em; }
@@ -56,6 +58,14 @@
           <option value="slide">Slide</option>
           <option value="fade">Fade (custom)</option>
           <option value="none">None</option>
+        </select>
+      </label>
+      <label>Cards
+        <select id="cards">
+          <option value="none">none</option>
+          <option value="cascade">cascade</option>
+          <option value="3d">3-D cascade</option>
+          <option value="pop">pop</option>
         </select>
       </label>
       <label>Axis
@@ -83,20 +93,20 @@
     <div id="frame" class="frame">
     <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus when the Tile holding it hides, so the keys keep moving -->
     <div id="stage" class="stage" tabindex="0" style="row-gap: 12px;">
-      <div data-ts-shape="3x2 2x2">Weather</div>
-      <div data-ts-shape="1x1" style="grid-column-start: 1;">Clock</div>
-      <div data-ts-shape="2x1">Battery</div>
-      <div data-ts-shape="2x3 2x2">Calendar</div>
-      <div data-ts-shape="1x2">Volume</div>
-      <div data-ts-shape="1x1">Timer <button id="timer" type="button">Start</button></div>
-      <div data-ts-shape="4x2 3x2 2x2">Photos</div>
-      <div data-ts-shape="2x2">Notes</div>
-      <div data-ts-shape="1x1">Wi-Fi</div>
-      <div data-ts-shape="3x1 2x1">Music</div>
-      <div data-ts-shape="2x2 1x1">Stocks</div>
-      <div data-ts-shape="1x1">Focus</div>
-      <div data-ts-shape="2x1">Reminders</div>
-      <div data-ts-shape="1x3 1x2">News</div>
+      <div data-ts-shape="3x2 2x2"><div class="card">Weather</div></div>
+      <div data-ts-shape="1x1" style="grid-column-start: 1;"><div class="card">Clock</div></div>
+      <div data-ts-shape="2x1"><div class="card">Battery</div></div>
+      <div data-ts-shape="2x3 2x2"><div class="card">Calendar</div></div>
+      <div data-ts-shape="1x2"><div class="card">Volume</div></div>
+      <div data-ts-shape="1x1"><div class="card">Timer <button id="timer" type="button">Start</button></div></div>
+      <div data-ts-shape="4x2 3x2 2x2"><div class="card">Photos</div></div>
+      <div data-ts-shape="2x2"><div class="card">Notes</div></div>
+      <div data-ts-shape="1x1"><div class="card">Wi-Fi</div></div>
+      <div data-ts-shape="3x1 2x1"><div class="card">Music</div></div>
+      <div data-ts-shape="2x2 1x1"><div class="card">Stocks</div></div>
+      <div data-ts-shape="1x1"><div class="card">Focus</div></div>
+      <div data-ts-shape="2x1"><div class="card">Reminders</div></div>
+      <div data-ts-shape="1x3 1x2"><div class="card">News</div></div>
     </div>
     <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: as the showcase's Stage, it keeps the focus for the keys -->
     <div id="gallery" class="stage" tabindex="0" hidden></div>

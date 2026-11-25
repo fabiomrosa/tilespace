@@ -931,7 +931,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-10, T2.13, T2.13b, T2.13c.
 
 ### T3.19 · The demo's card effects
-- **Status:** waiting (T3.18)
+- **Status:** done (2026-11-25)
 - **Goal:** a developer sees three card effects written as user code on `change` and copies one
   (the owner: "quero variações").
 - **Depends on:** T3.18.
