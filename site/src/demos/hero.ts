@@ -1,5 +1,6 @@
 import { createTilespace, type Tilespace } from "@tilespace/vanilla";
 import { liveCounter } from "../ui/live-counter.ts";
+import { labelSpans } from "../ui/span-labels.ts";
 import { cascade } from "./card-cascade.ts";
 
 /** The wall's Grid and gaps per breakpoint (HANDOFF row 1): desktop, tablet, phone. */
@@ -29,13 +30,6 @@ export function mountHero(
   for (const type of ["pointerup", "pointercancel", "contextmenu"]) {
     addEventListener(type, () => setTimeout(() => (pressed = false)));
   }
-  /** Each card shows its Tile's Span, which the library chooses and writes. */
-  const label = () => {
-    for (const tile of wall.children as HTMLCollectionOf<HTMLElement>) {
-      const card = tile.firstElementChild as HTMLElement | null;
-      if (card) card.dataset.span = tile.dataset.tsSpan ?? "";
-    }
-  };
   const queries = LAYOUTS.map((layout) => matchMedia(layout.query));
   const mount = () => {
     // The last layout's query is "all": one always matches. A resize across two breakpoints fires
@@ -56,8 +50,8 @@ export function mountHero(
       loop: true,
       label: "Live tile wall. Drag, scroll or use arrow keys.",
     });
-    label();
-    tilespace.on("pack", label);
+    labelSpans(wall);
+    tilespace.on("pack", () => labelSpans(wall));
     tilespace.on("change", ({ direction }) => {
       if (pressed || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const cards = wall.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card");

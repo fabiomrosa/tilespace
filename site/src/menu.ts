@@ -8,7 +8,8 @@ export function setUpMenu(button: HTMLButtonElement, nav: HTMLElement): void {
   nav.addEventListener("click", (event) => {
     if ((event.target as Element).closest("a")) {
       open(false);
-      button.focus();
+      // After the jump to the link's section, which takes the focus along: no scroll back up.
+      setTimeout(() => button.focus({ preventScroll: true }));
     }
   });
   document.addEventListener("keydown", (event) => {
