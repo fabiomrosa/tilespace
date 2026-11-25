@@ -2,21 +2,23 @@
  * The demo (T2.6, T2.11): three examples (a showcase of mixed Shapes, a gallery, a dashboard of
  * widgets that keep their state) on Stages whose Grid follows their size. Every input moves:
  * Prev and Next, the arrow keys with focus inside the Stage, the wheel and the Drag. The
- * Transition, the axis, where the Holes go, the gaps, `loop` and `peek` can be changed (the
- * Tilespace is mounted again), and Destroy puts the Stage back as the page wrote it. Built with
- * DOM APIs only.
+ * Transition, the cards' own effect (user code on `change`, `card-effects.ts`), the axis, where the
+ * Holes go, the gaps, `loop` and `peek` can be changed (the Tilespace is mounted again), and
+ * Destroy puts the Stage back as the page wrote it. Built with DOM APIs only.
  */
 import {
   createTilespace,
   type Tilespace,
   type TilespaceOptions,
 } from "../packages/vanilla/src/index.ts";
+import { cardEffects } from "./card-effects.ts";
 import { buildDashboard, buildGallery } from "./examples.ts";
 
 const byId = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const label = byId("space");
 const toggle = byId("toggle");
 const transition = byId<HTMLSelectElement>("transition");
+const cards = byId<HTMLSelectElement>("cards");
 const axis = byId<HTMLSelectElement>("axis");
 const loop = byId<HTMLInputElement>("loop");
 const holes = byId<HTMLSelectElement>("holes");
@@ -66,6 +68,13 @@ const mount = () => {
   });
   spaces = new Set(Array.from(stage.children, (t) => t.getAttribute("data-ts-space"))).size;
   tilespace.on("change", show);
+  // The cards' own motion, the user's: the Space's new cards, from the side the move came.
+  tilespace.on("change", ({ direction }) => {
+    const effect = cardEffects[cards.value];
+    if (!effect || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const current = stage.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card");
+    effect(Array.from(current), direction, axis.value as "horizontal" | "vertical");
+  });
   tilespace.on("pack", (detail) => {
     spaces = detail.spaces;
     show();

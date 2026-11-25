@@ -22,7 +22,8 @@ with no Hole; a filling that places no Tile never counts, so every Tile is still
 (`playground/`, Vite): type a Grid and Shapes and see every Space drawn with its Holes and Score.
 `npm run demo` serves the demo (`demo/`, Vite): a showcase of mixed Shapes, a gallery and a
 dashboard whose widgets keep their state, with Prev, Next, Destroy, and the Transition (slide, a
-custom fade, none), the axis and `loop` to choose. `npm run e2e` (in the gate) drives it in Chromium with
+custom fade, none), a card effect (none, cascade, 3-D cascade, pop: user code on `change`, each
+Tile holding its card), the axis and `loop` to choose. `npm run e2e` (in the gate) drives it in Chromium with
 Playwright: the rendered boxes match the Packing through `next` and a resize, and `destroy()`
 leaves the Stage as the page wrote it.
 `createTilespace(stage, { columns, rows | minCellWidth, cellAspect, gap, shape, order, nodeBudget,
@@ -69,7 +70,8 @@ Space's Holes against an exhaustive search (`test/exhaustive.ts`).
   `listenDrag` and `Grip` (`drag.ts`, internal),
   `TilespaceEvents` (`create-tilespace.ts`). Its tests run in happy-dom.
 - `playground/` (not a package): `index.html` and `main.ts`, over `core`'s source.
-- `demo/` (not a package): `index.html`, `main.ts` and `examples.ts`, over `vanilla`'s source;
+- `demo/` (not a package): `index.html`, `main.ts`, `examples.ts` and `card-effects.ts` (the
+  cards' own motion as user code on `change`), over `vanilla`'s source;
   `e2e/*.e2e.ts` and `playwright.config.ts` drive it.
 
 ## Contract
@@ -127,4 +129,6 @@ None.
   amended), and a card that animates or places itself goes in a wrapper (DEC-06).
 - **2026-11-25, T3.18:** the default Transition is the Space's slide only (no settle, no fade), and
   `change` says the move's `direction` for the cards' own motion.
-- **Next:** T3.19, then T3.9a.
+- **2026-11-25, T3.19:** the demo's card effects: cascade, 3-D cascade and pop, written as user
+  code on `change` that animates the card inside each Tile, from the move's side.
+- **Next:** T3.9a.

@@ -13,9 +13,9 @@ const el = <T extends HTMLElement = HTMLElement>(
   return node;
 };
 
-/** A Tile of the given Shape. */
+/** A Tile of the given Shape, holding its card: the card is what a card effect animates. */
 const tile = (shape: string, ...children: (Node | string)[]) => {
-  const node = el("div", {}, ...children);
+  const node = el("div", {}, el("div", { className: "card" }, ...children));
   node.dataset.tsShape = shape;
   return node;
 };
