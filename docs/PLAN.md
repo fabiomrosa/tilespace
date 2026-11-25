@@ -673,7 +673,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-06, DEC-14, the WAI-ARIA APG carousel pattern.
 
 ### T3.25 · The playground on its own page
-- **Status:** next
+- **Status:** done (2026-11-25)
 - **Goal:** the home tells the story and the playground has a page of its own (the owner,
   2026-11-25: it weighed too much on the home).
 - **Depends on:** T3.9c, T3.10.

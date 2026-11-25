@@ -168,4 +168,7 @@ None.
 - **2026-11-25, the owner (the site's structure):** the home tells the story in this order: hero,
   01 The idea, 02 Quick start, 03 Packages (with the install tabs), 04 The lab, 05 Where it comes
   from, footer; the playground moves to its own page (T3.25), Cards on Cascade from the start.
-- **Next:** T3.25, then T3.3.
+- **2026-11-25, T3.25:** the playground has its own page, `playground.html` (Vite's second page),
+  with Cards on Cascade from the start and 27 Showcase Tiles; the header's "Playground" and the
+  hero's "Open the playground" lead there, and the home no longer holds it.
+- **Next:** T3.3.

@@ -22,9 +22,12 @@ const tile = (shape: string, ...children: (Node | string)[]) => {
 
 const SHAPES = ["2x2", "1x1", "2x1", "1x2", "3x2 2x2", "1x1", "2x1 1x1", "1x1", "2x2 1x1", "1x2"];
 
-/** Mixed Shapes in the seven tile colours, each labelled with its place in the HTML. */
+/**
+ * Mixed Shapes in the seven tile colours, each labelled with its place in the HTML: 27 fill both of
+ * the desktop's 8x4 Spaces, and nearly all three of a phone's 4x5.
+ */
 export const showcase = () =>
-  Array.from({ length: 20 }, (_, i) =>
+  Array.from({ length: 27 }, (_, i) =>
     tile(SHAPES[i % SHAPES.length] as string, el("b", { textContent: String(i + 1) })),
   );
 
