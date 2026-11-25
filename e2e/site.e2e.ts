@@ -97,7 +97,7 @@ test("opens the same links in a menu sheet on a phone, next in the Tab order", a
   // The jump holds: the Playground's heading in view, and the next Tab goes on from there.
   await expect(page.getByRole("heading", { name: "Playground" })).toBeInViewport();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("region", { name: /^Playground: / })).toBeFocused();
+  await expect(page.getByRole("tab", { name: "Showcase" })).toBeFocused();
 });
 
 test("gives every control a 44 px target on a phone, and shows each code line whole", async ({
@@ -349,6 +349,52 @@ test.describe("the playground", () => {
     await expect(counter).toHaveText(/^Space 1 of /);
   });
 
+  test("moves along the tabs with the arrow keys, each tab mounting its example", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    const tab = (name: string) => page.getByRole("tab", { name });
+    await expect(tab("Showcase")).toHaveAttribute("aria-selected", "true");
+
+    await tab("Showcase").focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(tab("Gallery")).toBeFocused();
+    await expect(tab("Gallery")).toHaveAttribute("aria-selected", "true");
+    await expect(tab("Showcase")).toHaveAttribute("tabindex", "-1");
+    await expect(page.getByRole("tabpanel")).toHaveAttribute("aria-labelledby", "tab-gallery");
+    await expect(stage(page).getByRole("img").first()).toBeVisible();
+
+    await page.keyboard.press("ArrowRight");
+    await expect(tab("Dashboard")).toBeFocused();
+    await expect(stage(page).getByLabel("Notes")).toBeVisible();
+    // Past the last tab, back to the first; Home and End too.
+    await page.keyboard.press("ArrowRight");
+    await expect(tab("Showcase")).toBeFocused();
+    await page.keyboard.press("End");
+    await expect(tab("Dashboard")).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("Home");
+    await expect(tab("Showcase")).toHaveAttribute("aria-selected", "true");
+  });
+
+  test("keeps a dashboard value through a move away and back", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    await page.getByRole("tab", { name: "Dashboard" }).click();
+    await stage(page).getByLabel("Notes").fill("buy milk");
+    const counter = page.locator("#playground-count");
+    await expect(counter).toHaveText(/^Space 1 of [2-9]/);
+
+    await page.getByRole("button", { name: "Next Space in the playground" }).click();
+    await expect(counter).toHaveText(/^Space 2 of /);
+    await page.waitForFunction(() => document.getAnimations().length === 0);
+    await expect(stage(page).getByLabel("Notes")).toBeHidden();
+    await page.getByRole("button", { name: "Previous Space in the playground" }).click();
+    await page.waitForFunction(() => document.getAnimations().length === 0);
+
+    await expect(stage(page).getByLabel("Notes")).toHaveValue("buy milk");
+  });
+
   test("mounts the phone's 4x5 Grid when the screen narrows", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");
@@ -365,11 +411,12 @@ test.describe("the playground", () => {
   test.describe("with JavaScript off", () => {
     test.use({ javaScriptEnabled: false });
 
-    test("shows fallback tiles, and no pager to press", async ({ page }) => {
+    test("shows fallback tiles, and no tabs or pager to press", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto("./");
 
       await expect(page.locator("#playground-stage > div").first()).toBeVisible();
+      await expect(page.getByRole("tab", { name: "Gallery" })).toBeHidden();
       await expect(page.getByRole("button", { name: "Next Space in the playground" })).toBeHidden();
       const [scroll, client] = await page.evaluate(() => [
         document.documentElement.scrollWidth,

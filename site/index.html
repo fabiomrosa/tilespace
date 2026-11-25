@@ -135,8 +135,13 @@
       <section id="playground" class="playground" aria-labelledby="playground-title">
         <div class="container playground-head">
           <h2 id="playground-title">Playground</h2>
+          <div class="tabs" role="tablist" aria-label="Examples" hidden>
+            <button type="button" role="tab" id="tab-showcase" data-example="showcase" aria-selected="true" aria-controls="playground-panel">Showcase</button>
+            <button type="button" role="tab" id="tab-gallery" data-example="gallery" aria-selected="false" aria-controls="playground-panel" tabindex="-1">Gallery</button>
+            <button type="button" role="tab" id="tab-dashboard" data-example="dashboard" aria-selected="false" aria-controls="playground-panel" tabindex="-1">Dashboard</button>
+          </div>
         </div>
-        <div class="container">
+        <div id="playground-panel" class="container" role="tabpanel" aria-labelledby="tab-showcase">
           <div class="playground-frame">
             <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: the Stage keeps the focus, so the arrow keys keep moving -->
             <div id="playground-stage" class="playground-stage" tabindex="0">
@@ -153,7 +158,7 @@
             </div>
           </div>
           <div class="playground-bar">
-            <p class="muted">Mixed shapes in seven colours: each tile shows its place in the HTML and, once mounted, the span it got.</p>
+            <p id="playground-note" class="muted">Mixed shapes in seven colours: each tile shows its place in the HTML and, once mounted, the span it got.</p>
             <div id="playground-pager" class="pager" hidden>
               <button id="playground-prev" class="round" type="button" aria-label="Previous Space in the playground">←</button>
               <p id="playground-count" class="count" aria-live="polite"></p>
