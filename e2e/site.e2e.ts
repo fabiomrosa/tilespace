@@ -19,9 +19,17 @@ test("serves the site's build under the Pages base path", async ({ page }) => {
   );
 });
 
-test("links the logo mark as its icons, under the base path", async ({ page, request }) => {
-  await page.goto("./");
+test("links the logo mark as its icons, under the base path, on both pages", async ({
+  page,
+  request,
+}) => {
+  for (const path of ["./", "./playground.html"]) {
+    await page.goto(path);
+    await checkIcons(page, request);
+  }
+});
 
+const checkIcons = async (page: Page, request: import("@playwright/test").APIRequestContext) => {
   for (const rel of ["icon", "apple-touch-icon"]) {
     const href = await page
       .locator(`link[rel="${rel}"]`)
@@ -32,6 +40,16 @@ test("links the logo mark as its icons, under the base path", async ({ page, req
     // `vite preview` answers any path with the page: the icon must be an image.
     expect(response.headers()["content-type"]).toMatch(/^image\//);
   }
+};
+
+test("carries the same header and footer links on both pages", async ({ page }) => {
+  const links = async (path: string) => {
+    await page.goto(path);
+    return page
+      .locator("header a, footer a")
+      .evaluateAll((els) => els.map((el) => el.textContent?.trim()));
+  };
+  expect(await links("./playground.html")).toEqual(await links("./"));
 });
 
 /** The page's background, from the tokens: light #F6F6F3, dark #0F1115. */
@@ -160,20 +178,22 @@ test("gives every control a 44 px target on a phone, and shows each code line wh
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 800 });
-  await page.goto("./");
-  await page.getByRole("button", { name: "Menu" }).click();
+  for (const path of ["./", "./playground.html"]) {
+    await page.goto(path);
+    await page.getByRole("button", { name: "Menu" }).click();
 
-  const controls = page.locator("header a, header button, main a, main button, footer a");
-  for (const control of await controls.all()) {
-    if (!(await control.isVisible())) continue;
-    const box = await control.boundingBox();
-    expect(
-      Math.min(box?.width ?? 0, box?.height ?? 0),
-      (await control.textContent()) ?? "",
-    ).toBeGreaterThanOrEqual(44);
-  }
-  for (const code of await page.locator("main code").all()) {
-    expect(await code.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    const controls = page.locator("header a, header button, main a, main button, footer a");
+    for (const control of await controls.all()) {
+      if (!(await control.isVisible())) continue;
+      const box = await control.boundingBox();
+      expect(
+        Math.min(box?.width ?? 0, box?.height ?? 0),
+        `${path}: ${(await control.textContent()) ?? ""}`,
+      ).toBeGreaterThanOrEqual(44);
+    }
+    for (const code of await page.locator("main code").all()) {
+      expect(await code.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    }
   }
 });
 
