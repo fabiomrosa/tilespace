@@ -131,4 +131,6 @@ None.
   `change` says the move's `direction` for the cards' own motion.
 - **2026-11-25, T3.19:** the demo's card effects: cascade, 3-D cascade and pop, written as user
   code on `change` that animates the card inside each Tile, from the move's side.
-- **Next:** T3.9a.
+- **2026-11-25, the owner:** a favicon before the playground (T3.20); the hero's cards cascade
+  again as the site's code (T3.21); the playground gets a Cards select (T3.9b).
+- **Next:** T3.20, T3.21, then T3.9a.
