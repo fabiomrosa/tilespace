@@ -143,4 +143,7 @@ None.
   JavaScript off. Split at 542 lines: the tabs, the Gallery and the Dashboard are T3.22
   (`backup/T3.9a-full`). The menu's links now jump to a real section: the menu closes and the focus
   goes on from there.
-- **Next:** T3.22.
+- **2026-11-25, T3.22 (the playground's tabs):** a tablist (APG tabs, automatic activation, Home
+  and End) mounts Showcase, Gallery (generated SVG photos, the default the owner left) or Dashboard
+  (real inputs that keep their values through a move); hidden with JavaScript off.
+- **Next:** T3.9b.

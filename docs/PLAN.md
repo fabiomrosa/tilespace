@@ -1003,7 +1003,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` row 3 and "Playground tabs".
 
 ### T3.22 · The site's playground: the tabs, the Gallery and the Dashboard
-- **Status:** waiting (T3.9a)
+- **Status:** done (2026-11-25)
 - **Goal:** a visitor switches between Showcase, Gallery and Dashboard.
 - **Depends on:** T3.9a.
 - **In scope:** the tablist (APG tabs: roving focus, `aria-selected`, automatic activation), the
