@@ -94,7 +94,10 @@
   width: min(100%, calc(100vw - 176px));
   margin-inline: auto;
 }
-.wall > div {
+/* The Tile is bare; its card fills it, and the hero's cascade moves the card (DEC-06). */
+.wall > div > .card {
+  box-sizing: border-box;
+  height: 100%;
   display: flex;
   align-items: flex-end;
   padding: 14px;
@@ -102,28 +105,29 @@
   color: var(--tile-ink);
   font: 500 13px / 1 var(--font-mono);
 }
-.wall > div::after {
-  content: attr(data-ts-span);
+/* The Span the library chose, copied onto the card by hero.ts. */
+.wall .card::after {
+  content: attr(data-span);
 }
-.wall > div:nth-child(7n + 1) {
+.wall > div:nth-child(7n + 1) > .card {
   background: var(--tile-coral);
 }
-.wall > div:nth-child(7n + 2) {
+.wall > div:nth-child(7n + 2) > .card {
   background: var(--tile-blue);
 }
-.wall > div:nth-child(7n + 3) {
+.wall > div:nth-child(7n + 3) > .card {
   background: var(--tile-amber);
 }
-.wall > div:nth-child(7n + 4) {
+.wall > div:nth-child(7n + 4) > .card {
   background: var(--tile-teal);
 }
-.wall > div:nth-child(7n + 5) {
+.wall > div:nth-child(7n + 5) > .card {
   background: var(--tile-violet);
 }
-.wall > div:nth-child(7n + 6) {
+.wall > div:nth-child(7n + 6) > .card {
   background: var(--tile-lime);
 }
-.wall > div:nth-child(7n + 7) {
+.wall > div:nth-child(7n + 7) > .card {
   background: var(--tile-pink);
 }
 /* With JavaScript off, the tiles fill cells of a plain grid, clipped to the wall. */

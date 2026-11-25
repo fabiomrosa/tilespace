@@ -966,7 +966,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `site/src/styles/layout.css` `.logo-mark`, `docs/site/HANDOFF.md` row 0.
 
 ### T3.21 · The hero's cards cascade
-- **Status:** waiting (T3.20)
+- **Status:** done (2026-11-25)
 - **Goal:** the hero's cards cascade in from the move's side again, as the site's own code on
   `change` (the owner, after T3.18 left the hero with the slide only).
 - **Depends on:** T3.18, T3.19.
