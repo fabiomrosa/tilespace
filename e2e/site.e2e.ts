@@ -70,6 +70,38 @@ test("never scrolls sideways, down to a 360 px phone", async ({ page }) => {
   }
 });
 
+test("lays out the idea's three cards in a row, and in a column on a phone, inside the screen", async ({
+  page,
+}) => {
+  const idea = page.getByRole("region", { name: "Bring your own tiles" });
+  /** Each card's box, and the screen's width. */
+  const cards = () =>
+    idea.locator(".idea").evaluateAll((els) => ({
+      boxes: els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect),
+      width: document.documentElement.clientWidth,
+    }));
+  for (const [width, row] of [
+    [1440, true],
+    [768, true],
+    [390, false],
+    [360, false],
+  ] as const) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto("./");
+    await expect(idea.getByRole("heading", { level: 3 })).toHaveText([
+      "Headless",
+      "Flexible spans",
+      "Every input",
+    ]);
+    const { boxes, width: client } = await cards();
+    expect(boxes).toHaveLength(3);
+    for (const box of boxes) expect(box.right, `at ${width} px`).toBeLessThanOrEqual(client);
+    const [a, b] = boxes as [DOMRect, DOMRect];
+    if (row) expect([b.top, b.left > a.left]).toEqual([a.top, true]);
+    else expect(b.top, `at ${width} px`).toBeGreaterThan(a.bottom);
+  }
+});
+
 test("opens the same links in a menu sheet on a phone, next in the Tab order", async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 800 });
   await page.goto("./");

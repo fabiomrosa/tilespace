@@ -492,3 +492,137 @@
     gap: 8px;
   }
 }
+
+/* Bring your own tiles (HANDOFF row 2): three static cards, one column on a phone. */
+#idea-title {
+  margin-top: var(--s-4);
+}
+.ideas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gutter);
+  margin-top: var(--s-12);
+}
+.idea h3 {
+  margin-top: var(--s-6);
+}
+.idea p {
+  margin-top: var(--s-3);
+  line-height: 1.5;
+}
+.idea-visual {
+  box-sizing: border-box;
+  height: 200px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-frame);
+  background: var(--surface);
+  overflow: hidden;
+}
+.headless {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.headless > span {
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+}
+.headless .your-card {
+  grid-column: span 2;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: var(--tile-blue);
+  color: var(--tile-ink);
+  font: 13px / 1 var(--font-mono);
+}
+.spans {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.shapes {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+.shapes > span {
+  border-radius: 8px;
+}
+.shapes > :nth-child(1) {
+  width: 72px;
+  height: 72px;
+  background: var(--tile-coral);
+}
+.shapes > :nth-child(2) {
+  width: 72px;
+  height: 34px;
+  background: var(--tile-amber);
+}
+.shapes > :nth-child(3) {
+  width: 34px;
+  height: 34px;
+  background: var(--tile-teal);
+}
+.spans code {
+  font: 13px / 1.4 var(--font-mono);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: 12px;
+}
+.inputs kbd,
+.inputs .chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  font: 13px / 1 var(--font-mono);
+}
+.inputs kbd {
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+.inputs .chip {
+  border-radius: var(--r-round);
+  color: var(--tile-ink);
+}
+.chip.violet {
+  background: var(--tile-violet);
+}
+.chip.lime {
+  background: var(--tile-lime);
+}
+.chip.pink {
+  background: var(--tile-pink);
+}
+@media (max-width: 639px) {
+  .ideas {
+    grid-template-columns: 1fr;
+    row-gap: var(--s-8);
+  }
+  .idea-visual {
+    height: 132px;
+    padding: 18px;
+  }
+  .shapes > :nth-child(1) {
+    width: 52px;
+    height: 52px;
+  }
+  .shapes > :nth-child(2) {
+    width: 52px;
+    height: 24px;
+  }
+  .shapes > :nth-child(3) {
+    width: 24px;
+    height: 24px;
+  }
+}
