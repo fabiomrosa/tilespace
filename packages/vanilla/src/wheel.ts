@@ -6,7 +6,7 @@ const QUIET = 200;
  * along the gesture's axis. A reversed scroller (`column-reverse`, `row-reverse`, `rtl`) runs from
  * 0 down; 1 px of slack absorbs a fractional position.
  */
-function scrolls(stage: HTMLElement, path: EventTarget[], vertical: boolean, delta: number) {
+export function scrolls(stage: HTMLElement, path: EventTarget[], vertical: boolean, delta: number) {
   for (const node of path) {
     if (node === stage) return false;
     if ((node as Node).nodeType !== 1) continue;

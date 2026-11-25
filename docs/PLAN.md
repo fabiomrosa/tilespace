@@ -1058,7 +1058,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** DEC-10, `demo/card-effects.ts`, `site/src/demos/card-cascade.ts`.
 
 ### T3.23 · The Drag leaves a press to a form control or a scroller
-- **Status:** next
+- **Status:** done (2026-11-25)
 - **Goal:** a slider, a text field or a scroller in a Tile keeps its own gesture (the owner, after
   T3.22 had to stop `pointerdown` on the site's dashboard).
 - **Depends on:** none.
@@ -1213,8 +1213,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.
   It costs ~32% per Space at 12x8 with 1x1 Tiles (1.7 → 2.3 ms at the default budget).
-- The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`
-  (form controls and scrollers: T3.23).
+- The Drag (T2.10 review): tests for `pointercancel`, a second pointer and `transition: false`.
 - A guard for a derived Grid on a content-height Stage (GOTCHAS "DOM"), e.g. ignoring a resize the
   engine's own writes caused; T2.4 only documents that the Stage needs a height.
 - T1.3 AC3 (two Tiles of one Shape never both tried at a Cell) has no test: a tie never replaces the

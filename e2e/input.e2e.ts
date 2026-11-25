@@ -40,6 +40,36 @@ test("leaves the arrow keys to a field inside a shadow root in a Tile", async ({
   await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
 });
 
+test("leaves a press on a slider inside a shadow root in a Tile to it", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 800 });
+  await page.goto("/");
+  // Retargeted at the Stage, the press's target is the host: only its composed path shows the slider.
+  await page.evaluate(() => {
+    const host = document.createElement("span");
+    const slider = Object.assign(document.createElement("input"), { type: "range", value: "0" });
+    slider.style.width = "200px";
+    host.attachShadow({ mode: "open" }).append(slider);
+    // The first card is the widest: the slider is whole on screen.
+    document.querySelector("#stage .card")?.append(host);
+  });
+  const slider = page.locator("#stage input[type=range]");
+  const box = (await slider.boundingBox()) as {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  const y = box.y + box.height / 2;
+
+  await page.mouse.move(box.x + 4, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width - 4, y, { steps: 10 });
+  await page.mouse.up();
+
+  await expect(page.locator("#space")).toHaveText(/^Space 1 of/);
+  await expect(slider).toHaveValue("100");
+});
+
 test("leaves a wheel gesture to a scroller inside a shadow root in a Tile", async ({ page }) => {
   await page.setViewportSize({ width: 1200, height: 800 });
   await page.goto("/");

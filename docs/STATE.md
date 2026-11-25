@@ -46,7 +46,8 @@ Space. One wheel gesture (momentum included, ended by 200 ms of quiet) moves one
 the page scroll when it moved nothing, and leaves a gesture to a scroller or handler in a Tile.
 The Tiles fill column by column on a horizontal axis (as on the Xbox dashboard) and row by row on
 a vertical one. A pointer Drag along the axis scrubs the Transition and commits past half or on a flick, else
-plays it back. `axis` also turns the default slide vertical. With `peek`, the Spaces before and after the
+plays it back; a press on a form control, an editable element or a scroller that can scroll that
+way is theirs. `axis` also turns the default slide vertical. With `peek`, the Spaces before and after the
 Current one show beside the Stage, `inert`, for a container of the user's to clip. With `minCellWidth` (and `cellAspect`, 1 by default) the
 Grid is derived from the Stage's content size and follows it through a `ResizeObserver`; a new Grid
 repacks, fires `pack` (`{ spaces }`) and keeps the first Tile on screen in view. Adding or
@@ -156,4 +157,7 @@ None.
   with reduced motion. The site's cascade follows the axis.
 - **2026-11-25, the owner:** two library fixes before the publish: the Drag leaves a press on a
   form control or a scroller alone (T3.23), and a `start` option mounts at a chosen Space (T3.24).
-- **Next:** T3.23, T3.24, then T3.10.
+- **2026-11-25, T3.23:** the Drag leaves a press on a form control (not a checkbox, radio or
+  button), an editable element or a scroller that can still scroll along the axis to it; the
+  site's dashboard dropped its own `pointerdown` guard.
+- **Next:** T3.24, then T3.10.

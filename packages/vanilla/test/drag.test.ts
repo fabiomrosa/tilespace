@@ -184,4 +184,90 @@ describe("the Drag", () => {
     expect(clicks).toEqual([2]);
     expect(tiles.flatMap((t) => t.getAnimations())).toEqual([]);
   });
+
+  it("leaves a press on a form control or an editable element to it", () => {
+    const controls = [
+      Object.assign(document.createElement("input"), { type: "range" }),
+      Object.assign(document.createElement("input"), { type: "text" }),
+      document.createElement("textarea"),
+      document.createElement("select"),
+      Object.assign(document.createElement("div"), { contentEditable: "true" }),
+    ];
+    for (const control of controls) {
+      const { tilespace, tiles } = mount();
+      tiles[0]?.append(control);
+
+      drag(control, [250, 100], 10);
+
+      expect(tilespace.current).toBe(0);
+      expect(tiles.flatMap((t) => t.getAnimations())).toEqual([]);
+      tilespace.destroy();
+      document.body.replaceChildren();
+    }
+  });
+
+  it("still drags from a checkbox, a button or plain content", () => {
+    for (const make of [
+      () => Object.assign(document.createElement("input"), { type: "checkbox" }),
+      () => document.createElement("button"),
+      () => document.createElement("span"),
+    ]) {
+      const { tilespace, tiles } = mount();
+      const target = make();
+      tiles[0]?.append(target);
+
+      drag(target, [250, 100], 10);
+
+      expect(tilespace.current).toBe(1);
+      tilespace.destroy();
+      document.body.replaceChildren();
+    }
+  });
+
+  it("leaves a press in a scroller along the axis to it while it can scroll that way", () => {
+    const { tilespace, tiles } = mount();
+    const scroller = document.createElement("div");
+    scroller.style.overflowX = "auto";
+    let left = 0;
+    Object.defineProperty(scroller, "scrollLeft", { get: () => left });
+    Object.defineProperty(scroller, "scrollWidth", { value: 800 });
+    Object.defineProperty(scroller, "clientWidth", { value: 400 });
+    tiles[0]?.append(scroller);
+
+    // Dragging left scrolls it on, while it has room.
+    drag(scroller, [250, 100], 10);
+    expect(tilespace.current).toBe(0);
+
+    left = 400;
+    drag(scroller, [250, 100], 10);
+    expect(tilespace.current).toBe(1);
+    // Back at its start, dragging right (towards the start) is the Drag's again.
+    left = 0;
+    drag(scroller, [350, 500], 10);
+    expect(tilespace.current).toBe(0);
+  });
+
+  it("finds a control inside an open shadow tree", () => {
+    const { tilespace, tiles } = mount();
+    const host = document.createElement("div");
+    const slider = Object.assign(document.createElement("input"), { type: "range" });
+    host.attachShadow({ mode: "open" }).append(slider);
+    tiles[0]?.append(host);
+
+    drag(slider, [250, 100], 10);
+
+    expect(tilespace.current).toBe(0);
+  });
+
+  it("forgets an older press, released unseen, when a control is pressed", () => {
+    const { stage, tilespace, tiles } = mount();
+    const slider = Object.assign(document.createElement("input"), { type: "range" });
+    tiles[0]?.append(slider);
+    // A press released outside the Stage: no pointerup reaches it.
+    pointer(stage, "pointerdown", 300, 0);
+
+    drag(slider, [250, 100], 10);
+
+    expect(tilespace.current).toBe(0);
+  });
 });
