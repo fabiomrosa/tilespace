@@ -610,6 +610,20 @@ test.describe("the playground", () => {
     expect(await cardMotions(page)).toEqual([]);
   });
 
+  test("mounts again on the visitor's Space at once when an option changes", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("./");
+    const counter = page.locator("#playground-count");
+    await page.getByRole("button", { name: "Next Space in the playground" }).click();
+    await expect(counter).toHaveText(/^Space 2 of /);
+    await page.waitForFunction(() => document.getAnimations().length === 0);
+
+    await page.getByLabel("Loop").check();
+
+    await expect(counter).toHaveText(/^Space 2 of /);
+    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+  });
+
   test("mounts the phone's 4x5 Grid when the screen narrows", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("./");

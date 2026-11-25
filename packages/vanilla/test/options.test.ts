@@ -37,6 +37,14 @@ describe("createTilespace options", () => {
       { label: 1n as unknown as string },
       "label must be a non-empty string, got 1",
     ],
+    ["a negative start", [null], { start: -1 }, "start must be an integer ≥ 0, got -1"],
+    ["a start of 1.5", [null], { start: 1.5 }, "start must be an integer ≥ 0, got 1.5"],
+    [
+      "a start that is not a number",
+      [null],
+      { start: "2" as unknown as number },
+      "start must be an integer ≥ 0, got 2",
+    ],
     [
       "a gap of Infinity",
       [null],

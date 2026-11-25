@@ -87,12 +87,11 @@ export function mountPlayground(root: HTMLElement) {
       loop: loop.checked,
       ...(chosen !== undefined && { transition: chosen }),
       label: `Playground: ${example}. Drag, scroll or use arrow keys.`,
+      // The visitor's place, or the last Space if the new Grid has fewer, at once.
+      start: place,
     });
     labelSpans(stage);
     tilespace.on("pack", () => labelSpans(stage));
-    // The visitor's place, as near as the new Grid has one.
-    const spaces = new Set(Array.from(stage.children, (t) => t.getAttribute("data-ts-space"))).size;
-    tilespace.goTo(Math.min(place, spaces - 1));
     liveCounter(tilespace, stage, count);
     tilespace.on("change", ({ direction }) => playCards(direction));
   };
