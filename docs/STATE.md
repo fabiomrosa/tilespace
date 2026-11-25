@@ -119,4 +119,7 @@ None.
   leaving one slide with the block (`TransitionContext.ahead`, `.behind`): no flick at the edges.
 - **2026-11-25, T3.14:** the 2017 wall is in the repository as `reference/surface.js`, its layout
   formatted, its code and comments as they were.
+- **2026-11-25, plan the home's sections:** like list-picker's home (the owner): the lab with its
+  table (T3.11b), the packages with a page each (T3.15), install tabs (T3.16), links and the
+  origin (T3.17).
 - **Next:** T3.9a.

@@ -933,7 +933,7 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   buttons with `aria-pressed`, Transition select, gap and space gap sliders with a px readout,
   loop); the bar wraps below ~1100 px; on a phone it collapses to prev / counter / next and an
   Options disclosure (`aria-expanded`) with the same controls.
-- **Out of scope:** the first section, the quick start, the lab (T3.10, T3.11).
+- **Out of scope:** the first section, the quick start, the lab (T3.10, T3.11a, T3.11b).
 - **Contract:** none.
 - **Acceptance criteria:**
   1. In Chromium each control changes the mounted Tilespace (checked as in `e2e/demo.e2e.ts`).
@@ -947,36 +947,101 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Goal:** "Bring your own tiles" explains the idea.
 - **Depends on:** T3.9b.
 - **In scope:** the section's static markup and visuals (three columns; one on a phone).
-- **Out of scope:** the quick start and the lab (T3.11).
+- **Out of scope:** the quick start and the lab (T3.11a, T3.11b).
 - **Contract:** none.
 - **Acceptance criteria:**
   1. No sideways page scroll at 360, 768, 1024 and 1440 px (beyond the hero's bleed).
 - **Files:** ~4, ~150 lines: `index.html`, `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
 - **References:** `docs/site/HANDOFF.md` row 2.
 
-### T3.11 · The site's quick start and lab
-- **Status:** waiting (T3.10, T3.5)
-- **Goal:** the code shown is the code run, and the lab's answer is on the page.
-- **Depends on:** T3.10, T3.5 (the lab card's numbers).
+### T3.11a · The site's quick start
+- **Status:** waiting (T3.10)
+- **Goal:** the code shown is the code run.
+- **Depends on:** T3.10.
 - **In scope:** one snippet source (the real API: `peek: true` with the page's CSS, DEC-16) that
   `demos/quickstart.ts` runs and the page prints; its live result with a counter, moving by keys,
-  wheel and drag, and fallback tiles; the lab card in HTML/SVG with `docs/LAB.md`'s numbers (the
-  first-fit time from its table, or the bar dropped), `role="img"` labels, and the link to
-  `docs/LAB.md`.
-- **Out of scope:** new benchmark numbers.
+  wheel and drag, and fallback tiles.
+- **Out of scope:** the lab (T3.11b).
 - **Contract:** none.
 - **Acceptance criteria:**
   1. The printed snippet and the run one are the same string (a test compares them).
-  2. Each number on the lab card is a row of `docs/LAB.md`.
-  3. The result's counter shows the packed count and follows a move.
+  2. The result's counter shows the packed count and follows a move.
 - **Files:** ~6, ~250 lines: `index.html`, `demos/quickstart.ts`, `components.css`,
   `e2e/site.e2e.ts`, PLAN, STATE.
-- **References:** `docs/site/HANDOFF.md` rows 4 and 5, "Lab chart".
+- **References:** `docs/site/HANDOFF.md` row 4.
+
+### T3.11b · The site's lab section
+- **Status:** waiting (T3.11a, T3.5)
+- **Goal:** the lab's question, its answer and its evidence are on the page, as on list-picker's
+  home (the owner, 2026-11-25).
+- **Depends on:** T3.11a, T3.5 (the numbers).
+- **In scope:** the question and the answer in a few lines; the handoff's chart card (HTML/SVG,
+  `role="img"` labels) and the benchmark table from `docs/LAB.md`, with the machine; links to the
+  decision records and to `docs/LAB.md`; the commands that reproduce it (`npm ci`,
+  `npm run bench`).
+- **Out of scope:** new benchmark numbers.
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Each number on the card and in the table is a row of `docs/LAB.md` (a test compares them).
+  2. The chart's groups have `role="img"` names that state their numbers.
+- **Files:** ~6, ~300 lines: `index.html`, `components.css`, a test, `e2e/site.e2e.ts`, PLAN,
+  STATE.
+- **References:** `docs/site/HANDOFF.md` row 5 and "Lab chart"; list-picker's home, "The lab's
+  question".
+
+### T3.15 · The site's packages: a section and a page each
+- **Status:** waiting (T3.11b, T3.4b)
+- **Goal:** a visitor sees what each package is and reads its page, as on list-picker's site (the
+  owner, 2026-11-25).
+- **Depends on:** T3.11b, T3.4b (the READMEs the pages follow).
+- **In scope:** a "Packages" section: `@tilespace/core` (the packing, no DOM) and
+  `@tilespace/vanilla` (the DOM engine), each linking its page, and React and Angular as "coming
+  soon"; `core.html` and `vanilla.html` (Vite pages under the same header and footer) with each
+  package's install, API and options, from its README; the header's links to them.
+- **Out of scope:** React and Angular pages.
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Each option and export a README lists is on its page (a test compares them).
+  2. The two pages build under `/tilespace/` and link back home.
+- **Files:** ~8, ~350 lines: `core.html`, `vanilla.html`, `index.html`, `vite.config.ts`,
+  `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** list-picker's site, "Packages"; T3.4a, T3.4b.
+
+### T3.16 · The site's install tabs
+- **Status:** waiting (T3.15)
+- **Goal:** a visitor copies the install command for their package manager.
+- **Depends on:** T3.15.
+- **In scope:** an "Install" section: tabs npm / yarn / pnpm (the APG tabs pattern), each with its
+  command and Copy; Vanilla now, React and Angular "coming soon".
+- **Out of scope:** the hero's own install line (it stays).
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Each tab shows its manager's command, and Copy copies that one.
+  2. Arrow keys move along the tabs.
+- **Files:** ~5, ~200 lines: `index.html`, `main.ts`, `components.css`, `e2e/site.e2e.ts`, PLAN,
+  STATE.
+- **References:** list-picker's home, "Install".
+
+### T3.17 · The site's links and origin
+- **Status:** waiting (T3.16)
+- **Goal:** a visitor finds the source, the decisions and where the idea came from.
+- **Depends on:** T3.16.
+- **In scope:** a "Links" section: the playground, the source on GitHub, the design decisions
+  (`docs/shared/DECISIONS.md`), the lab write-up, and "Where it comes from: a rewrite of a 2017
+  tile wall" (`reference/surface.js`); the footer gains Docs (the READMEs), Issues and the
+  changelog.
+- **Out of scope:** a docs site.
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. Every link points to a path that exists in the repository or on the site (a test checks
+     them against the tree).
+- **Files:** ~4, ~120 lines: `index.html`, `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** list-picker's home, "Links".
 
 ### T3.12 · The site's accessibility and motion checks
-- **Status:** waiting (T3.11)
+- **Status:** waiting (T3.17)
 - **Goal:** the site meets the handoff's "Done when".
-- **Depends on:** T3.11.
+- **Depends on:** T3.17.
 - **In scope:** `npx lighthouse` (accessibility) against `vite preview`; reduced motion, keyboard
   only and VoiceOver checked by hand and written in the PR; the fixes these find, within the size
   limit (more goes to a new slice).
