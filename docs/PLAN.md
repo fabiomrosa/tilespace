@@ -950,10 +950,43 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   `e2e/demo.e2e.ts`, PLAN, STATE.
 - **References:** DEC-06, DEC-10.
 
+### T3.20 · The site's favicon
+- **Status:** next
+- **Goal:** the site's tab and home-screen icon is the logo mark (the owner).
+- **Depends on:** none.
+- **In scope:** `site/public/favicon.svg`, the header's logo mark (the 2x2 coral, the blue and the
+  amber Cells) as an SVG; `site/public/apple-touch-icon.png`, 180 px, drawn from it; the
+  `<link rel="icon">` and `<link rel="apple-touch-icon">` under the `/tilespace/` base.
+- **Out of scope:** a web manifest; other sizes.
+- **Contract:** none.
+- **Acceptance criteria:**
+  1. The built page links both icons under `/tilespace/`, and each one is served (`e2e/site.e2e.ts`,
+     seen red with a wrong path).
+- **Files:** ~5, ~60 lines: the two icons, `index.html`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** `site/src/styles/layout.css` `.logo-mark`, `docs/site/HANDOFF.md` row 0.
+
+### T3.21 · The hero's cards cascade
+- **Status:** waiting (T3.20)
+- **Goal:** the hero's cards cascade in from the move's side again, as the site's own code on
+  `change` (the owner, after T3.18 left the hero with the slide only).
+- **Depends on:** T3.18, T3.19.
+- **In scope:** the hero animates each card inside its Tile with the demo's cascade (shared with
+  the demo or copied, whichever keeps one source), from the move's side; not with `peek`'s cards
+  already in view after a Drag; off with reduced motion.
+- **Out of scope:** the playground's Cards picker (T3.9b).
+- **Contract:** none (consumes `change`'s `direction`).
+- **Acceptance criteria:**
+  1. In Chromium, after Next the new Space's cards cascade from the right, after Prev from the left
+     (seen red with the direction ignored).
+  2. After a Drag no card is hidden and played again.
+- **Files:** ~6, ~150 lines: `site/src/demos/hero.ts`, `site/index.html` or the hero's markup,
+  `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
+- **References:** DEC-10, `demo/card-effects.ts`.
+
 ### T3.9a · The site's playground: the examples
-- **Status:** waiting (T3.8c, T3.19)
+- **Status:** waiting (T3.8c, T3.21)
 - **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
-- **Depends on:** T3.8c, T3.19.
+- **Depends on:** T3.8c, T3.21.
 - **In scope:** the tablist (APG tabs: roving focus, `aria-selected`), the Showcase, Gallery and
   Dashboard factories in `demos/tiles.ts` (the Gallery's images as the owner decides), the framed
   Stage (8x4 at 480 px; 4x5 at 360 px on a phone, mounted again across breakpoints), prev/next and
@@ -972,13 +1005,15 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **Goal:** a visitor tries every option on the examples.
 - **Depends on:** T3.9a.
 - **In scope:** the bar wired to the options (axis and peek off / inset / bleed as segmented
-  buttons with `aria-pressed`, Transition select, gap and space gap sliders with a px readout,
-  loop); the bar wraps below ~1100 px; on a phone it collapses to prev / counter / next and an
+  buttons with `aria-pressed`, Transition select, a Cards select (none, cascade, 3-D cascade, pop:
+  the card effects as the site's code on `change`, the owner), gap and space gap sliders with a px
+  readout, loop); the bar wraps below ~1100 px; on a phone it collapses to prev / counter / next and an
   Options disclosure (`aria-expanded`) with the same controls.
 - **Out of scope:** the first section, the quick start, the lab (T3.10, T3.11a, T3.11b).
 - **Contract:** none.
 - **Acceptance criteria:**
-  1. In Chromium each control changes the mounted Tilespace (checked as in `e2e/demo.e2e.ts`).
+  1. In Chromium each control changes the mounted Tilespace (checked as in `e2e/demo.e2e.ts`), and
+     each Cards option animates the new Space's cards.
   2. At 390 px the Options button reveals the same controls, and a swipe moves a Space.
 - **Files:** ~6, ~300 lines: `index.html`, `demos/playground.ts`, `ui/segmented.ts`,
   `components.css`, `e2e/site.e2e.ts`, PLAN, STATE.
