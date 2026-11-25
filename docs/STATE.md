@@ -117,4 +117,4 @@ None.
   which the owner accepted.
 - **2026-11-25, T3.13:** with `peek`, the Space beyond the entering one and the one behind the
   leaving one slide with the block (`TransitionContext.ahead`, `.behind`): no flick at the edges.
-- **Next:** T3.14 (the 2017 wall as a reference), then T3.9a.
+- **Next:** T3.9a.

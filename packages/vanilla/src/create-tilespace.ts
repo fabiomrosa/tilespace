@@ -260,9 +260,9 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       log.resetStyle(tile, "translate");
       log.resetAttribute(tile, "inert");
     }
-    // With `peek`, the Space beyond the entering one rests where it will be a neighbour, and the one
-    // behind the leaving one where it was: the Transition moves them with the block. Any other
-    // Space hides while it runs.
+    // With `peek`, the Space beyond the entering one rests where it will be a neighbour, and the
+    // one behind the leaving one where it was: the Transition moves them with the block. Any
+    // other Space hides while it runs.
     const past = (space: number, d: 1 | -1) =>
       d === 1
         ? space < last()

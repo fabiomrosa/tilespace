@@ -119,7 +119,7 @@ describe("peek", () => {
     expect(frames(0).map((f) => f.opacity)).toEqual(["1", "1"]);
   });
 
-  it("brings the entering Space into the Stage and keeps the Space behind at rest while it moves", () => {
+  it("brings the entering Space into the Stage and keeps the one behind at rest while it moves", () => {
     // A Transition that only fades: the entering Tiles must already sit in the Stage.
     const fade: TilespaceOptions["transition"] = ({ entering }) =>
       entering.map(({ tile }) => tile.animate([{ opacity: 0 }, { opacity: 1 }], 300));
@@ -155,6 +155,29 @@ describe("peek", () => {
     ]);
     expect(frames(3)).toEqual(["820px 0px", "410px 0px"]);
     expect(frames(0)).toEqual(["-410px 0px", "-820px 0px"]);
+  });
+
+  it("moves each Tile once with loop and 2 or 3 Spaces, where the Spaces beyond are the same", () => {
+    for (const n of [2, 3]) {
+      const stage = document.createElement("div");
+      for (let i = 0; i < n; i++) stage.append(document.createElement("div"));
+      Object.defineProperty(stage, "clientWidth", { value: 400 });
+      Object.defineProperty(stage, "clientHeight", { value: 300 });
+      const tilespace = createTilespace(stage, { columns: 1, rows: 1, peek: true, loop: true });
+      const tiles = Array.from(stage.children) as HTMLElement[];
+
+      tilespace.next();
+
+      // 2: the Space beyond the entering one is the leaving one. 3: the one ahead is the one
+      // behind; it goes ahead, where it will be a neighbour.
+      expect(tiles.map((t) => t.getAnimations().length)).toEqual(n === 2 ? [1, 1] : [1, 1, 1]);
+      if (n === 3) {
+        const effect = tiles[2]?.getAnimations()[0]?.effect as KeyframeEffect | undefined;
+        // No gap here: a neighbour rests one Stage width (400 px) away.
+        expect(effect?.getKeyframes().map((f) => f.translate)).toEqual(["800px 0px", "400px 0px"]);
+      }
+      tilespace.destroy();
+    }
   });
 
   it("gives a custom Transition the Spaces beyond, already resting where they belong", () => {

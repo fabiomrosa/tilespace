@@ -102,8 +102,10 @@ Each package is created by the first slice that needs it.
   entering Space sits in the Stage (the Transition moves it from there). The Space beyond it
   (`ahead`) rests where it will be a neighbour and the one behind the leaving Space (`behind`)
   where it was; the default slides them with the block, from two Stage sizes away and on out, so
-  nothing pops at the edges. Any other Space hides. With `loop` and two Spaces, the other Space
-  always rests after, so a `prev` brings it in from the other side.
+  nothing pops at the edges; a custom Transition that slides `leaving` out moves or hides them too.
+  Any other Space hides. With `loop` and two Spaces, the other Space always rests after, so a
+  `prev` brings it in from the other side; with three, the Space ahead is also the one behind, so
+  it goes ahead and the far edge empties until the leaving Space slides over.
 - The Tiles outside the Current space are `inert` as well as hidden: a child that sets its own
   `visibility: visible` would otherwise show and take the focus. A move makes the leaving Tiles
   `inert` when it begins, so only the entering ones can be reached; a cancelled one shows them

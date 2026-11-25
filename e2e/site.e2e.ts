@@ -180,6 +180,7 @@ test.describe("the hero wall", () => {
     await expect(counter).toHaveText(`Space 2 of ${spaces}`);
     // Both neighbours as soon as the slide ends, while the cards are still settling: the one
     // beyond slides in with the block instead of appearing at the end.
+    // The default slide is 500 ms (default-transition.ts SLIDE); the hero's cascade runs ~1.5 s more.
     await page.waitForTimeout(650);
     expect(await page.evaluate(() => document.getAnimations().length)).toBeGreaterThan(0);
     expect(await bleeds(page, 1)).toEqual({ before: true, after: true });
