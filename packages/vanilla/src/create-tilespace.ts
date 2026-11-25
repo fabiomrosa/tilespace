@@ -260,15 +260,40 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
       log.resetStyle(tile, "translate");
       log.resetAttribute(tile, "inert");
     }
-    // Only the two Spaces show while it runs: another neighbour would sit under the leaving one.
+    // With `peek`, the Space beyond the entering one rests where it will be a neighbour, and the
+    // one behind the leaving one where it was: the Transition moves them with the block. Any
+    // other Space hides while it runs.
+    const past = (space: number, d: 1 | -1) =>
+      d === 1
+        ? space < last()
+          ? space + 1
+          : loop
+            ? 0
+            : -1
+        : space > 0
+          ? space - 1
+          : loop
+            ? last()
+            : -1;
+    const aheadOf = peek ? past(to, direction) : -1;
+    const ahead = aheadOf === current || aheadOf === to ? -1 : aheadOf;
+    const behindOf = peek ? past(current, -direction as 1 | -1) : -1;
+    const behind = behindOf === to || behindOf === ahead || behindOf === current ? -1 : behindOf;
     if (peek) {
       packing.spaces.forEach((placements, k) => {
         if (k === current || k === to) return;
+        const side = k === ahead ? direction : k === behind ? -direction : 0;
         for (const { tile } of placements) {
           const el = tiles[tile] as Tile;
           if (el.parentNode !== stage) continue;
-          log.style(el, "visibility", "hidden");
-          log.resetStyle(el, "translate");
+          if (side === 0) {
+            log.style(el, "visibility", "hidden");
+            log.resetStyle(el, "translate");
+          } else {
+            log.resetStyle(el, "visibility");
+            log.style(el, "translate", at(side * reach));
+            log.attribute(el, "inert", "");
+          }
         }
       });
     }
@@ -280,6 +305,8 @@ export function createTilespace(stage: HTMLElement, options: TilespaceOptions): 
         const context = {
           leaving,
           entering,
+          ahead: ahead < 0 ? [] : tilesIn(ahead),
+          behind: behind < 0 ? [] : tilesIn(behind),
           direction,
           axis,
           grid: { ...grid },

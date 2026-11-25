@@ -119,7 +119,7 @@ describe("peek", () => {
     expect(frames(0).map((f) => f.opacity)).toEqual(["1", "1"]);
   });
 
-  it("brings the entering Space into the Stage and hides the far neighbour while it moves", () => {
+  it("brings the entering Space into the Stage and keeps the one behind at rest while it moves", () => {
     // A Transition that only fades: the entering Tiles must already sit in the Stage.
     const fade: TilespaceOptions["transition"] = ({ entering }) =>
       entering.map(({ tile }) => tile.animate([{ opacity: 0 }, { opacity: 1 }], 300));
@@ -129,8 +129,71 @@ describe("peek", () => {
 
     tilespace.next();
 
-    // Space 1 leaves, Space 2 enters in place; Space 0 (the far neighbour) hides meanwhile.
-    expect(look(tiles).slice(0, 3)).toEqual(["hidden", "current", "current"]);
+    // Space 1 leaves, Space 2 enters in place; Space 0, behind, stays where it rests meanwhile.
+    expect(look(tiles).slice(0, 3)).toEqual(["peek -410px 0px", "current", "current"]);
+  });
+
+  it("slides the Space beyond the entering one in with the block, and the one behind out", () => {
+    const { tilespace, tiles } = mount({}, false);
+    tilespace.next();
+    for (const tile of tiles) for (const a of tile.getAnimations()) a.finish();
+
+    tilespace.next();
+
+    // Space 2 enters; Space 3 comes in from two Stage sizes away to rest beside it, Space 1 leaves,
+    // and Space 0, behind it, goes on out: nothing pops in or out at the edges while it moves.
+    const frames = (i: number) =>
+      (
+        (tiles[i]?.getAnimations()[0]?.effect as KeyframeEffect | undefined)?.getKeyframes() ?? []
+      ).map((f) => f.translate);
+    expect(look(tiles)).toEqual([
+      "peek -410px 0px",
+      "current",
+      "current",
+      "peek 410px 0px",
+      "hidden",
+    ]);
+    expect(frames(3)).toEqual(["820px 0px", "410px 0px"]);
+    expect(frames(0)).toEqual(["-410px 0px", "-820px 0px"]);
+  });
+
+  it("moves each Tile once with loop and 2 or 3 Spaces, where the Spaces beyond are the same", () => {
+    for (const n of [2, 3]) {
+      const stage = document.createElement("div");
+      for (let i = 0; i < n; i++) stage.append(document.createElement("div"));
+      Object.defineProperty(stage, "clientWidth", { value: 400 });
+      Object.defineProperty(stage, "clientHeight", { value: 300 });
+      const tilespace = createTilespace(stage, { columns: 1, rows: 1, peek: true, loop: true });
+      const tiles = Array.from(stage.children) as HTMLElement[];
+
+      tilespace.next();
+
+      // 2: the Space beyond the entering one is the leaving one. 3: the one ahead is the one
+      // behind; it goes ahead, where it will be a neighbour.
+      expect(tiles.map((t) => t.getAnimations().length)).toEqual(n === 2 ? [1, 1] : [1, 1, 1]);
+      if (n === 3) {
+        const effect = tiles[2]?.getAnimations()[0]?.effect as KeyframeEffect | undefined;
+        // No gap here: a neighbour rests one Stage width (400 px) away.
+        expect(effect?.getKeyframes().map((f) => f.translate)).toEqual(["800px 0px", "400px 0px"]);
+      }
+      tilespace.destroy();
+    }
+  });
+
+  it("gives a custom Transition the Spaces beyond, already resting where they belong", () => {
+    let seen: { ahead: number; behind: number } | undefined;
+    const fade: TilespaceOptions["transition"] = ({ entering, ahead, behind }) => {
+      seen = { ahead: ahead.length, behind: behind.length };
+      return entering.map(({ tile }) => tile.animate([{ opacity: 0 }, { opacity: 1 }], 300));
+    };
+    const { tilespace, tiles } = mount({ transition: fade }, false);
+    tilespace.next();
+    for (const tile of tiles) for (const a of tile.getAnimations()) a.finish();
+
+    tilespace.next();
+
+    expect(seen).toEqual({ ahead: 1, behind: 1 });
+    expect(look(tiles)[3]).toBe("peek 410px 0px");
   });
 
   it("measures the Stage again when a move begins", () => {

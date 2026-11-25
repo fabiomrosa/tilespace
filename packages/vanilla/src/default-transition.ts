@@ -11,6 +11,14 @@ export type Axis = "horizontal" | "vertical";
 export type TransitionContext = {
   leaving: { tile: Tile; placement: Placement }[];
   entering: { tile: Tile; placement: Placement }[];
+  /**
+   * With `peek`: the Space beyond the entering one, resting where it will be a neighbour (one Stage
+   * size plus the `spaceGap` away along `direction`), and the one behind the leaving one, resting
+   * where it was. Empty without `peek`, or when there is none. A Transition that slides `leaving`
+   * out lands it where `behind` rests: it moves or hides them too, as the default does.
+   */
+  ahead: { tile: Tile; placement: Placement }[];
+  behind: { tile: Tile; placement: Placement }[];
   /** 1 towards the next Space, -1 towards the previous one. */
   direction: 1 | -1;
   axis: Axis;
@@ -41,13 +49,15 @@ const FADE = 150;
 
 /**
  * Two phases (DEC-10): the Space slides along the axis as one block, the leaving Tiles out and the
- * entering ones in, faint; then each entering Tile settles with a fade and a short slide, in its
- * order within the Space (the fill's flow; backwards, reversed), at most 80 ms apart and about
- * 600 ms in all. Web Animations on `translate` and `opacity`: nothing is written to the Tiles'
- * styles. With `prefers-reduced-motion`, a short cross-fade in place instead.
+ * entering ones in, faint (with `peek`, the neighbours beyond them too); then each entering Tile
+ * settles with a fade and a short slide, in its order within the Space (the fill's flow; backwards,
+ * reversed), at most 80 ms apart and about 600 ms in all. Web Animations on `translate` and
+ * `opacity`: nothing is written to the Tiles' styles. With `prefers-reduced-motion`, a short
+ * cross-fade in place instead.
  */
 export function defaultTransition(context: TransitionContext): Animation[] {
-  const { leaving, entering, direction, width, height, axis, spaceGap, peek } = context;
+  const { leaving, entering, ahead, behind, direction, width, height, axis, spaceGap, peek } =
+    context;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const fade = (tile: Tile, from: number, fill: FillMode) =>
       tile.animate([{ opacity: from }, { opacity: 1 - from }], { duration: FADE, fill });
@@ -63,7 +73,18 @@ export function defaultTransition(context: TransitionContext): Animation[] {
   // Peeking Tiles are already in full view: they stay so, and nothing flashes.
   const faint = peek ? 1 : GHOST;
   const step = Math.min(STAGGER, CASCADE / Math.max(1, entering.length - 1));
+  // The neighbours beyond move with the block: one in from further away, one on out.
+  const along =
+    (from: number, to: number, fill: FillMode) =>
+    ({ tile }: { tile: Tile }) =>
+      tile.animate([{ translate: at(from * size) }, { translate: at(to * size) }], {
+        duration: SLIDE,
+        easing: EASING,
+        fill,
+      });
   return [
+    ...ahead.map(along(2 * direction, direction, "backwards")),
+    ...behind.map(along(-direction, -2 * direction, "forwards")),
     ...leaving.map(({ tile }) =>
       tile.animate(
         [

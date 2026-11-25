@@ -47,6 +47,9 @@ describe("custom, none and reduced-motion Transitions", () => {
 
     expect(seen).toEqual([
       {
+        // No `peek`: no Spaces beyond.
+        ahead: [],
+        behind: [],
         leaving: [],
         entering: [],
         direction: 1,

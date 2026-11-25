@@ -871,6 +871,24 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
   ROADMAP, STATE.
 - **References:** `docs/site/HANDOFF.md` row 1 (which bled one side only).
 
+### T3.13 · With peek, the neighbours beyond move with the slide
+- **Status:** done (2026-11-25)
+- **Goal:** no flick at the edges: after a move, the next neighbour is already there when the slide
+  ends (the owner, after T3.8c; it showed only at the end of the cascade).
+- **Depends on:** T2.14.
+- **In scope:** in `begin`, with `peek`, the Space beyond the entering one rests where it will be a
+  neighbour and the one behind the leaving one where it was, both `inert`; `TransitionContext`
+  gets them as `ahead` and `behind`; the default slides them with the block.
+- **Out of scope:** a custom Transition moving them (it gets them, resting).
+- **Contract:** `TransitionContext.ahead` and `.behind` (additive).
+- **Acceptance criteria:**
+  1. During a move with `peek`, the Space beyond rests a Stage size plus the gap away and slides
+     in from twice that; the one behind slides on out.
+  2. In Chromium, on the hero, both neighbours show once the slide ends, while cards still settle.
+- **Files:** ~8, ~150 lines: `create-tilespace.ts`, `default-transition.ts`, `test/peek.test.ts`,
+  `test/custom-transition.test.ts`, `e2e/site.e2e.ts`, ARCHITECTURE, PLAN, STATE.
+- **References:** DEC-06, DEC-10, the T3.8b review.
+
 ### T3.9a · The site's playground: the examples
 - **Status:** waiting (T3.8c)
 - **Goal:** a visitor switches between Showcase, Gallery and Dashboard in a framed demo.
@@ -953,9 +971,6 @@ This repository's track of `docs/shared/ROADMAP.md`, with entries in the templat
 - **References:** `docs/site/HANDOFF.md` "Done when", "Motion and accessibility".
 
 ## Later
-- With `peek`, `begin()` hides every Space but the two moving, and the next neighbour comes back
-  only at `settle`: after a Next, the bleed past the edge is empty for the whole cascade (1.5 s and
-  more on the site's hero, T3.8b review). Bring the new neighbour in when the slide ends.
 - The Score's `early` term (T2.12b) has one example test, and the exhaustive oracle checks only the
   Holes: a property against an uncut oracle of the whole `[holes, spanRank, early, displacement]`.
   It costs ~32% per Space at 12x8 with 1x1 Tiles (1.7 → 2.3 ms at the default budget).
