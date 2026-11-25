@@ -557,7 +557,7 @@ test.describe("the playground", () => {
     const prev = page.getByRole("button", { name: "Previous Space in the playground" });
     const settled = () => page.waitForFunction(() => document.getAnimations().length === 0);
 
-    for (const effect of ["cascade", "3d", "pop"]) {
+    for (const effect of ["cascade", "pop", "3d"]) {
       await cards.selectOption(effect);
       for (const button of [next, prev]) {
         await button.click();
@@ -572,12 +572,25 @@ test.describe("the playground", () => {
     await page.getByRole("group", { name: "Peek" }).getByRole("button", { name: "Inset" }).click();
     await settled();
     await expect(cards.locator('option[value="3d"]')).toBeDisabled();
-    await cards.selectOption("cascade");
+    await expect(cards).toHaveValue("cascade");
     await next.click();
     const peeking = await cardMotions(page);
     expect(peeking.length).toBeGreaterThan(0);
     expect(peeking.some((m) => m.fades)).toBe(false);
     expect(peeking.every((m) => m.transforms.includes("translateX(12px)"))).toBe(true);
+    await settled();
+    // Vertically, row by row from below.
+    await page.getByRole("button", { name: "Vertical" }).click();
+    await settled();
+    await prev.click();
+    const upright = await cardMotions(page);
+    expect(upright.length).toBeGreaterThan(0);
+    expect(upright.every((m) => m.transforms.includes("translateY(-12px)"))).toBe(true);
+    await settled();
+    // Peek Off again: the visitor's 3-D choice, set aside while peeking, comes back.
+    await page.getByRole("button", { name: "Horizontal" }).click();
+    await page.getByRole("group", { name: "Peek" }).getByRole("button", { name: "Off" }).click();
+    await expect(cards).toHaveValue("3d");
   });
 
   test("plays no Cards option after a Drag, its cards already in view", async ({ page }) => {

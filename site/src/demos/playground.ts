@@ -174,16 +174,29 @@ export function mountPlayground(root: HTMLElement) {
     const current = Array.from(
       stage.querySelectorAll<HTMLElement>(":scope > [data-ts-current] > .card"),
     );
-    if (options.peek !== "off") cascade(current, direction, axis, Number(spaceGap.value));
-    else cardEffects[cards.value]?.(current, direction, axis);
+    // The site's cascade falls behind during the library's slide, by at most the space gap.
+    if (options.peek !== "off") {
+      if (transition.value === "slide" && Number(spaceGap.value) > 0) {
+        cascade(current, direction, axis, Number(spaceGap.value));
+      }
+    } else cardEffects[cards.value]?.(current, direction, axis);
   };
-  /** Peeking, the effects that start hidden would blink the cards in view: they wait for Off. */
+  /**
+   * Peeking, the effects that start hidden would blink the cards in view: they wait for Off, and
+   * the visitor's choice comes back with it.
+   */
+  let chosen = cards.value;
+  cards.addEventListener("change", () => {
+    chosen = cards.value;
+  });
   const allowCards = () => {
     for (const option of cards.options) {
       option.disabled =
         options.peek !== "off" && option.value !== "none" && option.value !== "cascade";
     }
-    if (cards.selectedOptions[0]?.disabled) cards.value = "cascade";
+    cards.value = cards.querySelector<HTMLOptionElement>(`option[value="${chosen}"]`)?.disabled
+      ? "cascade"
+      : chosen;
   };
   const toggle = field<HTMLButtonElement>("playground-options");
   toggle.addEventListener("click", () => {
