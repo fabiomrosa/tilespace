@@ -121,9 +121,10 @@ entering Tiles with their Placements, the direction and the Stage's size. The de
 Space's slide only (amended by the owner 2026-11-25): the Space slides along the axis as one block
 in 500 ms, the leaving Tiles out and the entering ones in, one Stage size plus the `spaceGap` apart
 (`gap` by default; the owner, 2026-11-24), with `peek` the neighbours beyond with them, at full
-opacity (CSS `translate`). What a card does beyond that is the user's: a custom Transition, or an
-animation inside the Tile. The two-phase cascade of 2026-11-24 (each entering Tile settling after
-the slide) is the demo's custom Transition example. `transition: false` swaps instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
+opacity (CSS `translate`). What a card does beyond that is the user's: an animation inside the Tile,
+started on `change`, which says the move's `direction` (from which side the cards come), or a custom
+Transition. The cascade of 2026-11-24 (each entering card settling after the slide) is one of the
+demo's card effects, beside a 3-D cascade and a pop. `transition: false` swaps instantly; `prefers-reduced-motion` uses a short cross-fade. During a Drag the Animations are paused
 and their `currentTime` follows the pointer; on release they play forward (commit) or in reverse
 (cancel). No animation library.
 - **Why:** the 2017 wall needed TweenMax. Web Animations can be paused, scrubbed, reversed and

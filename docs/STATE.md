@@ -126,4 +126,4 @@ None.
   of its place (40 px otherwise), so the last column no longer covers the Space resting beyond.
 - **2026-11-25, the owner:** the library moves only the Space; card effects are the user's (DEC-10
   amended), and a card that animates or places itself goes in a wrapper (DEC-06).
-- **Next:** T3.18, then T3.9a.
+- **Next:** T3.18, T3.19, then T3.9a.
